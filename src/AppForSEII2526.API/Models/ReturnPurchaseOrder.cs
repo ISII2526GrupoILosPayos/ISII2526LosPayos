@@ -42,6 +42,17 @@
         public int? Rating { get; set; }
 
 
+        public override bool Equals(object obj)
+        {
+            if (obj is ReturnPurchaseOrder other)
+                return Id == other.Id;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
     }
 }
