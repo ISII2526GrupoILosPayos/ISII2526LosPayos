@@ -11,6 +11,35 @@
         [Display(Name = "Total price")]
         [Precision(10, 2)]
         public decimal TotalPrice { get; set; }
-       
+
+        public DateTime Date { get; set; }
+
+        [StringLength(100, ErrorMessage = "Description can be neither longer than 100 characters nor shorter than 1", MinimumLength = 1)]
+        public string Description { get; set; }
+
+        [StringLength(30, ErrorMessage = "Name and surname can be neither longer than 30 characters nor shorter than 1", MinimumLength = 1)]
+        public string NameSurname { get; set; }
+
+        [StringLength(20, ErrorMessage = "Postal code can be neither longer than 20 characters nor shorter than 1", MinimumLength = 1)]
+        public string PostalCode { get; set; }
+
+        public int? Rating { get; set; }
+
+
+        [StringLength(30, ErrorMessage = "Name of street can be neither longer than 30 characters nor shorter than 1", MinimumLength = 1)]
+        public string Street { get; set; }
+
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is PurchaseOrder other)
+                return Id == other.Id;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 }
