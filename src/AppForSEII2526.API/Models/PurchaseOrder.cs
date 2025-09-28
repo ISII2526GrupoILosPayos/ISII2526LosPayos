@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
 
+        [Required]
         [StringLength(20, ErrorMessage = "Name of City can be neither longer than 20 characters nor shorter than 1", MinimumLength =1)]
         public string City { get; set; }
 
@@ -14,18 +15,21 @@
 
         public DateTime Date { get; set; }
 
+        [Required]
         [StringLength(100, ErrorMessage = "Description can be neither longer than 100 characters nor shorter than 1", MinimumLength = 1)]
         public string Description { get; set; }
 
+        [Required]
         [StringLength(30, ErrorMessage = "Name and surname can be neither longer than 30 characters nor shorter than 1", MinimumLength = 1)]
         public string NameSurname { get; set; }
 
+        [Required]
         [StringLength(20, ErrorMessage = "Postal code can be neither longer than 20 characters nor shorter than 1", MinimumLength = 1)]
         public string PostalCode { get; set; }
 
         public int? Rating { get; set; }
 
-
+        [Required]
         [StringLength(30, ErrorMessage = "Name of street can be neither longer than 30 characters nor shorter than 1", MinimumLength = 1)]
         public string Street { get; set; }
 
