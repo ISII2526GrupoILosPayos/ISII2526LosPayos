@@ -11,5 +11,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Product> Products { get; set; }
     public DbSet<Brand> Brands { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
-
+    public DbSet<PurchaseProduct> PurchaseProducts { get; set; }
 }
