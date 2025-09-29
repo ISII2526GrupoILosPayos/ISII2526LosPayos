@@ -30,6 +30,9 @@ namespace AppForSEII2526.API.Models
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
 
+        [Required]
+        public PurchaseOrder PurchaseOrder { get; set; }
+
         public override bool Equals(object? obj)
         {
             if (obj is PurchaseProduct other)
