@@ -31,5 +31,9 @@
             return Id.GetHashCode();
         }
 
+        [Required]
+        public ReturnPurchaseOrder ReturnPurchaseOrder { get; set; }
+
+
     }
 }
