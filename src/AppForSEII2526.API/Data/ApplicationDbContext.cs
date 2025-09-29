@@ -9,4 +9,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<ReturnProduct> ReturnProducts { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Brand> Brands { get; set; }
+    public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
 }
