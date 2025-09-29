@@ -6,4 +6,6 @@ namespace AppForSEII2526.API.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options) {
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+    public DbSet<ReturnPurchaseOrder> ReturnPurchaseOrders { get; set; }
+    public DbSet<ReturnProduct> ReturnProducts { get; set; }
 }
