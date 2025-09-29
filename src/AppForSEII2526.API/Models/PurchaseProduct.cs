@@ -20,6 +20,7 @@ namespace AppForSEII2526.API.Models
         public decimal Price { get; set; }
 
         [Required]
+        [Key]
         public int ProductId { get; set; }
 
         [Required]
