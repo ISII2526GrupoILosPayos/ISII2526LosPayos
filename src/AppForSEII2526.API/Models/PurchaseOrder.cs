@@ -33,6 +33,8 @@
         [StringLength(30, ErrorMessage = "Name of street can be neither longer than 30 characters nor shorter than 1", MinimumLength = 1)]
         public string Street { get; set; }
 
+        public IList<PurchaseProduct> Products { get; set; }
+
 
         public override bool Equals(object? obj)
         {
