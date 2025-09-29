@@ -44,5 +44,8 @@ namespace AppForSEII2526.API.Models
         {
             return ProductId.GetHashCode();
         }
+
+        public int? ReturnProductId { get; set; }    // FK explícita (nullable)
+        public ReturnProduct? ReturnProduct { get; set; }
     }
 }

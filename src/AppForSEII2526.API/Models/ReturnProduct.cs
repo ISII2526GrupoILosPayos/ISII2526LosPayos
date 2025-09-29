@@ -31,5 +31,9 @@
             return Id.GetHashCode();
         }
 
+        // Relación obligatoria
+        public int PurchaseProductId { get; set; }   // FK explícita
+        public PurchaseProduct PurchaseProduct { get; set; }
+
     }
 }
