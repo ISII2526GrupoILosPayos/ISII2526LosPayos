@@ -31,15 +31,14 @@
             return Id.GetHashCode();
         }
 
-<<<<<<< HEAD
+
         // Relación obligatoria
         public int PurchaseProductId { get; set; }   // FK explícita
         public PurchaseProduct PurchaseProduct { get; set; }
-=======
+
         [Required]
         public ReturnPurchaseOrder ReturnPurchaseOrder { get; set; }
 
->>>>>>> development
 
     }
 }
