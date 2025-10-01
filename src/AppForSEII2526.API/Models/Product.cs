@@ -52,5 +52,9 @@ namespace AppForSEII2526.API.Models
             return false;
         }
 
+        // Clave foránea hacia Brand
+        [Required]
+        public int BrandId { get; set; }
+        public Brand Brand { get; set; }
     }
 }
