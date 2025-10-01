@@ -18,18 +18,7 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PurchaseOrder" />
-      <Property Name="Product" />
     </ShowAsAssociation>
-  </Class>
-  <Class Name="AppForSEII2526.API.Models.Product">
-    <Position X="0.5" Y="1.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>UAAAAAAAAQAgAAAAgAAAAAQAgAAAAAAAAAAAABAAAAI=</HashCode>
-      <FileName>Models\Product.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="PurchaseProducts" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
