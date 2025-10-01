@@ -54,5 +54,9 @@
             return Id.GetHashCode();
         }
 
+
+       //public ReturnProduct ReturnProduct { get; set; }
+
+         public IList<ReturnProduct> ReturnProducts { get; set; }
     }
 }

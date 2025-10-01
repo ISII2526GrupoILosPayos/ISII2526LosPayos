@@ -35,6 +35,8 @@ public class ApplicationUser : IdentityUser {
     [Display(Name = "Account Creation Date")]
     public DateTime AccountCreationDate { get; set; }
 
+    public IList<ReturnPurchaseOrder> ReturnOrders { get; set; } = new List<ReturnPurchaseOrder>();
+
     public override bool Equals(object? obj)
     {
         if (obj is ApplicationUser other)
