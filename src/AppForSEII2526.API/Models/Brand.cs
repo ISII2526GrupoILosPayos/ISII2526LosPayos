@@ -27,5 +27,7 @@
                 return this.Id == other.Id;
             return false;
         }
+
+        public IList<Product> Products { get; set; }
     }
 }
