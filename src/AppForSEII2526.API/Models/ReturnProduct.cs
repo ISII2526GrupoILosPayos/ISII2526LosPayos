@@ -32,7 +32,7 @@
         }
 
         [Required]
-        public ReturnPurchaseOrder ReturnPurchaseOrder { get; set; }
+        public ReturnPurchaseOrder ReturnOrder { get; set; }
 
 
     }
