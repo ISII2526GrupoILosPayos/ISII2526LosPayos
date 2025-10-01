@@ -35,6 +35,11 @@
 
         public IList<PurchaseProduct> Products { get; set; }
 
+        //  Clave foránea hacia ApplicationUser
+        [Required]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
 
         public override bool Equals(object? obj)
         {
