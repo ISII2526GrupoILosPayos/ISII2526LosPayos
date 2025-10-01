@@ -12,4 +12,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Brand> Brands { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
     public DbSet<PurchaseProduct> PurchaseProducts { get; set; }
+    public DbSet <PaymentMethod> PaymentMethods { get; set; }
+    public DbSet<Bizum> Bizums { get; set; }
+    public DbSet<CreditCard> CreditCards { get; set; }
+    public DbSet<PayPal> PayPals { get; set; }
 }
