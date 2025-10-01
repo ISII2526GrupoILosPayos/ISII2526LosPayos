@@ -35,8 +35,13 @@
 
         public IList<PurchaseProduct> Products { get; set; }
 
-        public PaymentMethod PaymentMethod { get; set; }
 
+        //  Clave foránea hacia ApplicationUser
+        [Required]
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
+
+        public PaymentMethod PaymentMethod { get; set; }
 
         public override bool Equals(object? obj)
         {
