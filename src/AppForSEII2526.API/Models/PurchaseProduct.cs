@@ -1,7 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppForSEII2526.API.Models
 {
+    [PrimaryKey(nameof(ProductId), nameof(PurchaseOrderId))]
     public class PurchaseProduct
     {
         public PurchaseProduct() { }
@@ -20,7 +22,6 @@ namespace AppForSEII2526.API.Models
         public decimal Price { get; set; }
 
         [Required]
-        [Key]
         public int ProductId { get; set; }
 
         [Required]
@@ -30,22 +31,10 @@ namespace AppForSEII2526.API.Models
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
 
-        [Required]
-        public PurchaseOrder PurchaseOrder { get; set; }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is PurchaseProduct other)
-                return ProductId == other.ProductId;
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return ProductId.GetHashCode();
-        }
-
-        public int? ReturnProductId { get; set; }    // FK explícita (nullable)
+        // 0..1: puede o no tener devolución asociada
         public ReturnProduct? ReturnProduct { get; set; }
+
+        public override bool Equals(object? obj) => obj is PurchaseProduct other && ProductId == other.ProductId && PurchaseOrderId == other.PurchaseOrderId;
+        public override int GetHashCode() => HashCode.Combine(ProductId, PurchaseOrderId);
     }
 }
