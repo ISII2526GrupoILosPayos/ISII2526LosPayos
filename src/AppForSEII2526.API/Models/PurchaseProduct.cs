@@ -2,6 +2,7 @@
 
 namespace AppForSEII2526.API.Models
 {
+    [PrimaryKey(nameof(ProductId), nameof(PurchaseOrderId))]
     public class PurchaseProduct
     {
         public PurchaseProduct() { }
@@ -15,13 +16,10 @@ namespace AppForSEII2526.API.Models
         }
 
         [Required]
-        [Precision(10, 2)]
-        [Range(0, 9999999.99)]
-        public decimal Price { get; set; }
-
-        [Required]
-        [Key]
         public int ProductId { get; set; }
+        
+        [Required]
+        public PurchaseOrder PurchaseOrder { get; set; }
 
         [Required]
         public int PurchaseOrderId { get; set; }
@@ -31,8 +29,11 @@ namespace AppForSEII2526.API.Models
         public int Quantity { get; set; }
 
         [Required]
-        public PurchaseOrder PurchaseOrder { get; set; }
-
+        [Precision(10, 2)]
+        [Range(0, 9999999.99)]
+        public decimal Price { get; set; }
+        
+        
         public override bool Equals(object? obj)
         {
             if (obj is PurchaseProduct other)
