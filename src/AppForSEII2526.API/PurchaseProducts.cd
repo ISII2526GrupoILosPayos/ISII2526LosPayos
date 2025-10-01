@@ -3,7 +3,7 @@
   <Class Name="AppForSEII2526.API.Models.PurchaseOrder">
     <Position X="5.75" Y="0.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAACAgAAAIoAAAAAAAAAAAQIEBAAIAAAAAAAQ=</HashCode>
+      <HashCode>AAACAAAAACAgAACYoAAAAAAAAAAAQIEBAAIAAAAAAAQ=</HashCode>
       <FileName>Models\PurchaseOrder.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -13,12 +13,23 @@
   <Class Name="AppForSEII2526.API.Models.PurchaseProduct">
     <Position X="0.75" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAAAQAAAAAAhAAAAAAAAAAAAKAAAAAAgAAAAAA=</HashCode>
+      <HashCode>EAACAAAAAQAAAAAAhAAAAAAAAAAAAKAAAAAAgAAAAAA=</HashCode>
       <FileName>Models\PurchaseProduct.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PurchaseOrder" />
+      <Property Name="Product" />
     </ShowAsAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.Product">
+    <Position X="0.75" Y="5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAAQAgAAAAgAAAAAQAgAAAAAAAAAAAABARAAI=</HashCode>
+      <FileName>Models\Product.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="PurchaseProducts" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

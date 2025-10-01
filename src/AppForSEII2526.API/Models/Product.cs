@@ -45,6 +45,8 @@ namespace AppForSEII2526.API.Models
         [Required]
         public bool IsReturnable { get; set; }
 
+        public IList<PurchaseProduct> PurchaseProducts { get; set; }   
+
         public override bool Equals(object obj)
         {
             if (obj is Product other)
