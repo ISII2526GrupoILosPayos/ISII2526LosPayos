@@ -33,6 +33,8 @@ namespace AppForSEII2526.API.Models
         [Required]
         public PurchaseOrder PurchaseOrder { get; set; }
 
+        public Product Product { get; set; }
+
         public override bool Equals(object? obj)
         {
             if (obj is PurchaseProduct other)
