@@ -54,7 +54,10 @@ namespace AppForSEII2526.API.Models
 
         // Clave foránea hacia Brand
         [Required]
-        public int BrandId { get; set; }
+        //public int BrandId { get; set; }
         public Brand Brand { get; set; }
+
+        public IList<PurchaseProduct> PurchaseProducts { get; set; }
+
     }
 }
