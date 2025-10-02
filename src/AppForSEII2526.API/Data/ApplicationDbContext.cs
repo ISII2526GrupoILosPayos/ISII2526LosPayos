@@ -18,6 +18,44 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<CreditCard> CreditCards { get; set; }
     public DbSet<PayPal> PayPals { get; set; }
 
+    //protected override void OnModelCreating(ModelBuilder builder)
+    //{
+    // base.OnModelCreating(builder);
+
+    //  builder.Entity<ReturnProduct>()
+    //  .HasOne(rp => rp.PurchaseProduct)
+    //  .WithOne(pp => pp.ReturnProduct)
+    //  .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+    //}
+
+    /* protected override void OnModelCreating(ModelBuilder builder)
+     {
+         base.OnModelCreating(builder);
+
+         // ReturnProduct ↔ PurchaseProduct (dejamos cascada)
+         builder.Entity<ReturnProduct>()
+             .HasOne(rp => rp.PurchaseProduct)
+             .WithOne(pp => pp.ReturnProduct)
+             .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId })
+             .OnDelete(DeleteBehavior.Cascade);
+
+         // ReturnProduct ↔ ReturnPurchaseOrder (cortamos cascada)
+         builder.Entity<ReturnProduct>()
+             .HasOne(rp => rp.ReturnOrder)
+             .WithMany(rpo => rpo.ReturnProducts)
+             .HasForeignKey(rp => rp.ReturnOrderId)
+             .OnDelete(DeleteBehavior.NoAction);
+
+         // ReturnPurchaseOrder ↔ ApplicationUser (también puedes cortar aquí si prefieres)
+         builder.Entity<ReturnPurchaseOrder>()
+             .HasOne(rpo => rpo.Customer)
+             .WithMany(u => u.ReturnOrders)
+             .HasForeignKey(rpo => rpo.CustomerId)
+             .OnDelete(DeleteBehavior.Restrict);
+     }
+
+     */
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -25,6 +63,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<ReturnProduct>()
             .HasOne(rp => rp.PurchaseProduct)
             .WithOne(pp => pp.ReturnProduct)
-            .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+            .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId })
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ReturnProduct>()
+            .HasOne(rp => rp.ReturnOrder)
+            .WithMany(rpo => rpo.ReturnProducts)
+            .HasForeignKey(rp => rp.ReturnOrderId)
+            .OnDelete(DeleteBehavior.Restrict); // O DeleteBehavior.NoAction
     }
+
+
 }

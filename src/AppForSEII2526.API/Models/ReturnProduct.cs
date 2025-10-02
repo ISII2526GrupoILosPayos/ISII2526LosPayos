@@ -28,6 +28,7 @@ namespace AppForSEII2526.API.Models
     
         public PurchaseProduct PurchaseProduct { get; set; } = null!;
 
+        public int ReturnOrderId { get; set; }          // FK explícita
         [Required]
         public ReturnPurchaseOrder ReturnOrder { get; set; }
 
