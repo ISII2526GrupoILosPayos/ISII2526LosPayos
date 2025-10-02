@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppForSEII2526.API.Models
 {
@@ -28,6 +29,14 @@ namespace AppForSEII2526.API.Models
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
 
+        // 0..1: puede o no tener devolución asociada
+        public ReturnProduct? ReturnProduct { get; set; }
+
+        public Product Product { get; set; }
+
+        public PurchaseOrder PurchaseOrder { get; set; }
+
+        
         [Required]
         [Precision(10, 2)]
         [Range(0, 9999999.99)]
