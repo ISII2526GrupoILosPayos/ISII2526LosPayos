@@ -5,7 +5,7 @@ using AppForSEII2526.API.Models;
 namespace AppForSEII2526.API.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options) {
-    public DbSet<BanReport> BanReports { get; set; }
+   
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<ReturnPurchaseOrder> ReturnPurchaseOrders { get; set; }
     public DbSet<ReturnProduct> ReturnProducts { get; set; }
@@ -18,6 +18,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<CreditCard> CreditCards { get; set; }
     public DbSet<PayPal> PayPals { get; set; }
 
+    //Clases Hugo
+    public DbSet<BanReport> BanReports { get; set; }
+    public DbSet<Complaint> Complaints { get; set; }
+    public DbSet<ReportCustomer> ReportCustomers { get; set; }
+
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -26,14 +32,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(rp => rp.PurchaseProduct)
             .WithOne(pp => pp.ReturnProduct)
             .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+
+        builder.Entity<ReportCustomer>()
+            .HasKey(rc => new { rc.BanReportId, rc.CustomerId });
         
         builder.Entity<PurchaseOrder>()
             .Property(p => p.State)
             .HasConversion<string>();
 
         builder.Entity<PurchaseOrder>()
-        .HasOne(po => po.PaymentMethod)
-        .WithMany() 
-        .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(po => po.PaymentMethod)
+            .WithMany() 
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

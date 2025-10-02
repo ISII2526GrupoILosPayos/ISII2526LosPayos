@@ -39,7 +39,7 @@ public class ApplicationUser : IdentityUser {
 
     public IList<PurchaseOrder> PurchaseOrders { get; set; }
 
-    //public List<Complaint> Complaint { get; set; }
+    public List<Complaint> Complaint { get; set; }
 
     public List<ReportCustomer> ReportCustomer { get; set; }
 
