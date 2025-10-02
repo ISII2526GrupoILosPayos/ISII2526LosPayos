@@ -13,4 +13,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Brand> Brands { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
     public DbSet<PurchaseProduct> PurchaseProducts { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<ReturnProduct>()
+            .HasOne(rp => rp.PurchaseProduct)
+            .WithOne(pp => pp.ReturnProduct)
+            .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+    }
 }
