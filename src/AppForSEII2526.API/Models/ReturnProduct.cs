@@ -1,8 +1,10 @@
-﻿namespace AppForSEII2526.API.Models
+﻿using System.ComponentModel.DataAnnotations.Schema; // Asegúrate de tener este using
+
+namespace AppForSEII2526.API.Models
 {
+    [PrimaryKey(nameof(ProductId), nameof(PurchaseOrderId))]
     public class ReturnProduct
     {
-
         public ReturnProduct() { }
 
         public ReturnProduct(int quantity, string reason)
@@ -19,6 +21,13 @@
 
         public string Reason { get; set; } = string.Empty;
 
+        // Dependencia hacia PurchaseProduct
+        public int ProductId { get; set; }
+        public int PurchaseOrderId { get; set; }
+
+        [ForeignKey(nameof(ProductId) + "," + nameof(PurchaseOrderId))]
+        public PurchaseProduct PurchaseProduct { get; set; } = null!;
+
         public override bool Equals(object obj)
         {
             if (obj is ReturnProduct other)
@@ -30,10 +39,5 @@
         {
             return Id.GetHashCode();
         }
-
-        [Required]
-        public ReturnPurchaseOrder ReturnPurchaseOrder { get; set; }
-
-
     }
 }
