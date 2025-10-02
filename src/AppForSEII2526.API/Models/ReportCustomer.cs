@@ -6,9 +6,7 @@ namespace AppForSEII2526.API.Models
         public ReportCustomer()
         {
         }
-        [Key]
         public int BanReportId { get; set; }
-        [Key]
         public int CustomerId { get; set; }
         public string Message { get; set; }
 
