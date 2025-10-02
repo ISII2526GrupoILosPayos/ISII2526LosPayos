@@ -34,7 +34,6 @@ namespace AppForSEII2526.API.Models
 
         public Product Product { get; set; }
 
-        public PurchaseOrder PurchaseOrder { get; set; }
 
         
         [Required]
