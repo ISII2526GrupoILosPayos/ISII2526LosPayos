@@ -28,6 +28,9 @@ namespace AppForSEII2526.API.Models
     
         public PurchaseProduct PurchaseProduct { get; set; } = null!;
 
+        [Required]
+        public ReturnPurchaseOrder ReturnOrder { get; set; }
+
         public override bool Equals(object obj)
         {
             if (obj is ReturnProduct other)
