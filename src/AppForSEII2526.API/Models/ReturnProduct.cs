@@ -25,7 +25,7 @@ namespace AppForSEII2526.API.Models
         public int ProductId { get; set; }
         public int PurchaseOrderId { get; set; }
 
-        [ForeignKey(nameof(ProductId) + "," + nameof(PurchaseOrderId))]
+    
         public PurchaseProduct PurchaseProduct { get; set; } = null!;
 
         public override bool Equals(object obj)

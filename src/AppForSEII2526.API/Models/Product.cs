@@ -45,6 +45,8 @@ namespace AppForSEII2526.API.Models
         [Required]
         public bool IsReturnable { get; set; }
 
+        public IList<PurchaseProduct> PurchaseProducts { get; set; }
+
         public override bool Equals(object obj)
         {
             if (obj is Product other)
@@ -57,7 +59,7 @@ namespace AppForSEII2526.API.Models
         //public int BrandId { get; set; }
         public Brand Brand { get; set; }
 
-        public IList<PurchaseProduct> PurchaseProducts { get; set; }
+      
 
     }
 }
