@@ -34,11 +34,26 @@ namespace AppForSEII2526.API.Models
         // 0..1: puede o no tener devolución asociada
         public ReturnProduct? ReturnProduct { get; set; }
 
+        [ForeignKey("ProductId")]
+
         public Product Product { get; set; }
+
+        [ForeignKey("PurchaseOrderId")]
 
         public PurchaseOrder PurchaseOrder { get; set; }
 
-        public override bool Equals(object? obj) => obj is PurchaseProduct other && ProductId == other.ProductId && PurchaseOrderId == other.PurchaseOrderId;
-        public override int GetHashCode() => HashCode.Combine(ProductId, PurchaseOrderId);
+
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is PurchaseProduct other)
+                return ProductId == other.ProductId;
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return ProductId.GetHashCode();
+        }
     }
 }
