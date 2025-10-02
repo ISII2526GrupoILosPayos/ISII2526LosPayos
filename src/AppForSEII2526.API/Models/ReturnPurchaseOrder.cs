@@ -42,7 +42,7 @@
         public int? Rating { get; set; }
 
 
-        //public PaymentMethod PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         public override bool Equals(object obj)
         {
