@@ -42,6 +42,8 @@
         public int? Rating { get; set; }
 
 
+        //public PaymentMethod PaymentMethod { get; set; }
+
         public override bool Equals(object obj)
         {
             if (obj is ReturnPurchaseOrder other)
@@ -58,5 +60,7 @@
        //public ReturnProduct ReturnProduct { get; set; }
 
          public IList<ReturnProduct> ReturnProducts { get; set; }
-    }
+
+        public ApplicationUser Customer { get; set; }
+        }
 }
