@@ -11,7 +11,6 @@
         }
 
         [Required]
-        [Key]
         public string CreditCardNumber { get; set; }
 
         [Required]

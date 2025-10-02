@@ -10,7 +10,6 @@
         }
 
         [Required]
-        [Key]
         public string Email { get; set; }
 
         public override bool Equals(object obj)

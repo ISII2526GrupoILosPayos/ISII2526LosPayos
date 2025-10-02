@@ -9,8 +9,7 @@
             TelephoneNumber = telephoneNumber;
         }
 
-        [Required]
-        [Key]
+        
         public int TelephoneNumber { get; set; }
 
         public override bool Equals(object obj)
