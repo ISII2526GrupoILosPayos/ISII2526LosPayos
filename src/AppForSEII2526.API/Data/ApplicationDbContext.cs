@@ -32,5 +32,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(rp => rp.PurchaseProduct)
             .WithOne(pp => pp.ReturnProduct)
             .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+
+        builder.Entity<ReportCustomer>()
+            .HasKey(rc => new { rc.BanReportId, rc.CustomerId });
     }
 }
