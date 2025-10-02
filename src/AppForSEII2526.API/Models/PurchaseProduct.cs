@@ -1,7 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppForSEII2526.API.Models
 {
+    [PrimaryKey(nameof(ProductId), nameof(PurchaseOrderId))]
     public class PurchaseProduct
     {
         public PurchaseProduct() { }
@@ -20,7 +22,6 @@ namespace AppForSEII2526.API.Models
         public decimal Price { get; set; }
 
         [Required]
-        [Key]
         public int ProductId { get; set; }
 
         [Required]
@@ -30,10 +31,18 @@ namespace AppForSEII2526.API.Models
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1")]
         public int Quantity { get; set; }
 
-        [Required]
-        public PurchaseOrder PurchaseOrder { get; set; }
+        // 0..1: puede o no tener devolución asociada
+        public ReturnProduct? ReturnProduct { get; set; }
+
+        [ForeignKey("ProductId")]
 
         public Product Product { get; set; }
+
+        [ForeignKey("PurchaseOrderId")]
+
+        public PurchaseOrder PurchaseOrder { get; set; }
+
+
 
         public override bool Equals(object? obj)
         {
