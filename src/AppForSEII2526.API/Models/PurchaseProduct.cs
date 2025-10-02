@@ -18,10 +18,7 @@ namespace AppForSEII2526.API.Models
 
         [Required]
         public int ProductId { get; set; }
-        
-        [Required]
-        public PurchaseOrder PurchaseOrder { get; set; }
-
+       
         [Required]
         public int PurchaseOrderId { get; set; }
 
@@ -32,16 +29,20 @@ namespace AppForSEII2526.API.Models
         // 0..1: puede o no tener devolución asociada
         public ReturnProduct? ReturnProduct { get; set; }
 
+        [ForeignKey("ProductId")]
+
         public Product Product { get; set; }
-
-
         
+        [ForeignKey("PurchaseOrderId")]
+
+        public PurchaseOrder PurchaseOrder { get; set; }
+
         [Required]
         [Precision(10, 2)]
         [Range(0, 9999999.99)]
         public decimal Price { get; set; }
         
-        
+     
         public override bool Equals(object? obj)
         {
             if (obj is PurchaseProduct other)
