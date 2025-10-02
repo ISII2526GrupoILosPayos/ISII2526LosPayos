@@ -26,5 +26,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(rp => rp.PurchaseProduct)
             .WithOne(pp => pp.ReturnProduct)
             .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+        
+        builder.Entity<PurchaseOrder>()
+            .Property(p => p.State)
+            .HasConversion<string>();
+
+        builder.Entity<PurchaseOrder>()
+        .HasOne(po => po.PaymentMethod)
+        .WithMany() 
+        .OnDelete(DeleteBehavior.Restrict);
     }
 }

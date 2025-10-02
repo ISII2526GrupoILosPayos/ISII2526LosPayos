@@ -37,6 +37,12 @@ public class ApplicationUser : IdentityUser {
 
     public IList<ReturnPurchaseOrder> ReturnOrders { get; set; } = new List<ReturnPurchaseOrder>();
 
+    public IList<PurchaseOrder> PurchaseOrders { get; set; }
+
+    //public List<Complaint> Complaint { get; set; }
+
+    public List<ReportCustomer> ReportCustomer { get; set; }
+
     public override bool Equals(object? obj)
     {
         if (obj is ApplicationUser other)
