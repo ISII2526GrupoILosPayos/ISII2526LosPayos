@@ -5,7 +5,7 @@ using AppForSEII2526.API.Models;
 namespace AppForSEII2526.API.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options) {
-    public DbSet<BanReport> BanReports { get; set; }
+   
     public DbSet<ApplicationUser> ApplicationUsers { get; set; }
     public DbSet<ReturnPurchaseOrder> ReturnPurchaseOrders { get; set; }
     public DbSet<ReturnProduct> ReturnProducts { get; set; }
@@ -17,6 +17,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Bizum> Bizums { get; set; }
     public DbSet<CreditCard> CreditCards { get; set; }
     public DbSet<PayPal> PayPals { get; set; }
+
+    //Clases Hugo
+    public DbSet<BanReport> BanReports { get; set; }
+    public DbSet<Complaint> Complaints { get; set; }
+    public DbSet<ReportCustomer> ReportCustomers { get; set; }
+
 
     //protected override void OnModelCreating(ModelBuilder builder)
     //{
@@ -64,13 +70,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(rp => rp.PurchaseProduct)
             .WithOne(pp => pp.ReturnProduct)
             .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId })
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade); // Especifica cascada aquí
 
         builder.Entity<ReturnProduct>()
             .HasOne(rp => rp.ReturnOrder)
             .WithMany(rpo => rpo.ReturnProducts)
             .HasForeignKey(rp => rp.ReturnOrderId)
             .OnDelete(DeleteBehavior.Restrict); // O DeleteBehavior.NoAction
+
+        builder.Entity<ReportCustomer>()
+            .HasKey(rc => new { rc.BanReportId, rc.CustomerId });
     }
 
 
