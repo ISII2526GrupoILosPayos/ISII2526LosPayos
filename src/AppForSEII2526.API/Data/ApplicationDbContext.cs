@@ -17,4 +17,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Bizum> Bizums { get; set; }
     public DbSet<CreditCard> CreditCards { get; set; }
     public DbSet<PayPal> PayPals { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<ReturnProduct>()
+            .HasOne(rp => rp.PurchaseProduct)
+            .WithOne(pp => pp.ReturnProduct)
+            .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId });
+    }
 }
