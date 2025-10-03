@@ -76,7 +76,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(rp => rp.ReturnOrder)
             .WithMany(rpo => rpo.ReturnProducts)
             .HasForeignKey(rp => rp.ReturnOrderId)
-            .OnDelete(DeleteBehavior.Restrict); // O DeleteBehavior.NoAction
+            .OnDelete(DeleteBehavior.ClientCascade);
+            //.OnDelete(DeleteBehavior.Restrict); // O DeleteBehavior.NoAction
 
         builder.Entity<ReportCustomer>()
             .HasKey(rc => new { rc.BanReportId, rc.CustomerId });
