@@ -22,6 +22,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<BanReport> BanReports { get; set; }
     public DbSet<Complaint> Complaints { get; set; }
     public DbSet<ReportCustomer> ReportCustomers { get; set; }
+    public DbSet<ComplaintType> ComplaintTypes { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder builder)
