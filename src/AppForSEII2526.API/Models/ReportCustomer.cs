@@ -6,8 +6,10 @@ namespace AppForSEII2526.API.Models
         public ReportCustomer()
         {
         }
+        [ForeignKey(nameof(BanReport))]
         public int BanReportId { get; set; }
-        public int CustomerId { get; set; }
+        [ForeignKey(nameof(Customer))]
+        public string CustomerId { get; set; }
         public string Message { get; set; }
         public BanReport BanReport { get; set; }
         public ReportState State { get; set; }
