@@ -57,7 +57,7 @@
         }
 
         public ApplicationUser Customer { get; set; }
-       // public string CustomerId { get; set; }          // FK explícita
+        public string CustomerId { get; set; }          // FK explícita
 
         //public ReturnProduct ReturnProduct { get; set; }
 

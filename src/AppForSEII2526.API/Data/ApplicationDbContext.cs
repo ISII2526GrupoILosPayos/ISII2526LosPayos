@@ -70,14 +70,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(rp => rp.PurchaseProduct)
             .WithOne(pp => pp.ReturnProduct)
             .HasForeignKey<ReturnProduct>(rp => new { rp.ProductId, rp.PurchaseOrderId })
-            .OnDelete(DeleteBehavior.Cascade); // Especifica cascada aquí
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<ReturnProduct>()
             .HasOne(rp => rp.ReturnOrder)
             .WithMany(rpo => rpo.ReturnProducts)
             .HasForeignKey(rp => rp.ReturnOrderId)
-            .OnDelete(DeleteBehavior.ClientCascade);
-            //.OnDelete(DeleteBehavior.Restrict); // O DeleteBehavior.NoAction
+            .OnDelete(DeleteBehavior.NoAction); // <- Aquí el cambio recomendado
 
         builder.Entity<ReportCustomer>()
             .HasKey(rc => new { rc.BanReportId, rc.CustomerId });
@@ -90,6 +89,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(po => po.PaymentMethod)
             .WithMany() 
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ReturnPurchaseOrder>()
+            .HasOne(rpo => rpo.PaymentMethod)
+            .WithMany()
+            .OnDelete(DeleteBehavior.NoAction); // <- Añade esto para evitar cascada múltiple
+
+        builder.Entity<ReturnPurchaseOrder>()
+            .HasOne(rpo => rpo.Customer)
+            .WithMany(u => u.ReturnOrders)
+            .HasForeignKey(rpo => rpo.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade); // O deja el valor por defecto
     }
 
 
