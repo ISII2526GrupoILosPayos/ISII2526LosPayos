@@ -26,6 +26,7 @@
         public string Reason { get; set; }
 
         public DateTime StartDate { get; set; }
+        public List<ReportCustomer> ReportCustomers { get; set; }
 
         public override bool Equals(object? obj)
         {

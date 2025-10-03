@@ -8,6 +8,8 @@
         public string Description { get; set; }
         public DateTime ComplaintDate { get; set; }
         public bool Processed { get; set; }
+        public ApplicationUser Customer { get; set; }
+        public ComplaintType Type { get; set; }
 
         public override bool Equals(object? obj)
         {

@@ -9,6 +9,9 @@ namespace AppForSEII2526.API.Models
         public int BanReportId { get; set; }
         public int CustomerId { get; set; }
         public string Message { get; set; }
+        public BanReport BanReport { get; set; }
+        public ReportState State { get; set; }
+        public ApplicationUser Customer { get; set; }
 
         public override bool Equals(object? obj)
         {
