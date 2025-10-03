@@ -41,6 +41,8 @@
         [Range(1, 5)]
         public int? Rating { get; set; }
 
+        public PaymentMethod PaymentMethod { get; set; }
+
 
         public override bool Equals(object obj)
         {
@@ -54,9 +56,11 @@
             return Id.GetHashCode();
         }
 
+        public ApplicationUser Customer { get; set; }
+        public string CustomerId { get; set; }          // FK explícita
 
-       //public ReturnProduct ReturnProduct { get; set; }
+        //public ReturnProduct ReturnProduct { get; set; }
 
-         public IList<ReturnProduct> ReturnProducts { get; set; }
+        public IList<ReturnProduct> ReturnProducts { get; set; }
     }
 }
