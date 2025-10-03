@@ -13,6 +13,8 @@
         [Key]
         public int Id { get; set; }
 
+        public ApplicationUser User { get; set; }
+
         public override bool Equals(object obj)
         {
             if (obj is PaymentMethod other)

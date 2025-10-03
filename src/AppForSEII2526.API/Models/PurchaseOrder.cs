@@ -2,6 +2,27 @@
 {
     public class PurchaseOrder
     {
+        public PurchaseOrder() { }
+
+        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string description, string nameSurname, string postalCode, string street)
+        {
+            City = city;
+            TotalPrice = totalPrice;
+            Date = date;
+            Description = description;
+            NameSurname = nameSurname;
+            PostalCode = postalCode;
+            Street = street;
+        }
+
+        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string description, string nameSurname, string postalCode, string street, int? rating, PurchaseState state, string applicationUserId)
+            : this(city, totalPrice, date, description, nameSurname, postalCode, street)
+        {
+            Rating = rating;
+            State = state;
+            ApplicationUserId = applicationUserId;
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -42,6 +63,8 @@
         public ApplicationUser ApplicationUser { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }
+
+        public PurchaseState State { get; set; }
 
         public override bool Equals(object? obj)
         {
