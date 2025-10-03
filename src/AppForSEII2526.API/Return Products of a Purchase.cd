@@ -1,24 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
-  <Class Name="AppForSEII2526.API.Models.ReturnPurchaseOrder">
-    <Position X="5" Y="0.5" Width="2.25" />
+  <Class Name="AppForSEII2526.API.Models.ApplicationUser">
+    <Position X="16" Y="0.75" Width="4" />
     <TypeIdentifier>
-      <HashCode>AAACAAEAAAAAAAAAgAAAEAQAAAAgQIEBAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAABAgAAAAAQQBAIAAIgCAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ReturnOrders" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.ReturnPurchaseOrder">
+    <Position X="10.5" Y="0.5" Width="3.75" />
+    <Members>
+      <Property Name="CustomerId" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAEDAAEAAAAAAAAAgAAAEAQAAAAgQJEBAAAAAAAAAAA=</HashCode>
       <FileName>Models\ReturnPurchaseOrder.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Customer" />
+    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ReturnProducts" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.ReturnProduct">
-    <Position X="0.5" Y="0.5" Width="2.5" />
+    <Position X="4.5" Y="0.5" Width="3.5" />
+    <Members>
+      <Property Name="ProductId" Hidden="true" />
+      <Property Name="PurchaseOrderId" Hidden="true" />
+      <Property Name="ReturnOrderId" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAIAgAAAAAAAAAAAAYAAAAAAgAAAAAA=</HashCode>
+      <HashCode>EAACAAACAAAAAAJAgAAAAAAAAAAAAKAAQAAAgAAAAAA=</HashCode>
       <FileName>Models\ReturnProduct.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="ReturnPurchaseOrder" />
+      <Property Name="PurchaseProduct" />
+      <Property Name="ReturnOrder" />
     </ShowAsAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.PurchaseProduct">
+    <Position X="4.5" Y="6" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>EAACAAAAAQAAAAAAhAAAAAAAAAAAAKAAAAgAgAAAAAA=</HashCode>
+      <FileName>Models\PurchaseProduct.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ReturnProduct" />
+      <Property Name="Product" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.Product">
+    <Position X="11" Y="6" Width="4" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAAQAgAAAAgAAAAAQAgAAAAAAAAAAAABABAAI=</HashCode>
+      <FileName>Models\Product.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Brand" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="PurchaseProducts" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.Brand">
+    <Position X="17.25" Y="6.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAgAIAAAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Brand.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Products" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
