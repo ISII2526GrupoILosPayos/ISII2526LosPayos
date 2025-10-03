@@ -1,24 +1,101 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="AppForSEII2526.API.Models.PurchaseOrder">
-    <Position X="5.75" Y="0.75" Width="2.5" />
+    <Position X="10" Y="3" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAACAgAAAIoAAAAAAAAAAAQIEBAAIAAAAAAAQ=</HashCode>
+      <HashCode>AAADAAAAACAgAACYoAAAAAAAAAAAQIEBAAIABAAAAAQ=</HashCode>
       <FileName>Models\PurchaseOrder.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ApplicationUser" />
+      <Property Name="PaymentMethod" />
+      <Property Name="State" />
+    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Products" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="AppForSEII2526.API.Models.PurchaseProduct">
-    <Position X="0.75" Y="1.25" Width="2.5" />
+    <Position X="5.25" Y="3.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAAAAQAAAAAAhAAAAAAAAAAAAKAAAAAAgAAAAAA=</HashCode>
+      <HashCode>EAACAAAAAQAAAAAAhAAAAAAAAAAAAKAAAAgAgAAAAAA=</HashCode>
       <FileName>Models\PurchaseProduct.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="PurchaseOrder" />
+      <Property Name="Product" />
     </ShowAsAssociation>
   </Class>
+  <Class Name="AppForSEII2526.API.Models.Product">
+    <Position X="1.25" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>UAAAAAAAAQAgAAAAgAAAAAQAgAAAAAAAAAAAABABAAI=</HashCode>
+      <FileName>Models\Product.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Brand" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="PurchaseProducts" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.ApplicationUser">
+    <Position X="14.75" Y="3.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAgAAAAAQQBAAAAIgCAAAAAAAAAAA=</HashCode>
+      <FileName>Models\ApplicationUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="PurchaseOrders" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.PaymentMethod">
+    <Position X="10.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PaymentMethod.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="User" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.PayPal">
+    <Position X="7.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\PayPal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.Bizum">
+    <Position X="13.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAggAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Bizum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.CreditCard">
+    <Position X="10.5" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\CreditCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AppForSEII2526.API.Models.Brand">
+    <Position X="1.25" Y="8" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAgAIAAAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Brand.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Products" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Enum Name="AppForSEII2526.API.Models.PurchaseState">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAACAAAAgAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Models\PurchaseState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

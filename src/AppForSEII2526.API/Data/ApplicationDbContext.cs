@@ -81,6 +81,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         builder.Entity<ReportCustomer>()
             .HasKey(rc => new { rc.BanReportId, rc.CustomerId });
+        
+        builder.Entity<PurchaseOrder>()
+            .Property(p => p.State)
+            .HasConversion<string>();
+
+        builder.Entity<PurchaseOrder>()
+            .HasOne(po => po.PaymentMethod)
+            .WithMany() 
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
 
