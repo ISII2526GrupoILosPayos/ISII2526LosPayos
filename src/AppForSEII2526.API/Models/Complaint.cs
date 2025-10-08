@@ -5,7 +5,7 @@
         public Complaint() { }
 
         public int Id { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public DateTime ComplaintDate { get; set; }
         public bool Processed { get; set; }
         public ApplicationUser Customer { get; set; }
