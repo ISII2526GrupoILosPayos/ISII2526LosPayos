@@ -4,7 +4,7 @@
     {
         public PurchaseOrder() { }
 
-        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string description, string nameSurname, string postalCode, string street)
+        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string? description, string nameSurname, string postalCode, string street)
         {
             City = city;
             TotalPrice = totalPrice;
@@ -15,7 +15,7 @@
             Street = street;
         }
 
-        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string description, string nameSurname, string postalCode, string street, int? rating, PurchaseState state, string applicationUserId)
+        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string? description, string nameSurname, string postalCode, string street, int? rating, PurchaseState state, string applicationUserId)
             : this(city, totalPrice, date, description, nameSurname, postalCode, street)
         {
             Rating = rating;
@@ -36,9 +36,9 @@
 
         public DateTime Date { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "Description can be neither longer than 100 characters nor shorter than 1", MinimumLength = 1)]
-        public string Description { get; set; }
+
+        [StringLength(100, ErrorMessage = "Description can be neither longer than 100 characters")]
+        public string? Description { get; set; }
 
         [Required]
         [StringLength(30, ErrorMessage = "Name and surname can be neither longer than 30 characters nor shorter than 1", MinimumLength = 1)]

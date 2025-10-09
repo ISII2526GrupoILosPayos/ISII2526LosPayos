@@ -1,5 +1,6 @@
 ﻿namespace AppForSEII2526.API.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Brand
     {
         public Brand() { }
