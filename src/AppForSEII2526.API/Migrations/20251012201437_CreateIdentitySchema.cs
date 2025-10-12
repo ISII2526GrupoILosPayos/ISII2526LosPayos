@@ -90,7 +90,7 @@ namespace AppForSEII2526.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -211,8 +211,8 @@ namespace AppForSEII2526.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
-                    TelephoneNumber = table.Column<int>(type: "int", nullable: true),
-                    CreditCardNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TelephoneNumber = table.Column<long>(type: "bigint", nullable: true),
+                    CreditCardNumber = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: true),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -233,7 +233,7 @@ namespace AppForSEII2526.API.Migrations
                 {
                     BanReportId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -284,7 +284,7 @@ namespace AppForSEII2526.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ComplaintDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Processed = table.Column<bool>(type: "bit", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -316,7 +316,7 @@ namespace AppForSEII2526.API.Migrations
                     City = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     NameSurname = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: true),
@@ -466,6 +466,12 @@ namespace AppForSEII2526.API.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Brands_Name",
+                table: "Brands",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Complaints_CustomerId",
                 table: "Complaints",
                 column: "CustomerId");
@@ -476,6 +482,12 @@ namespace AppForSEII2526.API.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComplaintTypes_Name",
+                table: "ComplaintTypes",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_UserId",
                 table: "PaymentMethods",
                 column: "UserId");
@@ -484,6 +496,12 @@ namespace AppForSEII2526.API.Migrations
                 name: "IX_Products_BrandId",
                 table: "Products",
                 column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Name",
+                table: "Products",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrders_ApplicationUserId",

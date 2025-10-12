@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppForSEII2526.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251003175811_CreateIdentitySchema")]
+    [Migration("20251012201437_CreateIdentitySchema")]
     partial class CreateIdentitySchema
     {
         /// <inheritdoc />
@@ -157,6 +157,9 @@ namespace AppForSEII2526.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Brands");
                 });
 
@@ -176,7 +179,6 @@ namespace AppForSEII2526.API.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Processed")
@@ -204,9 +206,12 @@ namespace AppForSEII2526.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("ComplaintTypes");
                 });
@@ -279,6 +284,9 @@ namespace AppForSEII2526.API.Migrations
 
                     b.HasIndex("BrandId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Products");
                 });
 
@@ -303,7 +311,6 @@ namespace AppForSEII2526.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -376,7 +383,6 @@ namespace AppForSEII2526.API.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("State")
@@ -604,8 +610,8 @@ namespace AppForSEII2526.API.Migrations
                 {
                     b.HasBaseType("AppForSEII2526.API.Models.PaymentMethod");
 
-                    b.Property<int>("TelephoneNumber")
-                        .HasColumnType("int");
+                    b.Property<long>("TelephoneNumber")
+                        .HasColumnType("bigint");
 
                     b.HasDiscriminator().HasValue("Bizum");
                 });
@@ -616,7 +622,8 @@ namespace AppForSEII2526.API.Migrations
 
                     b.Property<string>("CreditCardNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
