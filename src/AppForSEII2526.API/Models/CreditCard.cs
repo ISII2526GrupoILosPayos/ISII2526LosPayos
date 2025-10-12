@@ -11,6 +11,8 @@
         }
 
         [Required]
+        [CreditCard]
+        [StringLength(16, MinimumLength = 16, ErrorMessage = "Credit card number must have exactly 16 digits")]
         public string CreditCardNumber { get; set; }
 
         [Required]

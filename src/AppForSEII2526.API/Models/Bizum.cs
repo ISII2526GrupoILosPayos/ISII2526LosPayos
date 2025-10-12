@@ -4,13 +4,14 @@
     {
         public Bizum() { }
 
-        public Bizum(int telephoneNumber)
+        public Bizum(long telephoneNumber)
         {
             TelephoneNumber = telephoneNumber;
         }
 
-        
-        public int TelephoneNumber { get; set; }
+        [Required]
+        [Range(100000000, 999999999, ErrorMessage = "Phone number must have exactly 9 digits")]
+        public long TelephoneNumber { get; set; }
 
         public override bool Equals(object obj)
         {
