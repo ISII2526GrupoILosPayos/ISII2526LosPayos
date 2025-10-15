@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AppForSEII2526.API.DTOs.ProductDTOs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppForSEII2526.API.Controllers
@@ -31,5 +32,20 @@ namespace AppForSEII2526.API.Controllers
         //    decimal result = op1 / op2;
         //    return Ok(result);
         //}
+
+        [HttpGet]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(IList<ProductForPurchaseDTO>), (int) HttpStatusCode.OK)]
+        public async Task<ActionResult> GetProductsForPurchase(string? productName)
+        {
+            IList<ProductForPurchaseDTO> productDTOS = await _context.Products
+                .Include(product=>product.Brand)        //Cuando quiero hacer una union con otra tabla
+                .Where(product=>product.Name.Contains(productName)
+                        || (productName==null))
+                .OrderBy(product=>product.Name)
+                .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name))
+                .ToListAsync();
+            return Ok(productDTOS);
+        }
     }
 }
