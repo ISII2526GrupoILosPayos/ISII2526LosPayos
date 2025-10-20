@@ -23,9 +23,17 @@ namespace AppForSEII2526.API.Controllers
         public async Task<IActionResult> GetUsers(string? surname, ComplaintType? complaintType)
         {
             IList<UserForBanDTO> usersDTO = await _context.ApplicationUsers
-                .Where(m=> m.Surname.Contains(surname) || (surname==null))
+                .Where(m=> ((m.Surname.Contains(surname)) || (surname==null))
+                
+                &&( m.Complaint.Where(n=> n.Processed==false)))
                 .Select(m=> new UserForBanDTO(m.Id,
-                    m.Name
+                    m.Name,
+                    m.Surname,
+                    m.AccountCreationDate,
+                    m.ComplaintTypes.Select(n=> new ComplaintTypeDTO(
+                        n.Type.Id,
+                        n.Type.Name
+                    )).ToList()
                 ))
                 .ToListAsync();
             return Ok(usersDTO);
