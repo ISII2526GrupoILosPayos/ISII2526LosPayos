@@ -2,12 +2,12 @@
 {
     public class PurchaseProductForReturnDTO
     {
-        public PurchaseProductForReturnDTO(int id, string name, string brand, int stock, string location)
+        public PurchaseProductForReturnDTO(int id, string name, string brand, int quantity, string location)
         {
             Id = id;
             Name = name;
             Brand = brand;
-            Stock = stock;
+            Quantity = quantity;
             Location = location;
         }
 
@@ -21,7 +21,7 @@
 
         public string Brand { get; set; }
 
-        public int Stock { get; set; }
+        public int Quantity { get; set; }
 
         public string Location { get; set; }
     }

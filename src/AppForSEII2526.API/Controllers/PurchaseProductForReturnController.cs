@@ -1,6 +1,12 @@
 ﻿using AppForSEII2526.API.DTOs.ReturnProductDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AppForSEII2526.API.Controllers
 {
@@ -17,38 +23,42 @@ namespace AppForSEII2526.API.Controllers
             _logger = logger;
         }
 
-        //[HttpGet]
-        //[Route("[action]")]
-        //[ProducesResponseType(typeof(decimal), (int) HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(string), (int) HttpStatusCode.BadRequest)]
-        //public async Task<ActionResult>  ComputeDivision(decimal op1, decimal op2)
-        //{
-        //    if (op2== 0)
-        //    {
-        //        string error = "OP2 cannot be 0 to compute a division";
-        //        _logger.LogError(DateTime.Now + "Error" + error);
-        //        return BadRequest(error);
-        //    }
-        //   decimal result =  op1/op2;
-        //    return Ok(result);
-        //}
-
         [HttpGet]
         [Route("[action]")]
-        [ProducesResponseType(typeof(IList<PurchaseProductForReturnDTO>), (int) HttpStatusCode.OK)]
-        public async Task<ActionResult> GetPurchasedProductsForReturning(string ? productName, string userName)
+        [ProducesResponseType(typeof(IList<PurchaseProductForReturnDTO>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult> GetPurchasedProductsForReturning(string? productName, string userName, int quantity)
         {
+            // incluimos Product->Brand y PurchaseOrder->ApplicationUser para poder filtrar por userName
             IList<PurchaseProductForReturnDTO> purchaseProductForReturnDTOs = await _context.PurchaseProducts
-                .Include(product => product.Product.Brand)
-                .Include(product => product.PurchaseOrder).ThenInclude(product => product.ApplicationUser)
-                .Where(product =>product.Product.Name.Contains(productName)
-                || (productName == null) && ((product.PurchaseOrder.ApplicationUser.UserName== userName) && (product.ReturnProduct==null))
-                .OrderBy(product => product.Product.Name) && (product => product.Product.Quantity))
-                .Select(product => new PurchaseProductForReturnDTO(product.Product.ProductId, product.Product.Name, product.Product.Brand.Name,product.Product.Stock,product.Product.Brand.Location))
+                .Include(pp => pp.Product)
+                    .ThenInclude(p => p.Brand)
+                .Include(pp => pp.PurchaseOrder)
+                    .ThenInclude(po => po.ApplicationUser)
+                .Where(pp =>
+                    (
+                        productName == null ||
+                        pp.Product.Name.Contains(productName)
+                    )
+                    && (
+                        pp.PurchaseOrder.ApplicationUser.UserName == userName
+                        && pp.ReturnProduct == null
+                    )
+                    && (
+                         pp.Quantity > quantity
+                    )
+                )
+                .OrderBy(pp => pp.Product.Name)
+                .Select(pp => new PurchaseProductForReturnDTO(pp.Product.ProductId, pp.Product.Name, pp.Product.Brand.Name, pp.Quantity, pp.Product.Brand.Location)
+                {
+                    PurchaseOrderId = pp.PurchaseOrderId
+                })
                 .ToListAsync();
+
+
             return Ok(purchaseProductForReturnDTOs);
+
+           
         }
-
-
     }
+
 }
