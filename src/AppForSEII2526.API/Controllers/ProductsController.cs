@@ -36,14 +36,14 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<ProductForPurchaseDTO>), (int) HttpStatusCode.OK)]
-        public async Task<ActionResult> GetProductsForPurchase(string? productName)
+        public async Task<ActionResult> GetProductsForPurchase(string? productName, string? productColour)
         {
             IList<ProductForPurchaseDTO> productDTOS = await _context.Products
                 .Include(product=>product.Brand)        //Cuando quiero hacer una union con otra tabla
                 .Where(product=>product.Name.Contains(productName)
                         || (productName==null))
                 .OrderBy(product=>product.Name)
-                .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name))
+                .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name, product.Brand.Location, product.Stock))
                 .ToListAsync();
             return Ok(productDTOS);
         }
