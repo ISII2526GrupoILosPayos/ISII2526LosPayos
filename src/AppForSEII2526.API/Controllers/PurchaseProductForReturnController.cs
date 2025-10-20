@@ -36,14 +36,15 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<PurchaseProductForReturnDTO>), (int) HttpStatusCode.OK)]
-        public async Task<ActionResult> GetPurchasedProductsForReturning(string ? productName)
+        public async Task<ActionResult> GetPurchasedProductsForReturning(string ? productName, string userName)
         {
             IList<PurchaseProductForReturnDTO> purchaseProductForReturnDTOs = await _context.PurchaseProducts
                 .Include(product => product.Product.Brand)
+                .Include(product => product.PurchaseOrder).ThenInclude(product => product.ApplicationUser)
                 .Where(product =>product.Product.Name.Contains(productName)
-                || (productName == null))
-                .OrderBy(product => product.Product.Name)
-                .Select(product => new PurchaseProductForReturnDTO(product.Product.ProductId, product.Product.Name, product.Product.Brand.Name))
+                || (productName == null) && ((product.PurchaseOrder.ApplicationUser.UserName== userName) && (product.ReturnProduct==null))
+                .OrderBy(product => product.Product.Name) && (product => product.Product.Quantity))
+                .Select(product => new PurchaseProductForReturnDTO(product.Product.ProductId, product.Product.Name, product.Product.Brand.Name,product.Product.Stock,product.Product.Brand.Location))
                 .ToListAsync();
             return Ok(purchaseProductForReturnDTOs);
         }
