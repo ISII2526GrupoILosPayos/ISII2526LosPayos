@@ -40,11 +40,17 @@ namespace AppForSEII2526.API.Controllers
         {
             IList<ProductForPurchaseDTO> productDTOS = await _context.Products
                 .Include(product=>product.Brand)        //Cuando quiero hacer una union con otra tabla
-                .Where(product=>product.Name.Contains(productName)
-                        || (productName==null))
+                .Where(product =>
+                    (productName == null || product.Name.Contains(productName)) &&
+                    (productColour == null || product.Colour.Contains(productColour))
+                )
                 .OrderBy(product=>product.Name)
                 .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name, product.Brand.Location, product.Stock))
                 .ToListAsync();
+            if (!productDTOS.Any())
+            {
+                return NotFound("There are no products available with these attributes to purchase.");
+            }
             return Ok(productDTOS);
         }
     }
