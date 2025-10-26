@@ -20,19 +20,23 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(IList<UserForBanDTO>), (int) HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUsers(string? surname, ComplaintType? complaintType)
+        public async Task<IActionResult> GetUsers(string? surname, string? complaintType)
         {
             IList<UserForBanDTO> usersDTO = await _context.ApplicationUsers
-                .Where(m=> ((m.Surname.Contains(surname)) || (surname==null))
-                
-                &&( m.Complaint.Where(n=> n.Processed==false)))
-                .Select(m=> new UserForBanDTO(m.Id,
-                    m.Name,
-                    m.Surname,
-                    m.AccountCreationDate,
-                    m.ComplaintTypes.Select(n=> new ComplaintTypeDTO(
-                        n.Type.Id,
-                        n.Type.Name
+                .Where(m =>
+                ((m.Surname.Contains(surname)) || (surname == null))
+                &&
+                (m.Complaint.Any(n =>
+                !n.Processed
+                &&
+                n.Type.Name.Contains(complaintType) || complaintType == null)))
+                .Select(n => new UserForBanDTO(n.Id,
+                    n.Name,
+                    n.Surname,
+                    n.AccountCreationDate,
+                    n.Complaint.Select(o => new ComplaintTypeDTO(
+                        o.Type.Name,
+                        n.Complaint.Count(p => !p.Processed && p.Type.Name == o.Type.Name)
                     )).ToList()
                 ))
                 .ToListAsync();
