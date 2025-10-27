@@ -1,41 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 {
+    // DTO principal devuelto por el caso de uso:
+    // "The system shows the returning process performed..."
     public class ReturnPurchaseOrderDTO
     {
-        public ReturnPurchaseOrderDTO(DateTime date, PaymentMethod paymentMethod, decimal moneyToReturn, int? rating, string name, string surname, string address, string? phoneNumber)
+        public ReturnPurchaseOrderDTO(
+            string customerName,
+            string customerFirstSurname,
+            string customerAddress,
+            string customerTelephoneNumber,
+            IList<ReturnedProductDTO> returnedProducts)
         {
-            Date = date;
-            PaymentMethod1 = paymentMethod;
-            MoneyToReturn = moneyToReturn;
-            Rating = rating;
-            Name = name;
-            Surname = surname;
-            Address = address;
-            PhoneNumber = phoneNumber;
+            CustomerName = customerName;
+            CustomerFirstSurname = customerFirstSurname;
+            CustomerAddress = customerAddress;
+            CustomerTelephoneNumber = customerTelephoneNumber;
+            ReturnedProducts = returnedProducts;
         }
 
-        
+        // Datos del cliente
+        public string CustomerName { get; set; }              // Name
+        public string CustomerFirstSurname { get; set; }      // First Surname
+        // Second Surname no se incluye porque no está en el modelo actual
+        public string CustomerAddress { get; set; }           // Address
+        public string CustomerTelephoneNumber { get; set; }   // Telephone number
 
-        public DateTime ReturnDate { get; set; }
-        public string PaymentMethod { get; set; }
-        public decimal MoneyToReturn { get; set; }
-        public int? Rating { get; set; }
-
-
-
-        public string Name { get; set; }
-        public string FirstSurname { get; set; }
-        public string Address { get; set; }
-        public string Phone { get; set; }
-
-
+        // Información de los productos devueltos
         public IList<ReturnedProductDTO> ReturnedProducts { get; set; }
-        public DateTime Date { get; }
-        public PaymentMethod PaymentMethod1 { get; }
-        public string Surname { get; }
-        public string? PhoneNumber { get; }
     }
 }
