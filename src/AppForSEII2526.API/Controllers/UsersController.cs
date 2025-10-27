@@ -24,21 +24,24 @@ namespace AppForSEII2526.API.Controllers
         {
             IList<UserForBanDTO> usersDTO = await _context.ApplicationUsers
                 .Where(m =>
-                ((m.Surname.Contains(surname)) || (surname == null))
-                &&
-                (m.Complaint.Any(n =>
-                !n.Processed
-                &&
-                n.Type.Name.Contains(complaintType) || complaintType == null)))
-                .Select(n => new UserForBanDTO(n.Id,
+                ((m.Surname.Contains(surname)) || (surname == null)) &&
+                m.Complaint.Any(n =>
+                !n.Processed &&
+                (complaintType == null || n.Type.Name.Contains(complaintType))))
+                .Select(n => new UserForBanDTO(
+                    n.Id,
                     n.Name,
                     n.Surname,
                     n.AccountCreationDate,
-                    n.Complaint.Select(o => new ComplaintTypeDTO(
-                        o.Type.Name,
-                        n.Complaint.Count(p => !p.Processed && p.Type.Name == o.Type.Name)
-                    )).ToList()
-                ))
+                    n.Complaint
+                    .Where(o =>
+                        !o.Processed &&
+                        (complaintType == null || o.Type.Name.Contains(complaintType)))
+                .GroupBy(q => q.Type.Name)
+                .Select(g => new ComplaintTypeDTO(
+                    g.Key,
+                    g.Count()))
+                .ToList()))
                 .ToListAsync();
             return Ok(usersDTO);
         }
