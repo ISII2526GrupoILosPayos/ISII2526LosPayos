@@ -36,17 +36,17 @@ namespace AppForSEII2526.API.Controllers
                 //        .ThenInclude(pp => pp.Product)
                 //            .ThenInclude(p => p.Brand)
                 .Where(rpo => rpo.Id == id)
-                .Select(rpo => new ReturnPurchaseOrderDTO(rpo.Date,)
+                .Select(rpo => new ReturnPurchaseOrderDTO(rpo.Date,rpo.PaymentMethod,rpo.MoneyToReturn,rpo.Rating,rpo.Name,rpo.Customer.Surname,rpo.Customer.Address,rpo.Customer.PhoneNumber)
                 
                 {
-                    Name = rpo.Customer.Name,
-                    FirstSurname = rpo.Customer.Surname,
-                    Address = rpo.Customer.Address,
-                    Phone = rpo.Customer.PhoneNumber,
-                    ReturnDate = rpo.Date,
+                        //Name = rpo.Customer.Name,
+                        //FirstSurname = rpo.Customer.Surname,
+                        //Address = rpo.Customer.Address,
+                        //Phone = rpo.Customer.PhoneNumber,
+                        //ReturnDate = rpo.Date,
                     //PaymentMethod = rpo.PaymentMethod.,
-                    MoneyToReturn = rpo.MoneyToReturn,
-                    Rating = rpo.Rating,
+                        //MoneyToReturn = rpo.MoneyToReturn,
+                        //Rating = rpo.Rating,
                     //ReturnedProducts = rpo.ReturnProducts
                     //    .Select(rp => new ReturnedProductDTO
                     //    {

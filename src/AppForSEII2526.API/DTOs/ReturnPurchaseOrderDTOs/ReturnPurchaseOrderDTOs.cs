@@ -5,22 +5,19 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 {
     public class ReturnPurchaseOrderDTO
     {
-        public ReturnPurchaseOrderDTO()
+        public ReturnPurchaseOrderDTO(DateTime date, PaymentMethod paymentMethod, decimal moneyToReturn, int? rating, string name, string surname, string address, string? phoneNumber)
         {
-        }
-
-        public ReturnPurchaseOrderDTO(DateTime returnDate, string paymentMethod, decimal moneyToReturn, int? rating, string name, string firstSurname, string address, string phone, IList<ReturnedProductDTO> returnedProducts)
-        {
-            ReturnDate = returnDate;
-            PaymentMethod = paymentMethod;
+            Date = date;
+            PaymentMethod1 = paymentMethod;
             MoneyToReturn = moneyToReturn;
             Rating = rating;
             Name = name;
-            FirstSurname = firstSurname;
+            Surname = surname;
             Address = address;
-            Phone = phone;
-            ReturnedProducts = returnedProducts;
+            PhoneNumber = phoneNumber;
         }
+
+        
 
         public DateTime ReturnDate { get; set; }
         public string PaymentMethod { get; set; }
@@ -36,5 +33,9 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 
 
         public IList<ReturnedProductDTO> ReturnedProducts { get; set; }
+        public DateTime Date { get; }
+        public PaymentMethod PaymentMethod1 { get; }
+        public string Surname { get; }
+        public string? PhoneNumber { get; }
     }
 }
