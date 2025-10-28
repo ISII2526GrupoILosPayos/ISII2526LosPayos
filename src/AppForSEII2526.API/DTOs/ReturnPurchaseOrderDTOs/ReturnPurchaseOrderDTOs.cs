@@ -29,5 +29,20 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 
         // Información de los productos devueltos
         public IList<ReturnedProductDTO> ReturnedProducts { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ReturnPurchaseOrderDTO dTO &&
+                   CustomerName == dTO.CustomerName &&
+                   CustomerFirstSurname == dTO.CustomerFirstSurname &&
+                   CustomerAddress == dTO.CustomerAddress &&
+                   CustomerTelephoneNumber == dTO.CustomerTelephoneNumber &&
+                   EqualityComparer<IList<ReturnedProductDTO>>.Default.Equals(ReturnedProducts, dTO.ReturnedProducts);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(CustomerName, CustomerFirstSurname, CustomerAddress, CustomerTelephoneNumber, ReturnedProducts);
+        }
     }
 }

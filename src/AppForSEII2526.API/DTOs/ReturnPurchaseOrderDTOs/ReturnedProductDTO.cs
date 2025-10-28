@@ -1,4 +1,5 @@
-﻿namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
+﻿
+namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 {
     public class ReturnedProductDTO
     {
@@ -21,5 +22,20 @@
         public string BrandName { get; set; }          // name of the firm
         public string WarehouseLocation { get; set; }  // location of the warehouse
         public string Reason { get; set; }             // returning option selected
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ReturnedProductDTO dTO &&
+                   Quantity == dTO.Quantity &&
+                   ProductName == dTO.ProductName &&
+                   BrandName == dTO.BrandName &&
+                   WarehouseLocation == dTO.WarehouseLocation &&
+                   Reason == dTO.Reason;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Quantity, ProductName, BrandName, WarehouseLocation, Reason);
+        }
     }
 }
