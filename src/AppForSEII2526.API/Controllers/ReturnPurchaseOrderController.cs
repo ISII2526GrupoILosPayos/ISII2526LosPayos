@@ -35,6 +35,17 @@ namespace AppForSEII2526.API.Controllers
             // - Incluimos ReturnProducts -> PurchaseProduct -> Product -> Brand
             //   porque necesitamos cantidad, productName, brandName, warehouseLocation y reason.
 
+
+            /*if (_context.ReturnPurchaseOrders == null)
+            {
+                _logger.LogError("Error: ReturnPurchaseOrders table does not exist");
+                return NotFound();
+            }
+            *///????????????????????????????
+
+
+
+
             var query = _context.ReturnPurchaseOrders
                 .Include(rpo => rpo.Customer)
                 .Include(rpo => rpo.ReturnProducts)
@@ -58,7 +69,7 @@ namespace AppForSEII2526.API.Controllers
                                     rp.Reason
                                 )
                             )
-                            .ToList()
+                            .ToList()//Dentro del parentesis?: ReturnedProductDTO
                     )
                 );
 
