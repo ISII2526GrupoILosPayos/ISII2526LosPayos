@@ -1,14 +1,16 @@
 ﻿using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs.ReturnProductDTOs;
+using AppForSEII2526.API.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
+using Xunit;
+using AppForSEII2526.UT;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
 {
@@ -16,62 +18,191 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
     {
         public GetPurchaseProductForReturning_test()
         {
-            var purchaseProduct = new List<AppForSEII2526.API.Models.PurchaseProduct>
+            // 1. Creamos la Brand (firma/sucursal/almacén)
+            var brand = new Brand
             {
-                new AppForSEII2526.API.Models.PurchaseProduct
-                {
-                    ProductId = 1,
-                    PurchaseOrderId = 1,
-                    Price = 100,
-                    Quantity = 2
-                },
-                new AppForSEII2526.API.Models.PurchaseProduct
-                {
-                    ProductId = 2,
-                    PurchaseOrderId = 1,
-                    Price = 200,
-                    Quantity = 1
-                }
-
-
+                Id = 10,
+                Name = "Nike",
+                Location = "Almacén Central Madrid",
+                Products = new List<Product>()
             };
 
-            var purchaseOrder = new AppForSEII2526.API.Models.PurchaseOrder
+            // 2. Creamos dos productos:
+            //    - uno retornable (debe aparecer en la respuesta)
+            //    - otro NO retornable (no debe aparecer)
+            var returnableProduct = new Product
             {
-                City = "Albacete",
-                TotalPrice = 10,
-                Date = DateTime.Now,
-                Description = "VeryGood",
-                NameSurname = "Fernandez",
-                PostalCode = "02002",
-                Street = "Campus",
-                Rating = 3,
-                State = AppForSEII2526.API.Models.PurchaseState.Done,
-                ApplicationUserId = "1"
+                ProductId = 1,
+                Name = "Zapatilla Roja",
+                Description = "Zapatilla deportiva roja",
+                Colour = "Rojo",
+                Price = 120m,
+                Stock = 50,
+                IsReturnable = true,
+                Brand = brand,
+                PurchaseProducts = new List<PurchaseProduct>()
             };
 
-            var user = new AppForSEII2526.API.Models.ApplicationUser
+            var nonReturnableProduct = new Product
             {
+                ProductId = 2,
+                Name = "Sudadera Negra",
+                Description = "Sudadera negra con capucha",
+                Colour = "Negro",
+                Price = 60m,
+                Stock = 10,
+                IsReturnable = false, // <- importante: este NO debe salir
+                Brand = brand,
+                PurchaseProducts = new List<PurchaseProduct>()
+            };
+
+            brand.Products.Add(returnableProduct);
+            brand.Products.Add(nonReturnableProduct);
+
+            // 3. Creamos un usuario con UserName (porque el filtro lo usa)
+            var user = new ApplicationUser
+            {
+                Id = "1",
+                UserName = "pauUser",
+                Email = "pau@example.com",
                 Name = "Pau",
                 Surname = "Femenia",
                 Address = "Campus",
-                AccountCreationDate = DateTime.Now
+                PhoneNumber = "666777888",
+                AccountCreationDate = DateTime.Now,
+                PurchaseOrders = new List<PurchaseOrder>()
             };
 
-
-            _context.ApplicationUsers.Add(user);
-            _context.PurchaseOrders.Add(purchaseOrder);
-            _context.PurchaseProducts.AddRange(purchaseProduct);
-            _context.SaveChanges();
-
-        }
-        [Fact]
-        public async Task GetPurchaseProductForReturning_null_PP_PO_AU()
-        {
-            IList<PurchaseProductForReturnDTO> purchaseproductForReturn = new IList<PurchaseProductForReturnDTO> ()
+            // 4. Creamos una PurchaseOrder asociada a ese usuario
+            var order = new PurchaseOrder
             {
+                Id = 1,
+                City = "Albacete",
+                TotalPrice = 10,
+                Date = DateTime.Now,
+                Description = "Muy bien todo",
+                NameSurname = "Pau Femenia",
+                PostalCode = "02002",
+                Street = "Campus",
+                Rating = 3,
+                State = PurchaseState.Done,
+                ApplicationUserId = user.Id,
+                ApplicationUser = user,
+                Products = new List<PurchaseProduct>()
+            };
 
-            }
+            user.PurchaseOrders.Add(order);
+
+            // 5. Creamos las líneas de compra (PurchaseProduct)
+            //    Caso válido: cantidad 2, producto retornable, ReturnProduct = null
+            var pp1 = new PurchaseProduct
+            {
+                ProductId = returnableProduct.ProductId,
+                Product = returnableProduct,
+                PurchaseOrderId = order.Id,
+                PurchaseOrder = order,
+                Quantity = 2,
+                Price = 100m,
+                ReturnProduct = null // <- AÚN NO DEVUELTO (esto hace que salga)
+            };
+
+            //    Caso inválido: producto NO retornable
+            var pp2 = new PurchaseProduct
+            {
+                ProductId = nonReturnableProduct.ProductId,
+                Product = nonReturnableProduct,
+                PurchaseOrderId = order.Id,
+                PurchaseOrder = order,
+                Quantity = 1,
+                Price = 200m,
+                ReturnProduct = null // pero IsReturnable = false, así que se filtra fuera
+            };
+
+            // añadimos a las colecciones navegacionales
+            order.Products.Add(pp1);
+            order.Products.Add(pp2);
+            returnableProduct.PurchaseProducts.Add(pp1);
+            nonReturnableProduct.PurchaseProducts.Add(pp2);
+
+            // 6. Guardamos todo en la BD en memoria
+            _context.Brands.Add(brand);
+            _context.Products.AddRange(returnableProduct, nonReturnableProduct);
+            _context.ApplicationUsers.Add(user);
+            _context.PurchaseOrders.Add(order);
+            _context.PurchaseProducts.AddRange(pp1, pp2);
+
+            _context.SaveChanges();
         }
 
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetPurchasedProductsForReturning_OK_test()
+        {
+            // Arrange
+            var loggerMock = new Mock<ILogger<PurchaseProductForReturnController>>();
+            var controller = new PurchaseProductForReturnController(_context, loggerMock.Object);
+
+            string? filterProductName = null;   // sin filtro por nombre
+            string userName = "pauUser";        // el mismo UserName que pusimos en ApplicationUser
+            int minQuantity = 0;                // queremos todo con Quantity > 0
+
+            // Construimos la lista esperada EXACTAMENTE como la devolvería el controlador
+            var expected = new List<PurchaseProductForReturnDTO>()
+            {
+                new PurchaseProductForReturnDTO(
+                    id: 1,                          // pp1.ProductId
+                    name: "Zapatilla Roja",         // pp1.Product.Name
+                    brand: "Nike",                  // pp1.Product.Brand.Name
+                    quantity: 2,                    // pp1.Quantity
+                    location: "Almacén Central Madrid" // pp1.Product.Brand.Location
+                )
+                {
+                    PurchaseOrderId = 1            // pp1.PurchaseOrderId
+                }
+            };
+
+            // Act
+            var result = await controller.GetPurchasedProductsForReturning(
+                filterProductName,
+                userName,
+                minQuantity
+            );
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actualList = Assert.IsType<List<PurchaseProductForReturnDTO>>(okResult.Value);
+
+            // Comparamos usando tu override de Equals en PurchaseProductForReturnDTO
+            Assert.Equal(expected, actualList);
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetPurchasedProductsForReturning_empty_when_minQuantity_too_high()
+        {
+            // Arrange
+            var loggerMock = new Mock<ILogger<PurchaseProductForReturnController>>();
+            var controller = new PurchaseProductForReturnController(_context, loggerMock.Object);
+
+            string? filterProductName = null;
+            string userName = "pauUser";
+            int minQuantity = 999; // pedimos más de lo que hay en cualquier línea
+
+            // Act
+            var result = await controller.GetPurchasedProductsForReturning(
+                filterProductName,
+                userName,
+                minQuantity
+            );
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actualList = Assert.IsType<List<PurchaseProductForReturnDTO>>(okResult.Value);
+
+            // esperamos lista vacía
+            Assert.Empty(actualList);
+        }
+    }
 }
