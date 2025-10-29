@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
+namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
 {
     // DTO principal devuelto por el caso de uso:
     // "The system shows the returning process performed..."

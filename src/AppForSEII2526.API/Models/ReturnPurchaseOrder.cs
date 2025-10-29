@@ -19,7 +19,7 @@
         public int Id { get; set; }
 
         [Required]
-        [StringLength(20, ErrorMessage = "Maximun 20, minimun 10",MinimumLength =10)]
+        [StringLength(30, ErrorMessage = "Maximun 20, minimun 10",MinimumLength =10)]
         public string Name { get; set; }
 
         [Precision(10, 2)]

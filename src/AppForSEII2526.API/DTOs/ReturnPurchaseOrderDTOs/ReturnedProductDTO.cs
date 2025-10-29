@@ -1,5 +1,5 @@
 ﻿
-namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
+namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
 {
     public class ReturnedProductDTO
     {
