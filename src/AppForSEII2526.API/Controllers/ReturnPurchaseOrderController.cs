@@ -276,7 +276,7 @@ namespace AppForSEII2526.API.Controllers
             //
             // 5.1 Generar un Name válido (10..20 caracteres máx)
             //
-            string baseName = $"Devol-{user.Name}";
+            string baseName = $"-{user.Name}";
 
             if (baseName.Length < 10)
             {
