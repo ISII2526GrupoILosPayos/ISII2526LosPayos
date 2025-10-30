@@ -50,5 +50,26 @@ namespace AppForSEII2526.UT.ProductsController_test
             var productsactualresult=Assert.IsType<List<ProductForPurchaseDTO>>(okresult.Value);
             Assert.Equal(expectedProducts, productsactualresult);
         }
+
+        [Theory]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetProductsForPurchase_null_filter_name_colour(string? name, string? colour, List<ProductForPurchaseDTO> expectedProducts)
+        {
+            //var expectedProducts = new List<ProductForPurchaseDTO>()
+            //{
+            //    new ProductForPurchaseDTO(28, "Hoodie", "Nike", "Madrid", 100),
+            //    new ProductForPurchaseDTO(29, "Shoes", "Nike", "Madrid", 50),
+            //    new ProductForPurchaseDTO(27, "Water", "Bezoya", "Palencia", 100)
+            //};
+            var mock = new Mock<ILogger<ProductsController>>();
+            ILogger<ProductsController> logger = mock.Object;
+            ProductsController controller = new ProductsController(_context, logger);
+
+            var result = await controller.GetProductsForPurchase(name, colour);
+
+            var okresult = Assert.IsType<OkObjectResult>(result);
+            var productsactualresult = Assert.IsType<List<ProductForPurchaseDTO>>(okresult.Value);
+            Assert.Equal(expectedProducts, productsactualresult);
+        }
     }
 }
