@@ -20,6 +20,17 @@ namespace AppForSEII2526.API.Models
            
         }
 
+        public Product(int productId, string name, string description, string colour, decimal price, int stock, Brand brand)
+        {
+            ProductId = productId;
+            Name = name;
+            Description = description;
+            Colour = colour;
+            Price = decimal.Round(price, 2);
+            Stock = stock;
+            Brand = brand;
+        }
+
         [Key]
         public int ProductId { get; set; }
 
