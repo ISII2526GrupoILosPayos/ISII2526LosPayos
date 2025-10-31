@@ -29,7 +29,7 @@ namespace AppForSEII2526.API.Controllers
             }
 
             var purchaseOrder = await _context.PurchaseOrders
-                .Where(po => (po.Id == null || po.Id == id))
+                .Where(po => po.Id == id)
                 .Include(po => po.Products)                 
                     .ThenInclude(pp => pp.Product)          // Join con Product
                         .ThenInclude(p => p.Brand)          // Join con Brand
