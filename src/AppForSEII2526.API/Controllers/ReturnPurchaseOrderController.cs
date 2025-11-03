@@ -33,7 +33,7 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult> GetReturnPurchaseOrderDetails(int id)
         {
-            var dto = await _context.ReturnPurchaseOrders
+            var query = _context.ReturnPurchaseOrders
                 .Include(rpo => rpo.Customer)
                 .Include(rpo => rpo.ReturnProducts)
                     .ThenInclude(rp => rp.PurchaseProduct)
@@ -58,8 +58,10 @@ namespace AppForSEII2526.API.Controllers
                             )
                             .ToList()
                     )
-                )
-                .FirstOrDefaultAsync();
+                );
+
+            // Usamos FirstOrDefaultAsync() en vez de FirstAsync() para NO petar con 500 si no hay resultado
+            var dto = await query.FirstOrDefaultAsync();
 
             if (dto == null)
             {
@@ -71,7 +73,7 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [ProducesResponseType(typeof(ReturnPurchaseOrderDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ReturnPurchaseOrderForCreateDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Conflict)]
         public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderForCreateDTO model)
@@ -339,20 +341,24 @@ namespace AppForSEII2526.API.Controllers
             // 6. Respuesta 201
             //
             var responseDto = new ReturnPurchaseOrderDTO(
-                user.Name,
-                user.Surname,
-                user.Address,
-                user.PhoneNumber,
-                returnOrder.ReturnProducts
-                    .Select(rp => new ReturnedProductDTO(
-                        rp.Quantity,
-                        rp.PurchaseProduct.Product.Name,
-                        rp.PurchaseProduct.Product.Brand.Name,
-                        rp.PurchaseProduct.Product.Brand.Location,
-                        rp.Reason
-                    ))
-                    .ToList()
-            );
+            user.Name,
+            user.Surname,
+            user.Address,
+            user.PhoneNumber,
+             returnOrder.ReturnProducts
+            .Select(rp => new ReturnedProductDTO(
+                rp.Quantity,
+                rp.PurchaseProduct.Product.Name,
+                rp.PurchaseProduct.Product.Brand.Name,
+                rp.PurchaseProduct.Product.Brand.Location,
+                rp.Reason
+                 ))
+                .ToList(),
+                 // NUEVOS argumentos:
+                 returnOrder.PaymentMethod?.GetType().Name, // ReturningOptionSelected
+                  returnOrder.Rating                         // Rating
+                   );
+
 
             return CreatedAtAction(
                 nameof(GetReturnPurchaseOrderDetails),
