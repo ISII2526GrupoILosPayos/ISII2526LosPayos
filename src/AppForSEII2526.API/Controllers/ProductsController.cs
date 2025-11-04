@@ -47,7 +47,13 @@ namespace AppForSEII2526.API.Controllers
                 .OrderBy(product=>product.Name)
                 .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name, product.Brand.Location, product.Stock))
                 .ToListAsync();
-            
+
+            {
+                return NotFound("There are no products available with these attributes to purchase.");
+            }
+            {
+                return NotFound("There are no products available with these attributes to purchase.");
+            }
             return Ok(productDTOS);
         }
     }
