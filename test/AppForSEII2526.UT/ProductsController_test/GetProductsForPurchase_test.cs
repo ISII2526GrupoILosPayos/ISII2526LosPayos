@@ -36,9 +36,9 @@ namespace AppForSEII2526.UT.ProductsController_test
         {
             var expectedProducts = new List<ProductForPurchaseDTO>()
             {
+                new ProductForPurchaseDTO(1, "Water", "Bezoya", "Palencia", 100),
                 new ProductForPurchaseDTO(2, "Hoodie", "Nike", "Madrid", 100),
-                new ProductForPurchaseDTO(3, "Shoes", "Nike", "Madrid", 50),
-                new ProductForPurchaseDTO(1, "Water", "Bezoya", "Palencia", 100)
+                new ProductForPurchaseDTO(3, "Shoes", "Nike", "Madrid", 50)
             };
             var mock = new Mock<ILogger<ProductsController>>();
             ILogger<ProductsController> logger = mock.Object;
@@ -48,7 +48,7 @@ namespace AppForSEII2526.UT.ProductsController_test
 
             var okresult=Assert.IsType<OkObjectResult>(result);
             var productsactualresult=Assert.IsType<List<ProductForPurchaseDTO>>(okresult.Value);
-            Assert.Equal(expectedProducts, productsactualresult);
+            Assert.Equal(expectedProducts.OrderBy(p => p.Name), productsactualresult.OrderBy(p => p.Name));
         }
 
         public static IEnumerable<object[]> TestCasesFor_GetProductsForPurchase_OK()

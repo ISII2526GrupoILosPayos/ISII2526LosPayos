@@ -48,12 +48,6 @@ namespace AppForSEII2526.API.Controllers
                 .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name, product.Brand.Location, product.Stock))
                 .ToListAsync();
 
-            {
-                return NotFound("There are no products available with these attributes to purchase.");
-            }
-            {
-                return NotFound("There are no products available with these attributes to purchase.");
-            }
             return Ok(productDTOS);
         }
     }
