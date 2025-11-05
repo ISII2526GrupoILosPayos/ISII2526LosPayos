@@ -3,7 +3,14 @@
     public class PurchaseOrder
     {
         public PurchaseOrder() { }
-
+        public PurchaseOrder(string nameSurname, ApplicationUser applicationUser, string street, DateTime date, IList<PurchaseProduct> products)
+        {
+            NameSurname = nameSurname;
+            ApplicationUser = applicationUser;
+            Street = street;
+            Date = date;
+            Products = products;
+        }
         public PurchaseOrder(string city, decimal totalPrice, DateTime date, string? description, string nameSurname, string postalCode, string street)
         {
             City = city;
