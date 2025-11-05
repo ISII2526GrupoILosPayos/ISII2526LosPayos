@@ -336,17 +336,22 @@ namespace AppForSEII2526.API.Controllers
             }
 
             // 6. Respuesta 201 (reutilizando los DTOs de creación)
-            var response = new
+            // 6. Respuesta 201 - Mostrar datos del cliente y de los productos devueltos
+            var responseDto = new
             {
-                CustomerUserName = user.UserName,
-                PaymentMethod = returnOrder.PaymentMethod?.GetType().Name,
+                CustomerName = user.Name,
+                CustomerSurname = user.Surname,
+                CustomerAddress = user.Address,
+                CustomerTelephoneNumber = user.PhoneNumber,
+                ReturningOptionSelected = returnOrder.PaymentMethod?.GetType().Name,
                 Rating = returnOrder.Rating,
-                Items = returnOrder.ReturnProducts
-                    .Select(rp => new ReturnItemForCreateDTO
+                ReturnedProducts = returnOrder.ReturnProducts
+                    .Select(rp => new
                     {
-                        ProductId = rp.ProductId,
-                        PurchaseOrderId = rp.PurchaseOrderId,
                         Quantity = rp.Quantity,
+                        ProductName = rp.PurchaseProduct.Product.Name,
+                        BrandName = rp.PurchaseProduct.Product.Brand.Name,
+                        WarehouseLocation = rp.PurchaseProduct.Product.Brand.Location,
                         Reason = rp.Reason
                     })
                     .ToList()
@@ -355,8 +360,9 @@ namespace AppForSEII2526.API.Controllers
             return CreatedAtAction(
                 nameof(GetReturnPurchaseOrderDetails),
                 new { id = returnOrder.Id },
-                response
+                responseDto
             );
+
 
         }
     }
