@@ -151,8 +151,9 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             _context.ApplicationUsers.Add(user);
             _context.Products.AddRange(returnableProduct, nonReturnableProduct);
             _context.PurchaseOrders.Add(order);
-            _context.SaveChanges();//Al guardar order me da el error de clave foranea
             _context.PurchaseProducts.AddRange(pp1, pp2);
+            _context.SaveChanges();//Al guardar order me da el error de clave foranea
+            
            
 
         }
