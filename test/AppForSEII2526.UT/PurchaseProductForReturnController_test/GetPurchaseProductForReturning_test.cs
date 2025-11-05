@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Xunit;
 using AppForSEII2526.UT;
 using Microsoft.EntityFrameworkCore;
+using Humanizer;
 
 namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
 {
@@ -70,7 +71,27 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 Address = "Campus",
                 PhoneNumber = "666777888",
                 AccountCreationDate = DateTime.Now,
-                PurchaseOrders = new List<PurchaseOrder>()
+                PurchaseOrders = new List<PurchaseOrder>(),
+      
+            };
+
+            var bizum = new Bizum
+            {
+                TelephoneNumber = 6542312311,
+                User = user
+            };
+
+            var paypal = new PayPal
+            {
+                Email = "pau@gmail.com",
+                User = user
+            };
+
+            var creditcard = new CreditCard
+            {
+                CreditCardNumber= "5423413",
+                ExpirationDate = DateTime.Now,
+                User = user
             };
 
             // 4. Creamos una PurchaseOrder asociada a ese usuario
@@ -88,6 +109,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 State = PurchaseState.Done,
                 ApplicationUserId = user.Id,
                 ApplicationUser = user,
+                PaymentMethod = bizum,
                 Products = new List<PurchaseProduct>()
             };
 
