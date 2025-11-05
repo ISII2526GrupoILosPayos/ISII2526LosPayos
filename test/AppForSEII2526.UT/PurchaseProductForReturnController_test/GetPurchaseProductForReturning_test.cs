@@ -25,6 +25,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 Name = "Nike",
                 Location = "Almacén Central Madrid",
                 Products = new List<Product>()
+
             };
 
             // 2. Creamos dos productos:
@@ -56,8 +57,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 PurchaseProducts = new List<PurchaseProduct>()
             };
 
-            brand.Products.Add(returnableProduct);
-            brand.Products.Add(nonReturnableProduct);
+
 
             // 3. Creamos un usuario con UserName (porque el filtro lo usa)
             var user = new ApplicationUser
@@ -91,7 +91,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 Products = new List<PurchaseProduct>()
             };
 
-            user.PurchaseOrders.Add(order);
+           
 
             // 5. Creamos las líneas de compra (PurchaseProduct)
             //    Caso válido: cantidad 2, producto retornable, ReturnProduct = null
@@ -119,20 +119,65 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             };
 
             // añadimos a las colecciones navegacionales
-            order.Products.Add(pp1);
-            order.Products.Add(pp2);
-            returnableProduct.PurchaseProducts.Add(pp1);
-            nonReturnableProduct.PurchaseProducts.Add(pp2);
+            //order.Products.Add(pp1);
+            //order.Products.Add(pp2);
+            //returnableProduct.PurchaseProducts.Add(pp1);
+            //nonReturnableProduct.PurchaseProducts.Add(pp2);
 
             // 6. Guardamos todo en la BD en memoria
             _context.Brands.Add(brand);
-            _context.Products.AddRange(returnableProduct, nonReturnableProduct);
             _context.ApplicationUsers.Add(user);
+            _context.Products.AddRange(returnableProduct, nonReturnableProduct);
             _context.PurchaseOrders.Add(order);
+            _context.SaveChanges();//Al guardar order me da el error de clave foranea
             _context.PurchaseProducts.AddRange(pp1, pp2);
+           
 
-            _context.SaveChanges();
         }
+
+        public static IEnumerable<object[]> TestCasesForGetPurchaseProductForReturningTest()
+        {
+            var PurchaseProduct1 = new PurchaseProductForReturnDTO(
+                id: 1,
+                name: "Zapatilla Roja",
+                brand: "Nike",
+                quantity: 2,
+                location: "Almacén Central Madrid"
+            )
+            {
+                PurchaseOrderId = 1
+            };
+
+            var allTestCases = new List<object[]>
+            {
+                new object[]
+                {
+                    null,           // filterProductName
+                    "pauUser",      // userName
+                    0,              // minQuantity
+                    new List<PurchaseProductForReturnDTO> { PurchaseProduct1 } // expected
+                },
+
+                new object[]
+                {
+                    "Zapatilla",    // filterProductName
+                    "pauUser",      // userName
+                    0,              // minQuantity
+                    new List<PurchaseProductForReturnDTO> { PurchaseProduct1 } // expected
+                },
+
+                new object[]
+                {
+                    "Camisa",       // filterProductName
+                    "pauUser",      // userName
+                    0,              // minQuantity
+                    new List<PurchaseProductForReturnDTO>() // expected: vacío
+                },
+            };
+
+            return allTestCases;
+        }
+
 
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
