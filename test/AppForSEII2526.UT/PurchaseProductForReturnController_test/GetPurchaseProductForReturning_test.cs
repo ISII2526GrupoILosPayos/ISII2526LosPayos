@@ -272,5 +272,76 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             // esperamos lista vacía
             Assert.Empty(actualList);
         }
+
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetPurchasedProductsForReturning_conditions_test()
+        {
+            // Arrange
+            var loggerMock = new Mock<ILogger<PurchaseProductForReturnController>>();
+            var controller = new PurchaseProductForReturnController(_context, loggerMock.Object);
+
+            string userName = "pauUser";
+            string? filterProductName = "Zapatilla"; // debería filtrar solo una
+            int minQuantity = 1;
+
+            // Act
+            var result = await controller.GetPurchasedProductsForReturning(filterProductName, userName, minQuantity);
+
+            // Assert 1️⃣: Tipo de resultado correcto
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actualList = Assert.IsType<List<PurchaseProductForReturnDTO>>(okResult.Value);
+
+            // Assert 2️⃣: Solo productos retornables y sin ReturnProduct
+            Assert.All(actualList, item =>
+            {
+                var entity = _context.PurchaseProducts
+                    .Include(pp => pp.Product)
+                    .Include(pp => pp.ReturnProduct)
+                    .First(pp => pp.Product.ProductId == item.Id);
+
+                Assert.True(entity.Product.IsReturnable, $"Product {entity.Product.Name} should be returnable");
+                Assert.Null(entity.ReturnProduct);
+            });
+
+            // Assert 3️⃣: Solo productos del usuario correcto
+            Assert.All(actualList, item =>
+            {
+                var pp = _context.PurchaseProducts
+                    .Include(pp => pp.PurchaseOrder)
+                    .ThenInclude(po => po.ApplicationUser)
+                    .First(pp => pp.ProductId == item.Id);
+                Assert.Equal(userName, pp.PurchaseOrder.ApplicationUser.UserName);
+            });
+
+            // Assert 4️⃣: Se aplica el filtro de nombre
+            Assert.All(actualList, item =>
+            {
+                Assert.Contains("Zapatilla", item.Name, StringComparison.OrdinalIgnoreCase);
+            });
+
+            // Assert 5️⃣: Se respeta el filtro de cantidad mínima
+            Assert.All(actualList, item =>
+            {
+                Assert.True(item.Quantity >= minQuantity);
+            });
+
+            // Assert 6️⃣: Campos del DTO completos y coherentes
+            Assert.All(actualList, item =>
+            {
+                Assert.False(string.IsNullOrEmpty(item.Name));
+                Assert.False(string.IsNullOrEmpty(item.Brand));
+                Assert.False(string.IsNullOrEmpty(item.Location));
+                Assert.True(item.Quantity > 0);
+                Assert.True(item.PurchaseOrderId > 0);
+            });
+
+            // Assert 7️⃣: No contiene productos no retornables o de otros usuarios
+            var productNames = actualList.Select(a => a.Name).ToList();
+            Assert.DoesNotContain("Sudadera Negra", productNames); // no retornable
+        }
+
     }
 }
