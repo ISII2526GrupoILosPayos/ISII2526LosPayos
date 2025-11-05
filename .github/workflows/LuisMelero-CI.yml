@@ -10,7 +10,7 @@ on:
 # for considering only those changes affecting to a specific folder
 #    paths:
 #      - 'src/AppForMovies.API**'
-  pull_request:
+  push:
     branches: 
        - luismelero-7-CI-CD
 
