@@ -7,13 +7,13 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
     {
         public ReturnPurchaseOrderForCreateDTO(
             string customerUserName,
-            string paymentMethod,
+            string returningOptionSelected,
             int? rating,
             IList<ReturnItemForCreateDTO> items
         )
         {
             CustomerUserName = customerUserName;
-            PaymentMethod = paymentMethod;
+            ReturningOptionSelected = returningOptionSelected;
             Rating = rating;
             Items = items;
         }
@@ -28,7 +28,7 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
         // Paso 5 del caso de uso: "select an option for returning the money
         // (credit card, paypal or other)" => obligatorio
         [Required]
-        public string PaymentMethod { get; set; } // "CreditCard", "PayPal", "Other", etc.
+        public string ReturningOptionSelected { get; set; } // "CreditCard", "PayPal", "Other", etc.
 
         // Valoración opcional del sistema de entrega (1..5)
         [Range(1, 5)]

@@ -26,7 +26,6 @@ namespace AppForSEII2526.API.Controllers
             _context = context;
             _logger = logger;
         }
-
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(ReturnPurchaseOrderDTO), (int)HttpStatusCode.OK)]
@@ -39,6 +38,7 @@ namespace AppForSEII2526.API.Controllers
                     .ThenInclude(rp => rp.PurchaseProduct)
                         .ThenInclude(pp => pp.Product)
                             .ThenInclude(p => p.Brand)
+                .Include(rpo => rpo.PaymentMethod)
                 .Where(rpo => rpo.Id == id)
                 .Select(rpo =>
                     new ReturnPurchaseOrderDTO(
@@ -47,29 +47,25 @@ namespace AppForSEII2526.API.Controllers
                         rpo.Customer.Address,
                         rpo.Customer.PhoneNumber,
                         rpo.ReturnProducts
-                            .Select(rp =>
-                                new ReturnedProductDTO(
-                                    rp.Quantity,
-                                    rp.PurchaseProduct.Product.Name,
-                                    rp.PurchaseProduct.Product.Brand.Name,
-                                    rp.PurchaseProduct.Product.Brand.Location,
-                                    rp.Reason
-                                )
-                            )
-                            .ToList()
+                            .Select(rp => new ReturnedProductDTO(
+                                rp.Quantity,
+                                rp.PurchaseProduct.Product.Name,
+                                rp.PurchaseProduct.Product.Brand.Name,
+                                rp.PurchaseProduct.Product.Brand.Location
+                            ))
+                            .ToList(),
+                        rpo.PaymentMethod.GetType().Name
                     )
                 );
 
-            // Usamos FirstOrDefaultAsync() en vez de FirstAsync() para NO petar con 500 si no hay resultado
             var dto = await query.FirstOrDefaultAsync();
 
             if (dto == null)
-            {
                 return NotFound($"No return purchase order found with ID {id}.");
-            }
 
             return Ok(dto);
         }
+
 
         [HttpPost]
         [Route("[action]")]
@@ -95,8 +91,9 @@ namespace AppForSEII2526.API.Controllers
                     ModelState.AddModelError(nameof(model.Items),
                         "You must include at least one product to return.");
 
-                if (string.IsNullOrWhiteSpace(model.PaymentMethod))
-                    ModelState.AddModelError(nameof(model.PaymentMethod),
+                if (string.IsNullOrWhiteSpace(model.ReturningOptionSelected
+))
+                    ModelState.AddModelError(nameof(model.ReturningOptionSelected),
                         "PaymentMethod is required (credit card, paypal, other).");
 
                 if (model.Rating.HasValue &&
@@ -147,7 +144,7 @@ namespace AppForSEII2526.API.Controllers
             foreach (var pm in paymentMethodsOfUser)
             {
                 var pmTypeName = pm.GetType().Name; // "Bizum", "PayPal", etc.
-                if (string.Equals(pmTypeName, model.PaymentMethod,
+                if (string.Equals(pmTypeName, model.ReturningOptionSelected,
                                   StringComparison.OrdinalIgnoreCase))
                 {
                     selectedPaymentMethod = pm;
@@ -157,8 +154,8 @@ namespace AppForSEII2526.API.Controllers
 
             if (selectedPaymentMethod == null)
             {
-                ModelState.AddModelError(nameof(model.PaymentMethod),
-                    $"Payment method '{model.PaymentMethod}' is not available for this user.");
+                ModelState.AddModelError(nameof(model.ReturningOptionSelected),
+                    $"Payment method '{model.ReturningOptionSelected}' is not available for this user.");
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
 
@@ -302,7 +299,8 @@ namespace AppForSEII2526.API.Controllers
                 Date = DateTime.Now,
                 Rating = model.Rating,
 
-                PaymentMethod = selectedPaymentMethod, // ya resuelto arriba ✅
+                PaymentMethod = selectedPaymentMethod, // se usa la opción seleccionada por el cliente
+
 
                 Customer = user,
                 CustomerId = user.Id,
@@ -337,34 +335,29 @@ namespace AppForSEII2526.API.Controllers
                 return Conflict(conflictDetails);
             }
 
-            //
-            // 6. Respuesta 201
-            //
-            var responseDto = new ReturnPurchaseOrderDTO(
-            user.Name,
-            user.Surname,
-            user.Address,
-            user.PhoneNumber,
-             returnOrder.ReturnProducts
-            .Select(rp => new ReturnedProductDTO(
-                rp.Quantity,
-                rp.PurchaseProduct.Product.Name,
-                rp.PurchaseProduct.Product.Brand.Name,
-                rp.PurchaseProduct.Product.Brand.Location,
-                rp.Reason
-                 ))
-                .ToList(),
-                 // NUEVOS argumentos:
-                 returnOrder.PaymentMethod?.GetType().Name, // ReturningOptionSelected
-                  returnOrder.Rating                         // Rating
-                   );
-
+            // 6. Respuesta 201 (reutilizando los DTOs de creación)
+            var response = new
+            {
+                CustomerUserName = user.UserName,
+                PaymentMethod = returnOrder.PaymentMethod?.GetType().Name,
+                Rating = returnOrder.Rating,
+                Items = returnOrder.ReturnProducts
+                    .Select(rp => new ReturnItemForCreateDTO
+                    {
+                        ProductId = rp.ProductId,
+                        PurchaseOrderId = rp.PurchaseOrderId,
+                        Quantity = rp.Quantity,
+                        Reason = rp.Reason
+                    })
+                    .ToList()
+            };
 
             return CreatedAtAction(
                 nameof(GetReturnPurchaseOrderDetails),
                 new { id = returnOrder.Id },
-                responseDto
+                response
             );
+
         }
     }
 }

@@ -1,41 +1,23 @@
-﻿// AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs.ReturnPurchaseOrderDTO
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
 {
     public class ReturnPurchaseOrderDTO
     {
-        // === Constructor existente (NO se toca) ===
-        public ReturnPurchaseOrderDTO(
-            string customerName,
-            string customerFirstSurname,
-            string customerAddress,
-            string customerTelephoneNumber,
-            IList<ReturnedProductDTO> returnedProducts)
-        {
-            CustomerName = customerName;
-            CustomerFirstSurname = customerFirstSurname;
-            CustomerAddress = customerAddress;
-            CustomerTelephoneNumber = customerTelephoneNumber;
-            ReturnedProducts = returnedProducts;
-            // Dejar null por defecto para compatibilidad
-            ReturningOptionSelected = null;
-            Rating = null;
-        }
-
-        // === NUEVO constructor con los 2 campos extra ===
         public ReturnPurchaseOrderDTO(
             string customerName,
             string customerFirstSurname,
             string customerAddress,
             string customerTelephoneNumber,
             IList<ReturnedProductDTO> returnedProducts,
-            string? returningOptionSelected,
-            int? rating)
-            : this(customerName, customerFirstSurname, customerAddress, customerTelephoneNumber, returnedProducts)
+            string returningOptionSelected)
         {
+            CustomerName = customerName;
+            CustomerFirstSurname = customerFirstSurname;
+            CustomerAddress = customerAddress;
+            CustomerTelephoneNumber = customerTelephoneNumber;
+            ReturnedProducts = returnedProducts;
             ReturningOptionSelected = returningOptionSelected;
-            Rating = rating;
         }
 
         // Datos del cliente
@@ -47,8 +29,23 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
         // Productos devueltos
         public IList<ReturnedProductDTO> ReturnedProducts { get; set; }
 
-        // === NUEVAS propiedades opcionales (no rompen nada) ===
-        public string? ReturningOptionSelected { get; set; } // "Bizum" / "PayPal" / "CreditCard"...
-        public int? Rating { get; set; }
+        // Opción de devolución seleccionada
+        public string ReturningOptionSelected { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ReturnPurchaseOrderDTO dTO &&
+                   CustomerName == dTO.CustomerName &&
+                   CustomerFirstSurname == dTO.CustomerFirstSurname &&
+                   CustomerAddress == dTO.CustomerAddress &&
+                   CustomerTelephoneNumber == dTO.CustomerTelephoneNumber &&
+                   EqualityComparer<IList<ReturnedProductDTO>>.Default.Equals(ReturnedProducts, dTO.ReturnedProducts) &&
+                   ReturningOptionSelected == dTO.ReturningOptionSelected;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(CustomerName, CustomerFirstSurname, CustomerAddress, CustomerTelephoneNumber, ReturnedProducts, ReturningOptionSelected);
+        }
     }
 }
