@@ -4,15 +4,15 @@
 name: Continous Integration fired when a pull request is done to development
 
 on:
-#  push:
-#    branches: 
-#      - development
+  push:
+    branches: 
+      - luismelero-7-CI-CD
 # for considering only those changes affecting to a specific folder
 #    paths:
 #      - 'src/AppForMovies.API**'
-  push:
-    branches: 
-       - luismelero-7-CI-CD
+#  push:
+#    branches: 
+#       - luismelero-7-CI-CD
 
 jobs:
   build:
@@ -27,13 +27,11 @@ jobs:
     steps:
       - name: Check out repository code just branch development
         uses: actions/checkout@v4
-        with:
-            ref: 'Task3.10-starting-the-unit-testing'
+        
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
+
           
       - name: Restore dependencies        
         run: |  
