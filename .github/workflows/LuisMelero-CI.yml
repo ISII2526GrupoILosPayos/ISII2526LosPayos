@@ -1,7 +1,7 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: Continous Integration fired when a pull request is done to development
+name: Continous Integration fired when a push is done to luismelero-7-CI-CD
 
 on:
   push:
