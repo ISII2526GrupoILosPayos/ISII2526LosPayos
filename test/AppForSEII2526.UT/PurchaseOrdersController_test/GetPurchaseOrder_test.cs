@@ -23,22 +23,50 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
 
             var products = new List<Product>()
             {
-                new Product(1, "Water", "For hydratate yourself", "Blue", 1, 100, brands[0]),
-                new Product(2, "Hoodie", "For warming yourself", "Red", 69,100, brands[1]),
-                new Product(3, "Shoes", "For jumping too high", "Red", 100,50, brands[1]),
+                new Product("Water", "For hydratate yourself", "Blue", 1, 100, brands[0]),
+                new Product("Hoodie", "For warming yourself", "Red", 69, 100, brands[1]),
+                new Product("Shoes", "For jumping too high", "Red", 100, 50, brands[1]),
             };
-
-            ApplicationUser user = new ApplicationUser("1", "Luis", "Melero Jareño", "Cueva de Montesinos");
-
-            var purchaseOrder = new PurchaseOrder("Luis Melero Jareño", user, "Cueva de Montesinos", DateTime.Now, new List<PurchaseProduct>());
-
-            purchaseOrder.Products.Add(new PurchaseProduct(products[0], purchaseOrder));
-            purchaseOrder.Products.Add(new PurchaseProduct(products[1], purchaseOrder));
-            purchaseOrder.Products.Add(new PurchaseProduct(products[2], purchaseOrder));
-
             _context.AddRange(brands);
             _context.AddRange(products);
-            _context.AddRange(purchaseOrder);
+            _context.SaveChanges();
+
+            var user = new ApplicationUser("1", "Luis", "Melero Jareño", "Cueva de Montesinos");
+
+            _context.Add(user); // primero guardar el usuario
+            _context.SaveChanges();
+
+            var paymentMethod = new Bizum(666666666)
+            {
+                User = user 
+            };
+
+            _context.Add(paymentMethod);
+            _context.SaveChanges();
+
+            var purchaseOrder = new PurchaseOrder(
+                "Luis Melero Jareño",
+                user,
+                "Avenida Reyes Catolicos",
+                "Villarrobledo",
+                "02600",
+                new DateTime(2025, 11, 7, 0, 0, 0),
+                paymentMethod,
+                new List<PurchaseProduct>()
+            );
+
+            purchaseOrder.Products.Add(new PurchaseProduct
+            {
+                Product = products[0],
+                ProductId = products[0].ProductId,
+                PurchaseOrder = purchaseOrder,
+                Quantity = 1,
+                Price = products[0].Price
+            });
+
+
+
+            _context.Add(purchaseOrder);
             _context.SaveChanges();
         }
 
@@ -72,8 +100,8 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             var controller = new PurchaseOrdersController(_context, logger);
 
 
-            var expectedPurchaseOrder = new PurchaseOrderDetailDTO(1, DateTime.Now, "Luis", "Melero Jareño",
-                        "Avenida Reyes Catolicos","Villarrobledo", "02600", PurchaseState.Done, 170,
+            var expectedPurchaseOrder = new PurchaseOrderDetailDTO(1, new DateTime(2025, 11, 7, 0, 0, 0), "Luis", "Melero Jareño",
+                        "Avenida Reyes Catolicos","Villarrobledo", "02600",
                         new List<PurchaseProductDTO>());
             expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(1, "Water", "Bezoya", 1, 1));
 
