@@ -27,45 +27,23 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
                 new Product("Hoodie", "For warming yourself", "Red", 69, 100, brands[1]),
                 new Product("Shoes", "For jumping too high", "Red", 100, 50, brands[1]),
             };
-            _context.AddRange(brands);
-            _context.AddRange(products);
-            _context.SaveChanges();
 
             var user = new ApplicationUser("1", "Luis", "Melero Jareño", "Cueva de Montesinos");
-
-            _context.Add(user); // primero guardar el usuario
-            _context.SaveChanges();
 
             var paymentMethod = new Bizum(666666666)
             {
                 User = user 
             };
 
+            var purchaseOrder = new PurchaseOrder("Luis Melero Jareño", user, "Avenida Reyes Catolicos", "Villarrobledo", "02600", new DateTime(2025, 11, 7, 0, 0, 0), paymentMethod, new List<PurchaseProduct>());
+
+            purchaseOrder.Products.Add(new PurchaseProduct(products[0], products[0].ProductId, purchaseOrder, 1, products[0].Price
+            ));
+
+            _context.AddRange(brands);
+            _context.AddRange(products);
+            _context.Add(user);
             _context.Add(paymentMethod);
-            _context.SaveChanges();
-
-            var purchaseOrder = new PurchaseOrder(
-                "Luis Melero Jareño",
-                user,
-                "Avenida Reyes Catolicos",
-                "Villarrobledo",
-                "02600",
-                new DateTime(2025, 11, 7, 0, 0, 0),
-                paymentMethod,
-                new List<PurchaseProduct>()
-            );
-
-            purchaseOrder.Products.Add(new PurchaseProduct
-            {
-                Product = products[0],
-                ProductId = products[0].ProductId,
-                PurchaseOrder = purchaseOrder,
-                Quantity = 1,
-                Price = products[0].Price
-            });
-
-
-
             _context.Add(purchaseOrder);
             _context.SaveChanges();
         }

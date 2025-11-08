@@ -8,10 +8,13 @@ namespace AppForSEII2526.API.Models
     {
         public PurchaseProduct() { }
 
-        public PurchaseProduct(Product product, PurchaseOrder purchaseOrder)
+        public PurchaseProduct(Product product, int productId, PurchaseOrder purchaseOrder, int quantity, decimal price)
         {
             Product = product;
+            ProductId = productId;
             PurchaseOrder = purchaseOrder;
+            Quantity = quantity;
+            Price = price;
         }
 
         public PurchaseProduct(int productId, int purchaseOrderId, decimal price, int quantity)
