@@ -1,4 +1,5 @@
 ﻿using AppForSEII2526.API.Controllers;
+using AppForSEII2526.API.DTOs.ReturnProductDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,33 +56,34 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
         [Trait("Database", "WithoutFixture")]
         public async Task GetReturnPurchaseOrder_returns_order_details()
         {
-            //Arrange: usuario
+            // Arrange
             var logger = new Mock<ILogger<ReturnPurchaseOrderController>>();
             var controller = new ReturnPurchaseOrderController(_context, logger.Object);
+
+            // Expected result igual que el DTO real (sin PaymentMethod)
+            var expected = new ReturnPurchaseOrderDTO(
+                customerName: "Pau",
+                customerFirstSurname: "Femenia",
+                customerAddress: "Campus",
+                customerTelephoneNumber: "666777888",
+                returnedProducts: new List<ReturnedProductDTO>() // vacío
+            );
 
             // Act
             var result = await controller.GetReturnPurchaseOrderDetails(rpo.Id);
 
             // Assert
-            var ok = Assert.IsType<OkObjectResult>(result);
-            var dto = ok.Value!;
-            var t = dto.GetType();
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actual = Assert.IsType<ReturnPurchaseOrderDTO>(okResult.Value);
 
-            // Leemos propiedades por nombre para no depender del namespace/tipo del DTO
-            string customerName = (string)t.GetProperty("CustomerName")!.GetValue(dto)!;
-            string customerFirstSurname = (string)t.GetProperty("CustomerFirstSurname")!.GetValue(dto)!;
-            string customerAddress = (string)t.GetProperty("CustomerAddress")!.GetValue(dto)!;
-            string customerTelephone = (string)t.GetProperty("CustomerTelephoneNumber")!.GetValue(dto)!;
-            var returnedProducts = (System.Collections.IEnumerable)t.GetProperty("ReturnedProducts")!.GetValue(dto)!;
+            // Comprobamos campo a campo
+            Assert.Equal(expected.CustomerName, actual.CustomerName);
+            Assert.Equal(expected.CustomerFirstSurname, actual.CustomerFirstSurname);
+            Assert.Equal(expected.CustomerAddress, actual.CustomerAddress);
+            Assert.Equal(expected.CustomerTelephoneNumber, actual.CustomerTelephoneNumber);
 
-            Assert.Equal("Pau", customerName);
-            Assert.Equal("Femenia", customerFirstSurname);
-            Assert.Equal("Campus", customerAddress);
-            Assert.Equal("666777888", customerTelephone);
-
-            // Como no añadimos líneas en el Arrange, esperamos 0
-            Assert.Empty(returnedProducts.Cast<object>());
-
+            // Lista vacía porque no hay productos devueltos en el Arrange
+            Assert.Empty(actual.ReturnedProducts);
         }
 
         [Fact]
