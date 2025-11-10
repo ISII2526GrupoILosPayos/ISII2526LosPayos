@@ -201,7 +201,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             return allTestCases;
         }
 
-
+        /*
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
         [Trait("Database", "WithoutFixture")]
@@ -244,7 +244,9 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             // Comparamos usando tu override de Equals en PurchaseProductForReturnDTO
             Assert.Equal(expected, actualList);
         }
+        */
 
+        /*
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
         [Trait("Database", "WithoutFixture")]
@@ -272,75 +274,78 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             // esperamos lista vacía
             Assert.Empty(actualList);
         }
+        */
 
 
-        [Fact]
+        [Theory]
+        [MemberData(nameof(TestCasesForGetPurchaseProductForReturningTest))]
         [Trait("LevelTesting", "Unit Testing")]
         [Trait("Database", "WithoutFixture")]
-        public async Task GetPurchasedProductsForReturning_conditions_test()
+        public async Task GetPurchasedProductsForReturning_parametrized_test(string? filterProductName,string userName,int minQuantity
+            ,List<PurchaseProductForReturnDTO> expected)
         {
             // Arrange
             var loggerMock = new Mock<ILogger<PurchaseProductForReturnController>>();
             var controller = new PurchaseProductForReturnController(_context, loggerMock.Object);
 
-            string userName = "pauUser";
-            string? filterProductName = "Zapatilla"; // debería filtrar solo una
-            int minQuantity = 1;
-
             // Act
-            var result = await controller.GetPurchasedProductsForReturning(filterProductName, userName, minQuantity);
+            var result = await controller.GetPurchasedProductsForReturning(
+                filterProductName,
+                userName,
+                minQuantity
+            );
 
             // Assert 1️⃣: Tipo de resultado correcto
             var okResult = Assert.IsType<OkObjectResult>(result);
             var actualList = Assert.IsType<List<PurchaseProductForReturnDTO>>(okResult.Value);
 
-            // Assert 2️⃣: Solo productos retornables y sin ReturnProduct
-            Assert.All(actualList, item =>
+            // Assert 2️⃣: Igualdad con el resultado esperado
+            Assert.Equal(expected, actualList);
+
+            // Assert 3️⃣ (opcional): Validar coherencia mínima en los datos devueltos
+            if (actualList.Count > 0)
             {
-                var entity = _context.PurchaseProducts
-                    .Include(pp => pp.Product)
-                    .Include(pp => pp.ReturnProduct)
-                    .First(pp => pp.Product.ProductId == item.Id);
+                Assert.All(actualList, item =>
+                {
+                    Assert.False(string.IsNullOrWhiteSpace(item.Name));
+                    Assert.False(string.IsNullOrWhiteSpace(item.Brand));
+                    Assert.True(item.Quantity > 0);
+                    Assert.True(item.PurchaseOrderId > 0);
+                });
+            }
+        }
 
-                Assert.True(entity.Product.IsReturnable, $"Product {entity.Product.Name} should be returnable");
-                Assert.Null(entity.ReturnProduct);
-            });
 
-            // Assert 3️⃣: Solo productos del usuario correcto
-            Assert.All(actualList, item =>
-            {
-                var pp = _context.PurchaseProducts
-                    .Include(pp => pp.PurchaseOrder)
-                    .ThenInclude(po => po.ApplicationUser)
-                    .First(pp => pp.ProductId == item.Id);
-                Assert.Equal(userName, pp.PurchaseOrder.ApplicationUser.UserName);
-            });
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetPurchasedProductsForReturning_BadRequest_when_userName_is_null()
+        {
+            // Arrange
+            var mock = new Mock<ILogger<PurchaseProductForReturnController>>();
+            ILogger<PurchaseProductForReturnController> logger = mock.Object;
+            var controller = new PurchaseProductForReturnController(_context, logger);
 
-            // Assert 4️⃣: Se aplica el filtro de nombre
-            Assert.All(actualList, item =>
-            {
-                Assert.Contains("Zapatilla", item.Name, StringComparison.OrdinalIgnoreCase);
-            });
+            string? filterProductName = null;
+            string? userName = null; // ❌ inválido
+            int minQuantity = 0;
 
-            // Assert 5️⃣: Se respeta el filtro de cantidad mínima
-            Assert.All(actualList, item =>
-            {
-                Assert.True(item.Quantity >= minQuantity);
-            });
+            // Act
+            var result = await controller.GetPurchasedProductsForReturning(
+                filterProductName,
+                userName,
+                minQuantity
+            );
 
-            // Assert 6️⃣: Campos del DTO completos y coherentes
-            Assert.All(actualList, item =>
-            {
-                Assert.False(string.IsNullOrEmpty(item.Name));
-                Assert.False(string.IsNullOrEmpty(item.Brand));
-                Assert.False(string.IsNullOrEmpty(item.Location));
-                Assert.True(item.Quantity > 0);
-                Assert.True(item.PurchaseOrderId > 0);
-            });
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var problemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
 
-            // Assert 7️⃣: No contiene productos no retornables o de otros usuarios
-            var productNames = actualList.Select(a => a.Name).ToList();
-            Assert.DoesNotContain("Sudadera Negra", productNames); // no retornable
+            // extraemos el primer mensaje de error del diccionario de errores
+            var problem = problemDetails.Errors.First().Value[0];
+
+            // Comprobamos que el mensaje sea el esperado
+            Assert.Equal("UserName is required.", problem);
         }
 
     }
