@@ -349,6 +349,5 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             Assert.Equal("UserName is required.", message);
         }
 
-
     }
 }
