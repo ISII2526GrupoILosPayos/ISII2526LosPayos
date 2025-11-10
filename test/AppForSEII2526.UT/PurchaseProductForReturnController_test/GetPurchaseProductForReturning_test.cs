@@ -327,13 +327,13 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             var controller = new PurchaseProductForReturnController(_context, logger);
 
             string? filterProductName = null;
-            string? userName = null; // ❌ inválido
+            string? userName = null; // ❌ Caso inválido
             int minQuantity = 0;
 
             // Act
             var result = await controller.GetPurchasedProductsForReturning(
                 filterProductName,
-                userName,
+                userName!,
                 minQuantity
             );
 
@@ -341,12 +341,14 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             var problemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
 
-            // extraemos el primer mensaje de error del diccionario de errores
-            var problem = problemDetails.Errors.First().Value[0];
+            var firstError = problemDetails.Errors.First();
+            var key = firstError.Key;          // "userName"
+            var message = firstError.Value[0]; // "UserName is required."
 
-            // Comprobamos que el mensaje sea el esperado
-            Assert.Equal("UserName is required.", problem);
+            Assert.Equal("userName", key);
+            Assert.Equal("UserName is required.", message);
         }
+
 
     }
 }

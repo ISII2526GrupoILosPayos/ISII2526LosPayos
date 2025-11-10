@@ -28,6 +28,13 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(IList<PurchaseProductForReturnDTO>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult> GetPurchasedProductsForReturning(string? productName, string userName, int quantity)
         {
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                ModelState.AddModelError(nameof(userName), "UserName is required.");
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
             // incluimos Product->Brand y PurchaseOrder->ApplicationUser para poder filtrar por userName
             IList<PurchaseProductForReturnDTO> purchaseProductForReturnDTOs = await _context.PurchaseProducts
                 .Include(pp => pp.Product)
