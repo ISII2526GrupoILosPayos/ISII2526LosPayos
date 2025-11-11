@@ -37,8 +37,8 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
 
             var purchaseOrder = new PurchaseOrder("Luis Melero Jareño", user, "Avenida Reyes Catolicos", "Villarrobledo", "02600", new DateTime(2025, 11, 7, 0, 0, 0), paymentMethod, new List<PurchaseProduct>());
 
-            purchaseOrder.Products.Add(new PurchaseProduct(products[0], products[0].ProductId, purchaseOrder, 1, products[0].Price
-            ));
+            purchaseOrder.Products.Add(new PurchaseProduct(products[0], products[0].ProductId, purchaseOrder, 1, products[0].Price));
+            purchaseOrder.Products.Add(new PurchaseProduct(products[1], products[1].ProductId, purchaseOrder, 1, products[1].Price));
 
             _context.AddRange(brands);
             _context.AddRange(products);
@@ -82,6 +82,7 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
                         "Avenida Reyes Catolicos","Villarrobledo", "02600",
                         new List<PurchaseProductDTO>());
             expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(1, "Water", "Bezoya", 1, 1));
+            expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(2, "Hoodie", "Nike", 1, 69));
 
             // Act 
             var result = await controller.GetPurchaseOrder(1);
