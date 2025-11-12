@@ -1,0 +1,5 @@
+﻿INSERT INTO [dbo].[ReturnProducts] ([ProductId], [PurchaseOrderId], [Id], [Quantity], [Reason], [ReturnOrderId]) VALUES (4, 30, 0, 2, N'Damaged item', 1015)
+INSERT INTO [dbo].[ReturnProducts] ([ProductId], [PurchaseOrderId], [Id], [Quantity], [Reason], [ReturnOrderId]) VALUES (4, 1037, 0, 2, N'string', 1020)
+INSERT INTO [dbo].[ReturnProducts] ([ProductId], [PurchaseOrderId], [Id], [Quantity], [Reason], [ReturnOrderId]) VALUES (5, 30, 1, 2, N'Defective', 16)
+INSERT INTO [dbo].[ReturnProducts] ([ProductId], [PurchaseOrderId], [Id], [Quantity], [Reason], [ReturnOrderId]) VALUES (8, 1036, 2, 2, N'Ugly', 1017)
+INSERT INTO [dbo].[ReturnProducts] ([ProductId], [PurchaseOrderId], [Id], [Quantity], [Reason], [ReturnOrderId]) VALUES (8, 2039, 3, 1, N'Dont Fit', 2019)
