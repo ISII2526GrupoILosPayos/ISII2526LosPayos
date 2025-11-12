@@ -22,12 +22,6 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult> GetPurchaseOrder(int id)
         {
-            if (_context.PurchaseOrders == null)
-            {
-                _logger.LogError("Error: PurchaseOrders table does not exist");
-                return NotFound();
-            }
-
             var purchaseOrder = await _context.PurchaseOrders
                 .Where(po => po.Id == id)
                 .Include(po => po.Products)                 
