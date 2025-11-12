@@ -3,7 +3,17 @@
     public class PurchaseOrder
     {
         public PurchaseOrder() { }
-
+        public PurchaseOrder(string nameSurname, ApplicationUser applicationUser, string street, string city, string postalCode, DateTime date, PaymentMethod paymentMethod, IList<PurchaseProduct> products)
+        {
+            NameSurname = nameSurname;
+            ApplicationUser = applicationUser;
+            Street = street;
+            City = city;
+            PostalCode = postalCode;
+            Date = date;
+            PaymentMethod = paymentMethod;
+            Products = products;
+        }
         public PurchaseOrder(string city, decimal totalPrice, DateTime date, string? description, string nameSurname, string postalCode, string street)
         {
             City = city;
@@ -15,13 +25,13 @@
             Street = street;
         }
 
-        public PurchaseOrder(string city, decimal totalPrice, DateTime date, string? description, string nameSurname, string postalCode, string street, int? rating, PurchaseState state, string applicationUserId)
-            : this(city, totalPrice, date, description, nameSurname, postalCode, street)
-        {
-            Rating = rating;
-            State = state;
-            ApplicationUserId = applicationUserId;
-        }
+        //public PurchaseOrder(string city, decimal totalPrice, DateTime date, string? description, string nameSurname, string postalCode, string street, int? rating, PurchaseState state, string applicationUserId)
+        //    : this(city, totalPrice, date, description, nameSurname, postalCode, street)
+        //{
+        //    Rating = rating;
+        //    State = state;
+        //    ApplicationUserId = applicationUserId;
+        //}
 
         public int Id { get; set; }
 

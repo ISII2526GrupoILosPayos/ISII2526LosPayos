@@ -5,17 +5,7 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
 {
     public class PurchaseOrderDetailDTO
     {
-        public PurchaseOrderDetailDTO(
-            int id,
-            DateTime date,
-            string customerName,
-            string customerSurname,
-            string street,
-            string city,
-            string postalCode,
-            PurchaseState state,
-            decimal totalPrice,
-            IList<PurchaseProductDTO> purchaseProducts)
+        public PurchaseOrderDetailDTO(int id,DateTime date,string customerName,string customerSurname,string street,string city,string postalCode,PurchaseState state,decimal totalPrice,IList<PurchaseProductDTO> purchaseProducts)
         {
             Id = id;
             Date = date;
@@ -28,8 +18,28 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
             TotalPrice = totalPrice;
             PurchaseProducts = purchaseProducts;
         }
+        
+            public PurchaseOrderDetailDTO(
+                int id,
+                DateTime date,
+                string customerName,
+                string customerSurname,
+                string street,
+                string city,
+                string postalCode,
+                IList<PurchaseProductDTO> purchaseProducts)
+            {
+                Id = id;
+                Date = date;
+                CustomerName = customerName;
+                CustomerSurname = customerSurname;
+                Street = street;
+                City = city;
+                PostalCode = postalCode;
+                PurchaseProducts = purchaseProducts;
+            }
 
-        public int Id { get; set; }
+            public int Id { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -55,7 +65,8 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
                    City == dto.City &&
                    PostalCode == dto.PostalCode &&
                    State == dto.State &&
-                   TotalPrice == dto.TotalPrice;
+                   TotalPrice == dto.TotalPrice &&
+                   PurchaseProducts.SequenceEqual(dto.PurchaseProducts);
         }
 
         
