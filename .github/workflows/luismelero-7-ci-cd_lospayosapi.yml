@@ -7,6 +7,9 @@ on:
   push:
     branches:
       - luismelero-7-CI-CD
+#        - development
+#   paths:
+#    - 'src/AppForMovies.API**'
   workflow_dispatch:
 
 jobs:
@@ -14,6 +17,8 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read #This is required for actions/checkout
+    env:
+      API: ./src/AppForMovies.API/AppForMovies.API.csproj
 
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +28,16 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Restore dependencies        
+        run: |  
+          dotnet restore ${{ env.API }} 
+
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: |
+          dotnet build ${{ env.API }}  --configuration Release --no-restore
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish ${{ env.API }}  -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -62,4 +72,5 @@ jobs:
           app-name: 'lospayosapi'
           slot-name: 'Production'
           package: .
+
           
