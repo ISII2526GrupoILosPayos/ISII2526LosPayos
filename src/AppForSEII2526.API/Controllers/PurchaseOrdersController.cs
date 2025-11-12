@@ -57,5 +57,31 @@ namespace AppForSEII2526.API.Controllers
 
             return Ok(purchaseOrder);
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(PurchaseOrderDetailDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
+        public async Task<ActionResult> CreatePurchaseOrder(PurchaseOrderForCreateDTO purchaseForCreate)
+        {
+            if (purchaseForCreate.PurchaseProducts == null || purchaseForCreate.PurchaseProducts.Count == 0)
+                ModelState.AddModelError("PurchaseProducts", "Error! You must include at least one product to be purchased");
+
+            var user = _context.ApplicationUsers.FirstOrDefault(u => u.UserName == purchaseForCreate.CustomerUserName);
+            if (user == null)
+                ModelState.AddModelError("PurchaseApplicationUser", "Error! UserName is not registered");
+
+            if (string.IsNullOrEmpty(purchaseForCreate.NameSurname) ||
+                string.IsNullOrEmpty(purchaseForCreate.Street) ||
+                string.IsNullOrEmpty(purchaseForCreate.City) ||
+                string.IsNullOrEmpty(purchaseForCreate.PostalCode))
+            {
+                ModelState.AddModelError("DeliveryAddress", "Error! All delivery address fields are mandatory (street, city and postal code)");
+            }
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+        }
     }
 }
