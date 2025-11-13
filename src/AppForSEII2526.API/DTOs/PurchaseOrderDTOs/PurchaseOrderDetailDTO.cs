@@ -20,15 +20,7 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
             PurchaseProducts = purchaseProducts;
         }
         
-        public PurchaseOrderDetailDTO(
-            int id,
-            DateTime date,
-            string customerName,
-            string customerSurname,
-            string street,
-            string city,
-            string postalCode,
-            IList<PurchaseProductDTO> purchaseProducts)
+        public PurchaseOrderDetailDTO(int id, DateTime date, string customerName, string customerSurname, string street, string city, string postalCode, IList<PurchaseProductDTO> purchaseProducts)
         {
             Id = id;
             Date = date;
