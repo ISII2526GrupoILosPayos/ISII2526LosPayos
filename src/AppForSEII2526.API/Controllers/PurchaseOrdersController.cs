@@ -82,6 +82,105 @@ namespace AppForSEII2526.API.Controllers
 
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
+
+            var productNames = purchaseForCreate.PurchaseProducts.Select(p => p.Name).ToList();
+
+            var products = _context.Products
+                .Include(p => p.Brand)
+                .Where(p => productNames.Contains(p.Name))
+                .Select(p => new
+                {
+                    p.ProductId,
+                    p.Name,
+                    p.Colour,
+                    p.Price,
+                    p.Brand,
+                    p.Stock
+                })
+                .ToList();
+
+            var paymentMethod = _context.PaymentMethods.FirstOrDefault(pm => pm.Id == purchaseForCreate.PaymentMethodId);
+
+            if (paymentMethod == null)
+            {
+                ModelState.AddModelError("PaymentMethod", "Error! The selected payment method does not exist.");
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
+            PurchaseOrder purchaseOrder = new PurchaseOrder(purchaseForCreate.NameSurname, user, purchaseForCreate.Street, purchaseForCreate.City, purchaseForCreate.PostalCode, DateTime.Today, paymentMethod, new List<PurchaseProduct>());
+
+            purchaseOrder.Rating = purchaseForCreate.Rating ?? 0;
+
+            purchaseOrder.TotalPrice = 0;
+
+            var purchasedProductsDto = new List<PurchaseProductDTO>();
+            foreach (var item in purchaseForCreate.PurchaseProducts)
+            {
+                var product = products.FirstOrDefault(p => p.Name == item.Name);
+
+                if (product == null)
+                {
+                    ModelState.AddModelError("PurchaseProducts", $"Error! Product '{item.Name}' not found.");
+                }
+                else if (item.Quantity > product.Stock)
+                {
+                    ModelState.AddModelError("PurchaseProducts", $"Error! Product '{product.Name}' does not have enough stock (Available: {product.Stock}).");
+                }
+                else
+                {
+                    var purchaseProduct = new PurchaseProduct(product.ProductId, purchaseOrder, product.Price, item.Quantity);
+
+                    purchaseOrder.Products.Add(purchaseProduct);
+
+                    // DTO DE SALIDA CORRECTO
+                    purchasedProductsDto.Add(new PurchaseProductDTO(
+                        product.ProductId,
+                        product.Name,
+                        product.Brand.Name,
+                        item.Quantity,
+                        product.Price
+                    ));
+                }
+            }
+            purchaseOrder.TotalPrice = purchaseOrder.Products
+            .Sum(pp => pp.Price * pp.Quantity);
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            _context.Add(purchaseOrder);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                ModelState.AddModelError("PurchaseOrder", "Error! There was an error while saving your purchase order, please try again later.");
+                return Conflict("Error: " + ex.Message);
+            }
+            
+            var parts = purchaseOrder.NameSurname.Split(' ', 2);
+            var customerName = parts[0];
+            var customerSurname = parts.Length > 1 ? parts[1] : "";
+
+            var purchaseDetail = new PurchaseOrderDetailDTO(
+                purchaseOrder.Id,
+                purchaseOrder.Date,
+                customerName,        // <- ahora bien
+                customerSurname,     // <- ahora bien
+                purchaseOrder.Street,
+                purchaseOrder.City,
+                purchaseOrder.PostalCode,
+                purchaseOrder.TotalPrice,
+                purchaseForCreate.PaymentMethodId,
+                purchasedProductsDto
+            );
+
+
+            return CreatedAtAction("GetPurchaseOrder", new { id = purchaseOrder.Id }, purchaseDetail);
+            
         }
     }
 }

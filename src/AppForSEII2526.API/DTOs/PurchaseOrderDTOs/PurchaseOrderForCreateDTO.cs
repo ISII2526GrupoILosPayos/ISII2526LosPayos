@@ -4,30 +4,30 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
 {
     public class PurchaseOrderForCreateDTO
     {
-        public PurchaseOrderForCreateDTO(
-            string customerUserName,
-            string nameSurname,
-            string street,
-            string city,
-            string postalCode,
-            PaymentMethod paymentMethod,
-            IList<PurchaseProductDTO> purchaseProducts)
-        {
-            CustomerUserName = customerUserName ?? throw new ArgumentNullException(nameof(customerUserName));
-            NameSurname = nameSurname ?? throw new ArgumentNullException(nameof(nameSurname));
-            Street = street ?? throw new ArgumentNullException(nameof(street));
-            City = city ?? throw new ArgumentNullException(nameof(city));
-            PostalCode = postalCode ?? throw new ArgumentNullException(nameof(postalCode));
-            PaymentMethod = paymentMethod;
-            PurchaseProducts = purchaseProducts ?? throw new ArgumentNullException(nameof(purchaseProducts));
-        }
+        //public PurchaseOrderForCreateDTO(
+        //    string customerUserName,
+        //    string nameSurname,
+        //    string street,
+        //    string city,
+        //    string postalCode,
+        //    PaymentMethod paymentMethod,
+        //    IList<PurchaseProductDTO> purchaseProducts)
+        //{
+        //    CustomerUserName = customerUserName ?? throw new ArgumentNullException(nameof(customerUserName));
+        //    NameSurname = nameSurname ?? throw new ArgumentNullException(nameof(nameSurname));
+        //    Street = street ?? throw new ArgumentNullException(nameof(street));
+        //    City = city ?? throw new ArgumentNullException(nameof(city));
+        //    PostalCode = postalCode ?? throw new ArgumentNullException(nameof(postalCode));
+        //    PaymentMethod = paymentMethod;
+        //    PurchaseProducts = purchaseProducts ?? throw new ArgumentNullException(nameof(purchaseProducts));
+        //}
 
         public PurchaseOrderForCreateDTO()
         {
-            PurchaseProducts = new List<PurchaseProductDTO>();
+            PurchaseProducts = new List<PurchaseProductForCreateDTO>();
         }
 
-        [EmailAddress]
+        
         [Required]
         public string CustomerUserName { get; set; }
 
@@ -48,20 +48,13 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
         public string PostalCode { get; set; }
 
         [Required]
-        public PaymentMethod PaymentMethod { get; set; }
+        public int PaymentMethodId { get; set; }
 
         [Required]
-        public IList<PurchaseProductDTO> PurchaseProducts { get; set; }
+        public IList<PurchaseProductForCreateDTO> PurchaseProducts { get; set; }
 
-        [Display(Name = "Total Price")]
-        [JsonPropertyName("TotalPrice")]
-        public double TotalPrice
-        {
-            get
-            {
-                return PurchaseProducts?.Sum(p => (double)p.Price * p.Quantity) ?? 0.0;
-            }
-        }
+        [Range(0, 5)]
+        public int? Rating { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -71,9 +64,9 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
                    Street == dto.Street &&
                    City == dto.City &&
                    PostalCode == dto.PostalCode &&
-                   PaymentMethod == dto.PaymentMethod &&
+                   PaymentMethodId == dto.PaymentMethodId &&
                    PurchaseProducts.SequenceEqual(dto.PurchaseProducts) &&
-                   TotalPrice == dto.TotalPrice;
+                   Rating == dto.Rating;
         }
     }
 }

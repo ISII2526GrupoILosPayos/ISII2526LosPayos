@@ -25,6 +25,14 @@ namespace AppForSEII2526.API.Models
             Quantity = quantity;
         }
 
+        public PurchaseProduct(int productId, PurchaseOrder purchaseOrder, decimal price, int quantity)
+        {
+            ProductId = productId;
+            PurchaseOrder = purchaseOrder;
+            Price = price;
+            Quantity = quantity;
+        }
+
         [Required]
         public int ProductId { get; set; }
        
