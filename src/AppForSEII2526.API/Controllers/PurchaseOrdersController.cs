@@ -27,7 +27,8 @@ namespace AppForSEII2526.API.Controllers
                 .Include(po => po.Products)                 
                     .ThenInclude(pp => pp.Product)          // Join con Product
                         .ThenInclude(p => p.Brand)          // Join con Brand
-                .Include(po => po.ApplicationUser)          
+                .Include(po => po.ApplicationUser)
+                .Include(po => po.PaymentMethod)
                 .Select(po => new PurchaseOrderDetailDTO(
                     po.Id,
                     po.Date,
@@ -38,6 +39,7 @@ namespace AppForSEII2526.API.Controllers
                     po.PostalCode,
                     po.State,
                     po.TotalPrice,
+                    po.PaymentMethod.GetType().Name,
                     po.Products
                         .Select(pp => new PurchaseProductDTO(
                             pp.Product.ProductId,

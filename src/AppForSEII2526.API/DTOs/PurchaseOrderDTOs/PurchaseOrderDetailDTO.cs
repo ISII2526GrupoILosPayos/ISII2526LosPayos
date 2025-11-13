@@ -5,7 +5,7 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
 {
     public class PurchaseOrderDetailDTO
     {
-        public PurchaseOrderDetailDTO(int id,DateTime date,string customerName,string customerSurname,string street,string city,string postalCode,PurchaseState state,decimal totalPrice,IList<PurchaseProductDTO> purchaseProducts)
+        public PurchaseOrderDetailDTO(int id,DateTime date,string customerName,string customerSurname,string street,string city,string postalCode,PurchaseState state,decimal totalPrice, string paymentMethodName, IList<PurchaseProductDTO> purchaseProducts)
         {
             Id = id;
             Date = date;
@@ -16,6 +16,7 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
             PostalCode = postalCode;
             State = state;
             TotalPrice = totalPrice;
+            PaymentMethodName = paymentMethodName;
             PurchaseProducts = purchaseProducts;
         }
         
