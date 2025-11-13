@@ -134,7 +134,6 @@ namespace AppForSEII2526.API.Controllers
 
                     purchaseOrder.Products.Add(purchaseProduct);
 
-                    // DTO DE SALIDA CORRECTO
                     purchasedProductsDto.Add(new PurchaseProductDTO(
                         product.ProductId,
                         product.Name,
@@ -170,8 +169,8 @@ namespace AppForSEII2526.API.Controllers
             var purchaseDetail = new PurchaseOrderDetailDTO(
                 purchaseOrder.Id,
                 purchaseOrder.Date,
-                customerName,        // <- ahora bien
-                customerSurname,     // <- ahora bien
+                customerName,
+                customerSurname,     
                 purchaseOrder.Street,
                 purchaseOrder.City,
                 purchaseOrder.PostalCode,
