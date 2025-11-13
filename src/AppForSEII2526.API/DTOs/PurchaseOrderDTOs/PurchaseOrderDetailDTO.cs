@@ -39,7 +39,7 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
             PurchaseProducts = purchaseProducts;
         }
 
-        public PurchaseOrderDetailDTO(int id, DateTime date, string customerName, string customerSurname, string street, string city, string postalCode, decimal totalPrice, int paymentMethodId, IList<PurchaseProductDTO> purchaseProducts)
+        public PurchaseOrderDetailDTO(int id, DateTime date, string customerName, string customerSurname, string street, string city, string postalCode, decimal totalPrice, string paymentMethodName, IList<PurchaseProductDTO> purchaseProducts)
         {
             Id = id;
             Date = date;
@@ -49,7 +49,7 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
             City = city;
             PostalCode = postalCode;
             TotalPrice = totalPrice;
-            PaymentMethodId = paymentMethodId;
+            PaymentMethodName = paymentMethodName;
             PurchaseProducts = purchaseProducts;
         }
 
@@ -67,8 +67,9 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
         public decimal TotalPrice { get; set; }
 
         public IList<PurchaseProductDTO> PurchaseProducts { get; set; }
-        public string NameSurname { get; }
-        public int PaymentMethodId { get; }
+        //public string NameSurname { get; }
+        public string PaymentMethodName { get; set; }
+
 
         public override bool Equals(object? obj)
         {

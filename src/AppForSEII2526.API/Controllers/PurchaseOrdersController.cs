@@ -174,7 +174,7 @@ namespace AppForSEII2526.API.Controllers
                 purchaseOrder.City,
                 purchaseOrder.PostalCode,
                 purchaseOrder.TotalPrice,
-                purchaseForCreate.PaymentMethodId,
+                purchaseOrder.PaymentMethod.GetType().Name,
                 purchasedProductsDto
             );
 
