@@ -4,167 +4,185 @@ using AppForSEII2526.UT;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
 
-public class GetUsers_test : AppForSEII25264SqliteUT
+namespace AppForSEII2526.UT.UsersController_test
 {
-    public GetUsers_test()
+    public class GetUsers_test : AppForSEII25264SqliteUT
     {
-        var complaintTypes = new List<ComplaintType>()
+        public GetUsers_test()
         {
-            new ComplaintType() { Id = 1, Name = "Queja" },
-            new ComplaintType() { Id = 2, Name = "Denuncia" },
-            new ComplaintType() { Id = 3, Name = "Mejora" }
-        };
+            var complaintTypes = new List<ComplaintType>()
+            {
+                new ComplaintType() { Id = 1, Name = "Queja" },
+                new ComplaintType() { Id = 2, Name = "Denuncia" },
+                new ComplaintType() { Id = 3, Name = "Mejora" }
+            };
 
-        var users = new List<ApplicationUser>()
+            var users = new List<ApplicationUser>()
+            {
+                new ApplicationUser
+                {
+                    Id = "1",
+                    Name = "Pau",
+                    Surname = "Femenia",
+                    Address = "Campus",
+                    AccountCreationDate = new DateTime(2004, 11, 12)
+                },
+                new ApplicationUser
+                {
+                    Id = "2",
+                    Name = "Kylian",
+                    Surname = "Mbappe",
+                    Address = "La Finca",
+                    AccountCreationDate = new DateTime(2025, 10, 10)
+                }
+            };
+
+            var complaints = new List<Complaint>()
+            {
+                new Complaint
+                {
+                    Id = 3,
+                    Description = "Hola",
+                    ComplaintDate = new DateTime(2025, 10, 26),
+                    Processed = false,
+                    Customer = users[0],          // u1
+                    Type = complaintTypes[0]      // ct1
+                },
+                new Complaint
+                {
+                    Id = 6,
+                    Description = "Adios",
+                    ComplaintDate = new DateTime(2024, 10, 25),
+                    Processed = false,
+                    Customer = users[0],          // u1
+                    Type = complaintTypes[1]      // ct2
+                },
+                new Complaint
+                {
+                    Id = 8,
+                    Description = "hasta",
+                    ComplaintDate = new DateTime(2000, 01, 01),
+                    Processed = true,
+                    Customer = users[0],          // u1
+                    Type = complaintTypes[0]      // ct1
+                },
+                new Complaint
+                {
+                    Id = 9,
+                    Description = "Luego",
+                    ComplaintDate = new DateTime(2001, 01, 01),
+                    Processed = false,
+                    Customer = users[0],          // u1
+                    Type = complaintTypes[0]      // ct1
+                }
+            };
+
+
+
+            _context.ComplaintTypes.AddRange(complaintTypes);
+            _context.ApplicationUsers.AddRange(users);
+            _context.Complaints.AddRange(complaints);
+            _context.SaveChanges();
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetUsers_null_surname_type()
         {
-            new ApplicationUser
+            var complaintTypeDTOs = new List<ComplaintTypeDTO>()
             {
-                Id = "1",
-                Name = "Pau",
-                Surname = "Femenia",
-                Address = "Campus",
-                AccountCreationDate = new DateTime(2004, 11, 12)
-            },
-            new ApplicationUser
-            {
-                Id = "2",
-                Name = "Kylian",
-                Surname = "Mbappe",
-                Address = "La Finca",
-                AccountCreationDate = new DateTime(2025, 10, 10)
-            }
-        };
+                new ComplaintTypeDTO("Denuncia", 1),
+                new ComplaintTypeDTO("Queja", 2)
+            };
 
-        var complaints = new List<Complaint>()
+
+            var expectedResults = new List<UserForBanDTO> {
+                new UserForBanDTO(
+                 id: "1",
+                 name: "Pau",
+                 surname: "Femenia",
+                 accountCreationDate: new DateTime(2004, 11, 12),
+                 complaintTypes: complaintTypeDTOs
+                 )
+             };
+
+            var mock = new Mock<ILogger<UsersController>>();
+            ILogger<UsersController> logger = mock.Object;
+            UsersController controller = new UsersController(_context, logger);
+
+            var result = await controller.GetUsers(null, null);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var usersActual = Assert.IsType<List<UserForBanDTO>>(okResult.Value);
+            Assert.Equal(expectedResults, usersActual);
+        }
+
+        public static IEnumerable<object[]> TestCasesFor_GetUsersForBan_OK()
         {
-            new Complaint
+            var userDTOs = new List<UserForBanDTO>()
             {
-                Id = 3,
-                Description = "Hola",
-                ComplaintDate = new DateTime(2025, 10, 26),
-                Processed = false,
-                Customer = users[0],          // u1
-                Type = complaintTypes[0]      // ct1
-            },
-            new Complaint
+                new UserForBanDTO(
+                    id: "1",
+                    name: "Pau",
+                    surname: "Femenia",
+                    accountCreationDate: new DateTime(2004, 11, 12),
+                    complaintTypes: new List<ComplaintTypeDTO>()
+                    {
+                        new ComplaintTypeDTO("Denuncia", 1),
+                        new ComplaintTypeDTO("Queja", 2)
+                    }
+                ),
+                new UserForBanDTO(
+                    id: "1",
+                    name: "Pau",
+                    surname: "Femenia",
+                    accountCreationDate: new DateTime(2004, 11, 12),
+                    complaintTypes: new List<ComplaintTypeDTO>()
+                    {
+                        new ComplaintTypeDTO("Queja", 2)
+                    }
+                ),
+                new UserForBanDTO(
+                    id: "1",
+                    name: "Pau",
+                    surname: "Femenia",
+                    accountCreationDate: new DateTime(2004, 11, 12),
+                    complaintTypes: new List<ComplaintTypeDTO>()
+                    {
+                        new ComplaintTypeDTO("Denuncia", 1)
+                    }
+                )
+            };
+            var allTests = new List<object[]>
             {
-                Id = 6,
-                Description = "Adios",
-                ComplaintDate = new DateTime(2024, 10, 25),
-                Processed = false,
-                Customer = users[0],          // u1
-                Type = complaintTypes[1]      // ct2
-            },
-            new Complaint
-            {
-                Id = 8,
-                Description = "hasta",
-                ComplaintDate = new DateTime(2000, 01, 01),
-                Processed = true,
-                Customer = users[0],          // u1
-                Type = complaintTypes[0]      // ct1
-            },
-            new Complaint
-            {
-                Id = 9,
-                Description = "Luego",
-                ComplaintDate = new DateTime(2001, 01, 01),
-                Processed = false,
-                Customer = users[0],          // u1
-                Type = complaintTypes[0]      // ct1
-            }
-        };
+                new object[] { "Femen", null, new List<UserForBanDTO> { userDTOs[0] } },
+                new object[] { null, "Queja", new List<UserForBanDTO> { userDTOs[1] } },
+                new object[] { "Femen", "Denuncia", new List<UserForBanDTO> { userDTOs[2] } },
+                new object[] { null, null, new List<UserForBanDTO> { userDTOs[0] } },
+                new object[] { "Mbapp", null, new List<UserForBanDTO>() }
+            };  
+            return allTests;
+        }
 
-
-
-        _context.ComplaintTypes.AddRange(complaintTypes);
-        _context.ApplicationUsers.AddRange(users);
-        _context.Complaints.AddRange(complaints);
-        _context.SaveChanges();
-    }
-
-    [Fact]
-    [Trait("LevelTesting", "Unit Testing")]
-    public async Task GetUsers_null_surname_type()
-    {
-        var complaintTypeDTOs = new List<ComplaintTypeDTO>()
+        [Theory]
+        [MemberData(nameof(TestCasesFor_GetUsersForBan_OK))]
+        [Trait("LevelTesting", "Unit Testing")]
+        public async Task GetUsersForBan_OK_test(string? surname, string? type, List<UserForBanDTO> expectedUsers)
         {
-            new ComplaintTypeDTO("Denuncia", 1),
-            new ComplaintTypeDTO("Queja", 2)
-        };
+            // Arrange
+            var controller = new UsersController(_context, null);
 
+            // Act
+            var result = await controller.GetUsers(surname, type);
 
-        var expectedResults = new List<UserForBanDTO> {
-            new UserForBanDTO(
-             id: "1",
-             name: "Pau",
-             surname: "Femenia",
-             accountCreationDate: new DateTime(2004, 11, 12),
-             complaintTypes: complaintTypeDTOs
-             )
-         };
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
 
-        var mock = new Mock<ILogger<UsersController>>();
-        ILogger<UsersController> logger = mock.Object;
-        UsersController controller = new UsersController(_context, logger);
+            var usersActual = Assert.IsType<List<UserForBanDTO>>(okResult.Value);
 
-        var result = await controller.GetUsers(null, null);
-
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var usersActual = Assert.IsType<List<UserForBanDTO>>(okResult.Value);
-        Assert.Equal(expectedResults, usersActual);
-    }
-
-    public static IEnumerable<object[]> TestCasesFor_GetUsers_OK()
-    {
-        return new List<object[]>
-        {
-            // surname = null, type = null  → 1 usuario (Pau)
-            new object[] { null, null, 1 },
-
-            // surname = "Femenia" → Pau → 1
-            new object[] { "Femenia", null, 1 },
-
-            // surname = "Mbappe" → Mbappé no tiene complaints → 0
-            new object[] { "Mbappe", null, 0 },
-
-            // complaintType = "Queja" → Pau tiene 2 quejas (pero 1 usuario) → 1
-            new object[] { null, "Queja", 1 },
-
-            // complaintType = "Denuncia" → Pau tiene 1 → 1
-            new object[] { null, "Denuncia", 1 },
-
-            // complaintType = "Mejora" → no hay ninguna sin procesar → 0
-            new object[] { null, "Mejora", 0 },
-
-            // surname = "Femenia", type = "Queja" → 1
-            new object[] { "Femenia", "Queja", 1 },
-
-            // surname = "Femenia", type = "XXXXX" → 0
-            new object[] { "Femenia", "XXXXX", 0 },
-
-            // surname = "" (vacío) → Contains("") = true → Pau tiene complaints válidas → 1
-            new object[] { "", null, 1 }
-        };
-    }
-
-    // ---------------------------------------------------------------------
-
-    [Theory]
-    [MemberData(nameof(TestCasesFor_GetUsers_OK))]
-    [Trait("LevelTesting", "Unit Testing")]
-    public async Task GetUsers_OK_test(string? surname, string? complaintType, int expectedCount)
-    {
-        var controller = new UsersController(_context, null);
-
-        var result = await controller.GetUsers(surname, complaintType);
-
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var actual = Assert.IsType<List<UserForBanDTO>>(okResult.Value);
-
-        Assert.Equal(expectedCount, actual.Count);
+            // Igual que en el ejemplo de la profesora, pero con comparación profunda real
+            Assert.Equal(expectedUsers, usersActual);
+        }
     }
 }
