@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
+namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
 {
-    // DTO principal devuelto por el caso de uso:
-    // "The system shows the returning process performed..."
     public class ReturnPurchaseOrderDTO
     {
         public ReturnPurchaseOrderDTO(
@@ -11,24 +9,28 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
             string customerFirstSurname,
             string customerAddress,
             string customerTelephoneNumber,
-            IList<ReturnedProductDTO> returnedProducts)
+            IList<ReturnedProductDTO> returnedProducts,
+            string returningOptionSelected)
         {
             CustomerName = customerName;
             CustomerFirstSurname = customerFirstSurname;
             CustomerAddress = customerAddress;
             CustomerTelephoneNumber = customerTelephoneNumber;
             ReturnedProducts = returnedProducts;
+            ReturningOptionSelected = returningOptionSelected;
         }
 
         // Datos del cliente
-        public string CustomerName { get; set; }              // Name
-        public string CustomerFirstSurname { get; set; }      // First Surname
-        // Second Surname no se incluye porque no está en el modelo actual
-        public string CustomerAddress { get; set; }           // Address
-        public string CustomerTelephoneNumber { get; set; }   // Telephone number
+        public string CustomerName { get; set; }
+        public string CustomerFirstSurname { get; set; }
+        public string CustomerAddress { get; set; }
+        public string CustomerTelephoneNumber { get; set; }
 
-        // Información de los productos devueltos
+        // Productos devueltos
         public IList<ReturnedProductDTO> ReturnedProducts { get; set; }
+
+        // Opción de devolución seleccionada
+        public string ReturningOptionSelected { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -37,12 +39,13 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
                    CustomerFirstSurname == dTO.CustomerFirstSurname &&
                    CustomerAddress == dTO.CustomerAddress &&
                    CustomerTelephoneNumber == dTO.CustomerTelephoneNumber &&
-                   ReturnedProducts.SequenceEqual(dTO.ReturnedProducts);
+                   EqualityComparer<IList<ReturnedProductDTO>>.Default.Equals(ReturnedProducts, dTO.ReturnedProducts) &&
+                   ReturningOptionSelected == dTO.ReturningOptionSelected;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(CustomerName, CustomerFirstSurname, CustomerAddress, CustomerTelephoneNumber, ReturnedProducts);
+            return HashCode.Combine(CustomerName, CustomerFirstSurname, CustomerAddress, CustomerTelephoneNumber, ReturnedProducts, ReturningOptionSelected);
         }
     }
 }
