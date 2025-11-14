@@ -69,7 +69,6 @@ namespace AppForSEII2526.UT.BanReportController_test
                     Type = complaintTypes[1]
                 },
 
-                // Usuario 2: una queja sin procesar
                 new Complaint
                 {
                     Id = 3,
@@ -80,7 +79,6 @@ namespace AppForSEII2526.UT.BanReportController_test
                     Type = complaintTypes[0]
                 },
 
-                // Usuario 3: una queja que no debe verse afectada por el informe
                 new Complaint
                 {
                     Id = 4,
@@ -92,7 +90,6 @@ namespace AppForSEII2526.UT.BanReportController_test
                 }
             };
 
-            // BanReport
             var report = new BanReport
             {
                 Id = _existingReportId,
@@ -100,10 +97,9 @@ namespace AppForSEII2526.UT.BanReportController_test
                 DetailedDescription = "Varias quejas relacionadas con el uso inadecuado de la plataforma por parte de los clientes.",
                 StartDate = new DateTime(2025, 10, 01),
                 EndDate = new DateTime(2025, 12, 31),
-                ReportCustomers = new List<ReportCustomer>() // se rellena justo después
+                ReportCustomers = new List<ReportCustomer>()
             };
 
-            // ReportCustomers que forman parte del informe
             var reportCustomers = new List<ReportCustomer>()
             {
                 new ReportCustomer
@@ -113,7 +109,7 @@ namespace AppForSEII2526.UT.BanReportController_test
                     CustomerId = users[0].Id,
                     Customer = users[0],
                     Message = "Comportamiento inadecuado en varias ocasiones.",
-                    State = ReportState.Completed   // valor inicial que debe cambiar a InProgress
+                    State = ReportState.Completed   
                 },
                 new ReportCustomer
                 {
@@ -122,13 +118,12 @@ namespace AppForSEII2526.UT.BanReportController_test
                     CustomerId = users[1].Id,
                     Customer = users[1],
                     Message = "Comentarios ofensivos hacia otros clientes.",
-                    State = ReportState.Completed   // valor inicial que debe cambiar a InProgress
+                    State = ReportState.Completed   
                 }
             };
 
             report.ReportCustomers = reportCustomers;
 
-            // Seed en el contexto
             _context.ComplaintTypes.AddRange(complaintTypes);
             _context.ApplicationUsers.AddRange(users);
             _context.Complaints.AddRange(complaints);
