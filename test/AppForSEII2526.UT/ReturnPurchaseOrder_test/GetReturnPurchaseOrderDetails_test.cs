@@ -1,25 +1,19 @@
-﻿using System;
+﻿using AppForSEII2526.API.Controllers;
+using AppForSEII2526.API.DTOs.ReturnProductDTOs;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Xunit;
-
-using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
 {
     public class GetReturnPurchaseOrderDetails_test : AppForSEII25264SqliteUT
     {
-        [Fact]
-        [Trait("LevelTesting", "Unit Testing")]
-        [Trait("Database", "WithoutFixture")]
-        public async Task GetReturnPurchaseOrder_returns_order_details()
+        private ReturnPurchaseOrder rpo; // <-- Añade este campo Asi se debe poner para usar en el fact
+
+        public GetReturnPurchaseOrderDetails_test()
         {
-            // Arrange: usuario
             var user = new ApplicationUser
             {
                 Id = "U1",
@@ -31,22 +25,16 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 PhoneNumber = "666777888",
                 AccountCreationDate = DateTime.Now
             };
-            _context.ApplicationUsers.Add(user);
-            _context.SaveChanges();
 
-            // Método de pago (usa navegación, no UserId)
             var pm = new PayPal
             {
                 User = user,
                 Email = "paypal-pau@example.com"
             };
-            _context.PaymentMethods.Add(pm);
-            _context.SaveChanges();
 
-            // Cabecera de devolución (usa navegación, no PaymentMethodId)
-            var rpo = new ReturnPurchaseOrder
+            rpo = new ReturnPurchaseOrder // <-- Asigna a la variable de clase
             {
-                Name = "Devolucion_Prueba", // ajusta si tienes [StringLength]
+                Name = "Devolucion_Prueba",
                 TotalPrice = 100m,
                 NewTotalPrice = 90m,
                 MoneyToReturn = 10m,
@@ -55,34 +43,44 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 CustomerId = user.Id,
                 PaymentMethod = pm
             };
+
+            _context.ApplicationUsers.Add(user);
+            _context.PaymentMethods.Add(pm);
             _context.ReturnPurchaseOrders.Add(rpo);
             _context.SaveChanges();
+        }
 
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task GetReturnPurchaseOrder_returns_order_details()
+        {
+            // Arrange
             var logger = new Mock<ILogger<ReturnPurchaseOrderController>>();
             var controller = new ReturnPurchaseOrderController(_context, logger.Object);
 
+            // Expected result igual que el DTO real (sin PaymentMethod)
+            var expected = new ReturnPurchaseOrderDTO(
+                customerName: "Pau",
+                customerFirstSurname: "Femenia",
+                customerAddress: "Campus",
+                customerTelephoneNumber: "666777888",
+                returnedProducts: new List<ReturnedProductDTO>() // vacío
+            );
+
             // Act
-            var result = await controller.GetReturnPurchaseOrderDetails(rpo.Id);
+            var result = await controller.GetReturnPurchaseOrderDetails(rpo.Id);//Lo hacemos asi para hacerlo con un fact en vez de tener que pasarle parametros y hacer un THEORY(EN SU EJEMPLO NO TIENE THEORI ES DETAILS)
 
             // Assert
-            var ok = Assert.IsType<OkObjectResult>(result);
-            var dto = ok.Value!;
-            var t = dto.GetType();
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var actual = Assert.IsType<ReturnPurchaseOrderDTO>(okResult.Value);
 
-            // Leemos propiedades por nombre para no depender del namespace/tipo del DTO
-            string customerName = (string)t.GetProperty("CustomerName")!.GetValue(dto)!;
-            string customerFirstSurname = (string)t.GetProperty("CustomerFirstSurname")!.GetValue(dto)!;
-            string customerAddress = (string)t.GetProperty("CustomerAddress")!.GetValue(dto)!;
-            string customerTelephone = (string)t.GetProperty("CustomerTelephoneNumber")!.GetValue(dto)!;
-            var returnedProducts = (System.Collections.IEnumerable)t.GetProperty("ReturnedProducts")!.GetValue(dto)!;
+            // Comprobamos campo a campo
+            Assert.Equal(expected,actual);
 
-            Assert.Equal("Pau", customerName);
-            Assert.Equal("Femenia", customerFirstSurname);
-            Assert.Equal("Campus", customerAddress);
-            Assert.Equal("666777888", customerTelephone);
-
-            // Como no añadimos líneas en el Arrange, esperamos 0
-            Assert.Empty(returnedProducts.Cast<object>());
+            // Lista vacía porque no hay productos devueltos en el Arrange
+            Assert.Empty(actual.ReturnedProducts);
         }
 
         [Fact]
@@ -98,5 +96,9 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
             var notFound = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Contains("No return purchase order found", notFound.Value?.ToString());
         }
+
+
+
+
     }
 }

@@ -37,7 +37,7 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
                    CustomerFirstSurname == dTO.CustomerFirstSurname &&
                    CustomerAddress == dTO.CustomerAddress &&
                    CustomerTelephoneNumber == dTO.CustomerTelephoneNumber &&
-                   EqualityComparer<IList<ReturnedProductDTO>>.Default.Equals(ReturnedProducts, dTO.ReturnedProducts);
+                   ReturnedProducts.SequenceEqual(dTO.ReturnedProducts);
         }
 
         public override int GetHashCode()
