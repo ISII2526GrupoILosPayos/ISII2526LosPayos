@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AppForMovies.UT;
 using AppForSEII2526.API.DTOs.PurchaseOrderDTOs;
 using Humanizer.Localisation;
+using AppForSEII2526.API.Models;
 
 namespace AppForSEII2526.UT.PurchaseOrdersController_test
 {
@@ -36,7 +37,7 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             var products = new List<Product>()
             {
                 new Product(_product1Name, "For hydratate yourself", "Blue", 1, 100, brands[0]),
-                new Product(_product1Name, "For warming yourself", "Red", 69, 100, brands[1]),
+                new Product(_product2Name, "For warming yourself", "Red", 69, 100, brands[1]),
             };
 
             ApplicationUser user = new ApplicationUser("1", "Luis", "Melero Jareño", _street);
@@ -57,6 +58,96 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             _context.Add(paymentMethod);
             _context.Add(purchaseOrder);
             _context.SaveChanges();
+        }
+
+        public static IEnumerable<object[]> TestCasesFor_CreatePurchaseOrder()
+        {
+            var purchaseNoProducts = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 1, new List<PurchaseProductForCreateDTO>());
+
+            var purchaseProducts = new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO(_product2Name, 1) };
+
+            var purchaseUserNotFound = new PurchaseOrderForCreateDTO("paco@gmail.com", _customerNameSurname, _street, _city, _postalCode, 1, purchaseProducts);
+
+            var purchaseMissingStreetField = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, "", _city, _postalCode, 1, purchaseProducts);
+
+            var purchasePaymentMethodNotFound = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 27, purchaseProducts);
+
+            var purchaseProductNotFound = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 1, new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO { Name = "Fantasma", Quantity = 1 } });
+
+            var purchaseNotEnoughStock = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 1, new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO { Name = _product1Name, Quantity = 500 } });
+
+            var allTests = new List<object[]>
+            {
+                new object[] { purchaseNoProducts, "Error! You must include at least one product to be purchased" },
+                new object[] { purchaseUserNotFound, "Error! UserName is not registered" },
+                new object[] { purchaseMissingStreetField, "Error! All delivery address fields are mandatory (street, city and postal code)" },
+                new object[] { purchasePaymentMethodNotFound, "Error! The selected payment method does not exist." },
+                new object[] { purchaseProductNotFound, "Error! Product 'Fantasma' not found." },
+                new object[] { purchaseNotEnoughStock, "Error! Product 'Water' does not have enough stock (Available: 100)." }
+            };
+
+            return allTests;
+        }
+
+        [Theory]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        [MemberData(nameof(TestCasesFor_CreatePurchaseOrder))]
+        public async Task CreatePurchaseOrder_Error_test(PurchaseOrderForCreateDTO purchaseOrderDTO, string errorExpected)
+        {
+            // Arrange
+            var mock = new Mock<ILogger<PurchaseOrdersController>>();
+            ILogger<PurchaseOrdersController> logger = mock.Object;
+
+            var controller = new PurchaseOrdersController(_context, logger);
+
+            // Act
+            var result = await controller.CreatePurchaseOrder(purchaseOrderDTO);
+
+            //Assert
+            //we check that the response type is BadRequest and obtain the error returned
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            var problemDetails = Assert.IsType<ValidationProblemDetails>(badRequestResult.Value);
+
+            var errorActual = problemDetails.Errors.First().Value[0];
+
+            //we check that the expected error message and actual are the same
+            Assert.StartsWith(errorExpected, errorActual);
+
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
+        public async Task CreatePurchaseOrderl_Success_test()
+        {
+            // Arrange
+            var mock = new Mock<ILogger<PurchaseOrdersController>>();
+            ILogger<PurchaseOrdersController> logger = mock.Object;
+
+            var controller = new PurchaseOrdersController(_context, logger);
+
+            DateTime to = DateTime.Today.AddDays(6);
+            DateTime from = DateTime.Today.AddDays(7);
+
+            var purchaseOrderDTO = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 1, new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO { Name = _product1Name, Quantity = 1 } });
+
+            var nameParts = _customerNameSurname.Split(' ', 2);
+            var expectedName = nameParts[0];
+            var expectedSurname = nameParts.Length > 1 ? nameParts[1] : "";
+
+            var expectedrentalDetailDTO = new PurchaseOrderDetailDTO(1, DateTime.Now, expectedName, expectedSurname, _street, _city, _postalCode, 1 * 1, "Bizum", new List<PurchaseProductDTO>() { new PurchaseProductDTO(1, _product1Name, _product1Brand, 1, 1)});
+
+            // Act
+            var result = await controller.CreatePurchaseOrder(purchaseOrderDTO);
+
+            //Assert
+            //we check that the response type is BadRequest and obtain the error returned
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            var actualRentalDetailDTO = Assert.IsType<PurchaseOrderDetailDTO>(createdResult.Value);
+
+            Assert.Equal(expectedrentalDetailDTO, actualRentalDetailDTO);
+
         }
     }
 }
