@@ -1,5 +1,6 @@
 ﻿using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs.ReturnProductDTOs;
+using AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +67,8 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 customerFirstSurname: "Femenia",
                 customerAddress: "Campus",
                 customerTelephoneNumber: "666777888",
-                returnedProducts: new List<ReturnedProductDTO>() // vacío
+                returnedProducts: new List<ReturnedProductDTO>(), // vacío
+                returningOptionSelected: "PayPal"
             );
 
             // Act
