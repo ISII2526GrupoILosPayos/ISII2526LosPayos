@@ -39,7 +39,7 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
                    CustomerFirstSurname == dTO.CustomerFirstSurname &&
                    CustomerAddress == dTO.CustomerAddress &&
                    CustomerTelephoneNumber == dTO.CustomerTelephoneNumber &&
-                   EqualityComparer<IList<ReturnedProductDTO>>.Default.Equals(ReturnedProducts, dTO.ReturnedProducts) &&
+                   ReturnedProducts.SequenceEqual(dTO.ReturnedProducts)&&
                    ReturningOptionSelected == dTO.ReturningOptionSelected;
         }
 
