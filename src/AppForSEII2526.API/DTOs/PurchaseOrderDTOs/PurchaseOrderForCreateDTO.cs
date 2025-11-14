@@ -4,23 +4,23 @@ namespace AppForSEII2526.API.DTOs.PurchaseOrderDTOs
 {
     public class PurchaseOrderForCreateDTO
     {
-        //public PurchaseOrderForCreateDTO(
-        //    string customerUserName,
-        //    string nameSurname,
-        //    string street,
-        //    string city,
-        //    string postalCode,
-        //    PaymentMethod paymentMethod,
-        //    IList<PurchaseProductDTO> purchaseProducts)
-        //{
-        //    CustomerUserName = customerUserName ?? throw new ArgumentNullException(nameof(customerUserName));
-        //    NameSurname = nameSurname ?? throw new ArgumentNullException(nameof(nameSurname));
-        //    Street = street ?? throw new ArgumentNullException(nameof(street));
-        //    City = city ?? throw new ArgumentNullException(nameof(city));
-        //    PostalCode = postalCode ?? throw new ArgumentNullException(nameof(postalCode));
-        //    PaymentMethod = paymentMethod;
-        //    PurchaseProducts = purchaseProducts ?? throw new ArgumentNullException(nameof(purchaseProducts));
-        //}
+        public PurchaseOrderForCreateDTO(
+            string customerUserName,
+            string nameSurname,
+            string street,
+            string city,
+            string postalCode,
+            int paymentMethodId,
+            IList<PurchaseProductForCreateDTO> purchaseProducts)
+        {
+            CustomerUserName = customerUserName ?? throw new ArgumentNullException(nameof(customerUserName));
+            NameSurname = nameSurname ?? throw new ArgumentNullException(nameof(nameSurname));
+            Street = street ?? throw new ArgumentNullException(nameof(street));
+            City = city ?? throw new ArgumentNullException(nameof(city));
+            PostalCode = postalCode ?? throw new ArgumentNullException(nameof(postalCode));
+            PaymentMethodId = paymentMethodId;
+            PurchaseProducts = purchaseProducts ?? throw new ArgumentNullException(nameof(purchaseProducts));
+        }
 
         public PurchaseOrderForCreateDTO()
         {
