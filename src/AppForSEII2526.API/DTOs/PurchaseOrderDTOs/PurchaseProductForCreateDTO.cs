@@ -2,6 +2,16 @@
 {
     public class PurchaseProductForCreateDTO
     {
+        public PurchaseProductForCreateDTO()
+        {
+        }
+
+        public PurchaseProductForCreateDTO(string name, int quantity)
+        {
+            Name = name;
+            Quantity = quantity;
+        }
+
         [Required]
         public string Name { get; set; }
 
