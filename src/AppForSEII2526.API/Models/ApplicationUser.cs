@@ -8,6 +8,15 @@ public class ApplicationUser : IdentityUser {
 
     public ApplicationUser() { }
 
+    public ApplicationUser(string id, string name, string surname, string address)
+    {
+        Id = id;
+        Name = name;
+        Surname = surname;
+        Address = address;
+        AccountCreationDate = DateTime.Now;
+    }
+
     public ApplicationUser(string name, string surname, string address)
     {
         Name = name;

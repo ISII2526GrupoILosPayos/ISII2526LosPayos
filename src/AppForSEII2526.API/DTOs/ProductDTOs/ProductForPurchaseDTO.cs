@@ -20,5 +20,15 @@
         public string Location { get; set; }
 
         public int Stock { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ProductForPurchaseDTO dTO &&
+                   Id == dTO.Id &&
+                   Name == dTO.Name &&
+                   Brand == dTO.Brand &&
+                   Location == dTO.Location &&
+                   Stock == dTO.Stock;
+        }
     }
 }

@@ -1,1 +1,5 @@
-﻿INSERT INTO [dbo].[PurchaseProducts] ([ProductId], [PurchaseOrderId], [Quantity], [Price]) VALUES (5, 30, 2, CAST(20.00 AS Decimal(10, 2)))
+﻿INSERT INTO [dbo].[PurchaseProducts] ([ProductId], [PurchaseOrderId], [Quantity], [Price]) VALUES (4, 30, 3, CAST(30.00 AS Decimal(10, 2)))
+INSERT INTO [dbo].[PurchaseProducts] ([ProductId], [PurchaseOrderId], [Quantity], [Price]) VALUES (4, 1037, 4, CAST(25.00 AS Decimal(10, 2)))
+INSERT INTO [dbo].[PurchaseProducts] ([ProductId], [PurchaseOrderId], [Quantity], [Price]) VALUES (5, 30, 2, CAST(20.00 AS Decimal(10, 2)))
+INSERT INTO [dbo].[PurchaseProducts] ([ProductId], [PurchaseOrderId], [Quantity], [Price]) VALUES (8, 1036, 2, CAST(20.00 AS Decimal(10, 2)))
+INSERT INTO [dbo].[PurchaseProducts] ([ProductId], [PurchaseOrderId], [Quantity], [Price]) VALUES (8, 2039, 1, CAST(10.00 AS Decimal(10, 2)))
