@@ -19,31 +19,36 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        [ProducesResponseType(typeof(IList<UserForBanDTO>), (int) HttpStatusCode.OK)]
         public async Task<IActionResult> GetUsers(string? surname, string? complaintType)
         {
-            IList<UserForBanDTO> usersDTO = await _context.ApplicationUsers
+            var users = await _context.ApplicationUsers
                 .Where(m =>
-                ((m.Surname.Contains(surname)) || (surname == null)) &&
-                m.Complaint.Any(n =>
-                !n.Processed &&
-                (complaintType == null || n.Type.Name.Contains(complaintType))))
-                .Select(n => new UserForBanDTO(
-                    n.Id,
-                    n.Name,
-                    n.Surname,
-                    n.AccountCreationDate,
-                    n.Complaint
-                    .Where(o =>
-                        !o.Processed &&
-                        (complaintType == null || o.Type.Name.Contains(complaintType)))
-                .GroupBy(q => q.Type.Name)
-                .Select(g => new ComplaintTypeDTO(
-                    g.Key,
-                    g.Count()))
-                .ToList()))
+                    (surname == null || m.Surname.Contains(surname)) &&
+                    m.Complaint.Any(n =>
+                        !n.Processed &&
+                        (complaintType == null || n.Type.Name.Contains(complaintType))))
+                .Include(u => u.Complaint)        
+                .ThenInclude(c => c.Type)           
                 .ToListAsync();
-            return Ok(usersDTO);
+
+            var result = users.Select(u =>
+                new UserForBanDTO(
+                    u.Id,
+                    u.Name,
+                    u.Surname,
+                    u.AccountCreationDate,
+                    u.Complaint
+                        .Where(o =>
+                            !o.Processed &&
+                            (complaintType == null || o.Type.Name.Contains(complaintType)))
+                        .GroupBy(o => o.Type.Name)
+                        .Select(g => new ComplaintTypeDTO(g.Key, g.Count()))
+                        .OrderBy(ct => ct.Name)
+                        .ToList()
+                )
+            ).ToList();
+
+            return Ok(result);
         }
     }
 }
