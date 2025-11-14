@@ -1,63 +1,43 @@
-﻿namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-
-    namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
+    public class ReturnPurchaseOrderForCreateDTO
     {
-        public class ReturnPurchaseOrderForCreateDTO
+        public ReturnPurchaseOrderForCreateDTO(
+            string customerUserName,
+            string returningOptionSelected,
+            int? rating,
+            IList<ReturnItemForCreateDTO> items
+        )
         {
-            public ReturnPurchaseOrderForCreateDTO(
-                string customerUserName,
-                string customerName,
-                string customerSurname,
-                string customerAddress,
-                string customerTelephoneNumber,
-                string paymentMethod,   // "credit card", "paypal", "other"
-                string reason,          // motivo devolución
-                int? rating,            // 1..5 opcional
-                IList<ReturnProductForCreateDTO> productsToReturn
-            )
-            {
-                CustomerUserName = customerUserName;
-                CustomerName = customerName;
-                CustomerSurname = customerSurname;
-                CustomerAddress = customerAddress;
-                CustomerTelephoneNumber = customerTelephoneNumber;
-                PaymentMethod = paymentMethod;
-                Reason = reason;
-                Rating = rating;
-                ProductsToReturn = productsToReturn;
-            }
-
-            [Required]
-            public string CustomerUserName { get; set; } // quién está devolviendo (similar a CustomerUserName en rental)
-
-            [Required]
-            public string CustomerName { get; set; }     // Name
-
-            [Required]
-            public string CustomerSurname { get; set; }  // Surname (solo uno, como decidimos)
-
-            [Required]
-            public string CustomerAddress { get; set; }  // Address
-
-            [Required]
-            public string CustomerTelephoneNumber { get; set; } // Telephone number
-
-            [Required]
-            public string PaymentMethod { get; set; }    // credit card / paypal / other
-
-            [Required]
-            public string Reason { get; set; }           // motivo obligatorio del paso 5
-
-            [Range(1, 5)]
-            public int? Rating { get; set; }             // opcional
-
-            [Required]
-            public IList<ReturnProductForCreateDTO> ProductsToReturn { get; set; }
+            CustomerUserName = customerUserName;
+            ReturningOptionSelected = returningOptionSelected;
+            Rating = rating;
+            Items = items;
         }
-    }
 
+        // Quién está haciendo la devolución.
+        // Igual que en tu endpoint de productos para devolver,
+        // tú filtrabas por userName => usamos lo MISMO aquí.
+        [Required]
+        public string CustomerUserName { get; set; }
+
+        // Método para reembolsar dinero.
+        // Paso 5 del caso de uso: "select an option for returning the money
+        // (credit card, paypal or other)" => obligatorio
+        [Required]
+        public string ReturningOptionSelected { get; set; } // "CreditCard", "PayPal", "Other", etc.
+
+        // Valoración opcional del sistema de entrega (1..5)
+        [Range(1, 5)]
+        public int? Rating { get; set; }
+
+        // Lista de productos que está devolviendo en esta operación.
+        // Debe haber al menos 1 (si no, alt flow de error).
+        [Required]
+        [MinLength(1, ErrorMessage = "You must include at least one product to return")]
+        public IList<ReturnItemForCreateDTO> Items { get; set; }
+    }
 }

@@ -9,6 +9,7 @@ namespace AppForSEII2526.API.Models
 
         public Product() { }
 
+
         public Product(int productId, string name, string description, string colour, decimal price, int stock)
         {
             ProductId = productId;
@@ -18,6 +19,27 @@ namespace AppForSEII2526.API.Models
             Price = decimal.Round(price, 2);
             Stock = stock;
            
+        }
+
+        public Product(string name, string description, string colour, decimal price, int stock, Brand brand)
+        {
+            Name = name;
+            Description = description;
+            Colour = colour;
+            Price = decimal.Round(price, 2);
+            Stock = stock;
+            Brand = brand;
+        }
+
+        public Product(int productId, string name, string description, string colour, decimal price, int stock, Brand brand)
+        {
+            ProductId = productId;
+            Name = name;
+            Description = description;
+            Colour = colour;
+            Price = decimal.Round(price, 2);
+            Stock = stock;
+            Brand = brand;
         }
 
         [Key]
