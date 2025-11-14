@@ -70,5 +70,103 @@ namespace AppForSEII2526.API.Controllers
 
             return Ok(resultDTO);
         }
+
+        [HttpPost]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.Created)]
+        public async Task<IActionResult> CreateBanReport([FromBody] BanReportForCreateDTO reportDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new ValidationProblemDetails(ModelState));
+
+            if (reportDto.Users == null || reportDto.Users.Count == 0)
+            {
+                ModelState.AddModelError("Users", "Error! You must select at least one user to report.");
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
+            if (reportDto.StartDate > reportDto.EndDate)
+            {
+                ModelState.AddModelError("Dates", "Error! The start date cannot be after the end date.");
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
+            var userIds = reportDto.Users
+                .Select(u => u.CustomerId)
+                .Distinct()
+                .ToList();
+
+            var users = await _context.ApplicationUsers
+                .Where(u => userIds.Contains(u.Id))
+                .ToListAsync();
+
+            if (users.Count != userIds.Count)
+            {
+                var existingIds = users.Select(u => u.Id).ToHashSet();
+                var missingIds = userIds.Where(id => !existingIds.Contains(id));
+
+                ModelState.AddModelError("Users",
+                    "Error! One or more selected users do not exist: " + string.Join(", ", missingIds));
+                return BadRequest(new ValidationProblemDetails(ModelState));
+            }
+
+            var report = new BanReport
+            {
+                Reason = reportDto.Reason,
+                DetailedDescription = reportDto.DetailedDescription,
+                StartDate = reportDto.StartDate,
+                EndDate = reportDto.EndDate,
+                ReportCustomers = new List<ReportCustomer>()
+            };
+
+            foreach (var userEntry in reportDto.Users)
+            {
+                var customer = users.First(u => u.Id == userEntry.CustomerId);
+
+                var rc = new ReportCustomer
+                {
+                    CustomerId = customer.Id,
+                    Customer = customer,
+                    BanReport = report,
+                    Message = userEntry.PersonalMessage,
+                    State = ReportState.InProgress 
+                };
+
+                report.ReportCustomers.Add(rc);
+            }
+
+            _context.BanReports.Add(report);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while saving BanReport");
+                return Conflict("Error while saving the report. Please try again later.");
+            }
+
+            // Construir el DTO de salida
+            IList<ReportUserDTO> usersDTO = report.ReportCustomers
+                .Select(rc => new ReportUserDTO(
+                    rc.Customer.Name,
+                    rc.Customer.Surname,
+                    rc.Message
+                ))
+                .ToList();
+
+            var resultDTO = new ReportOperationResultDTO(
+                report.Reason,
+                report.DetailedDescription,
+                report.StartDate,
+                report.EndDate,
+                usersDTO
+            );
+
+            return CreatedAtAction(nameof(GetBanReport),
+                new { reportId = report.Id },
+                resultDTO);
+        }
     }
 }
