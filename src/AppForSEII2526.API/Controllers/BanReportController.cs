@@ -21,22 +21,54 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        [ProducesResponseType(typeof(IList<BanReportResultDTO>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetBanReport(int id)
+        [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetBanReport(int reportId)
         {
-            IList<BanReportResultDTO> banReportsDTO = await _context.BanReports
-                .Where(m => m.Id == id)
-                .Include(n => n.ReportCustomers)
-                .ThenInclude(o => o.Customer)
-                .ThenInclude(p => p.Complaint)
-                .Select(q => new BanReportResultDTO(
-                    q.ReportCustomers.Custo
+            var report = await _context.BanReports
+                .Include(r => r.ReportCustomers)
+                    .ThenInclude(rc => rc.Customer)
+                    .ThenInclude(c => c.Complaint)
+                .FirstOrDefaultAsync(r => r.Id == reportId);
 
+            if (report == null)
+            {
+                return NotFound("Report not found");
+            }
+
+            foreach (var rc in report.ReportCustomers)
+            {
+                if (rc.Customer?.Complaint != null)
+                {
+                    foreach (var complaint in rc.Customer.Complaint)
+                    {
+                        if (!complaint.Processed)
+                        {
+                            complaint.Processed = true;
+                        }
+                    }
+                }
+                rc.State = ReportState.InProgress;
+            }
+
+            await _context.SaveChangesAsync();
+
+            IList<ReportUserDTO> usersDTO = report.ReportCustomers
+                .Select(rc => new ReportUserDTO(
+                    rc.Customer.Name,
+                    rc.Customer.Surname,
+                    rc.Message
                 ))
-                .ToListAsync();
-            return Ok(banReportsDTO);
-        }
+                .ToList();
 
+            var resultDTO = new ReportOperationResultDTO(
+                report.Reason,
+                report.DetailedDescription,
+                report.StartDate,
+                report.EndDate,
+                usersDTO
+            );
+
+            return Ok(resultDTO);
+        }
     }
 }
