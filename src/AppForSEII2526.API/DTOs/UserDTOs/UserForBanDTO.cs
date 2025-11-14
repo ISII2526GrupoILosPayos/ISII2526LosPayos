@@ -1,4 +1,5 @@
-﻿namespace AppForSEII2526.API.DTOs.UserDTOs
+﻿
+namespace AppForSEII2526.API.DTOs.UserDTOs
 {
     public class UserForBanDTO
     {
@@ -17,5 +18,14 @@
         public DateTime AccountCreationDate { get; set; }
         public IList<ComplaintTypeDTO> ComplaintTypes { get; set; }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is UserForBanDTO dTO &&
+                   Id == dTO.Id &&
+                   Name == dTO.Name &&
+                   Surname == dTO.Surname &&
+                   AccountCreationDate == dTO.AccountCreationDate &&
+                   EqualityComparer<IList<ComplaintTypeDTO>>.Default.Equals(ComplaintTypes, dTO.ComplaintTypes);
+        }
     }
 }
