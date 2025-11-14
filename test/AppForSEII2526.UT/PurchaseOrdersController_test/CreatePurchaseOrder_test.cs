@@ -26,6 +26,10 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
         private const string _product2Name = "Hoodie";
         private const string _product2Brand = "Nike";
 
+        private int _paymentMethodId;
+        private int _product1Id;
+        private decimal _product1Price;
+
         public CreatePurchaseOrder_test()
         {
             var brands = new List<Brand>()
@@ -41,11 +45,13 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             };
 
             ApplicationUser user = new ApplicationUser("1", "Luis", "Melero Jareño", _street);
+            user.UserName = _userName;
 
             var paymentMethod = new Bizum(666666666)
             {
                 User = user
             };
+            
 
             var purchaseOrder = new PurchaseOrder(_customerNameSurname, user, _street, _city, _postalCode, DateTime.Now, paymentMethod, new List<PurchaseProduct>());
 
@@ -58,6 +64,10 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             _context.Add(paymentMethod);
             _context.Add(purchaseOrder);
             _context.SaveChanges();
+
+            _paymentMethodId = paymentMethod.Id;
+            _product1Id = products[0].ProductId;
+            _product1Price = products[0].Price;
         }
 
         public static IEnumerable<object[]> TestCasesFor_CreatePurchaseOrder()
@@ -127,16 +137,15 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
 
             var controller = new PurchaseOrdersController(_context, logger);
 
-            DateTime to = DateTime.Today.AddDays(6);
-            DateTime from = DateTime.Today.AddDays(7);
+            
 
-            var purchaseOrderDTO = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 1, new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO { Name = _product1Name, Quantity = 1 } });
+            var purchaseOrderDTO = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, _paymentMethodId, new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO { Name = _product1Name, Quantity = 1 } });
 
             var nameParts = _customerNameSurname.Split(' ', 2);
             var expectedName = nameParts[0];
             var expectedSurname = nameParts.Length > 1 ? nameParts[1] : "";
 
-            var expectedrentalDetailDTO = new PurchaseOrderDetailDTO(1, DateTime.Now, expectedName, expectedSurname, _street, _city, _postalCode, 1 * 1, "Bizum", new List<PurchaseProductDTO>() { new PurchaseProductDTO(1, _product1Name, _product1Brand, 1, 1)});
+            var expectedrentalDetailDTO = new PurchaseOrderDetailDTO(2, DateTime.Today, expectedName, expectedSurname, _street, _city, _postalCode, 1 * 1, "Bizum", new List<PurchaseProductDTO>() { new PurchaseProductDTO(1, _product1Name, _product1Brand, 1, 1)});
 
             // Act
             var result = await controller.CreatePurchaseOrder(purchaseOrderDTO);
