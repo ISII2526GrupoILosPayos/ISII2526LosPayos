@@ -136,11 +136,22 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 validItems
             );
 
+
+            // Rating fuera de rango
+            var ratnigmalExamen = new ReturnPurchaseOrderForCreateDTO(
+                "pau@example.com",
+                "PayPal",
+                3,
+                validItems
+            );
+
+
             return new List<object[]>
             {
                 new object[] { noItems, "You must include at least one product to return" },
                 new object[] { userNotFound, "User not found." },
-                new object[] { invalidRating, "Rating must be between 1 and 5." }
+                new object[] { invalidRating, "Rating must be between 1 and 5." },
+                new object[] { ratnigmalExamen, "Error!, Please, select a value either higher or lower than 3." }
             };
         }
 
