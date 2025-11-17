@@ -16,7 +16,7 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
     {
         private const string _userName = "luis@uclm.es";
         private const string _customerNameSurname = "Luis Melero";
-        private const string _street = "Cueva de Montesinos";
+        private const string _street = "Cueva de Montesinos, 27";
         private const string _city = "Villarrobledo";
         private const string _postalCode = "02600";
 
@@ -85,6 +85,9 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
 
             var purchaseNotEnoughStock = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, _street, _city, _postalCode, 1, new List<PurchaseProductForCreateDTO>() { new PurchaseProductForCreateDTO { Name = _product1Name, Quantity = 500 } });
 
+            //Test for the exam
+            var purchaseStreetWithNoComma = new PurchaseOrderForCreateDTO(_userName, _customerNameSurname, "Avenida de España", _city, _postalCode, 1, purchaseProducts);
+
             var allTests = new List<object[]>
             {
                 new object[] { purchaseNoProducts, "Error! You must include at least one product to be purchased" },
@@ -92,7 +95,8 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
                 new object[] { purchaseMissingStreetField, "Error! All delivery address fields are mandatory (street, city and postal code)" },
                 new object[] { purchasePaymentMethodNotFound, "Error! The selected payment method does not exist." },
                 new object[] { purchaseProductNotFound, "Error! Product 'Fantasma' not found." },
-                new object[] { purchaseNotEnoughStock, "Error! Product 'Water' does not have enough stock (Available: 100)." }
+                new object[] { purchaseNotEnoughStock, "Error! Product 'Water' does not have enough stock (Available: 100)." },
+                new object[] { purchaseStreetWithNoComma, "Error! You must include a comma to separate the street from the number of the house" }     //Test for the exam
             };
 
             return allTests;
