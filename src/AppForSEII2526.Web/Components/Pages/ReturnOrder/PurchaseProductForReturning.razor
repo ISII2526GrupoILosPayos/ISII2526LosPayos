@@ -50,7 +50,7 @@
     {
         try
         {
-            purchaseProductForReturn = await apiclient.GetPurchasedProductsForReturningAsync(userName, productName, quantity);
+            purchaseProductForReturn = await apiclient.GetPurchasedProductsForReturningAsync("pau@gmail.com", productName, quantity);
 
         }
         catch (ApiException ex)
