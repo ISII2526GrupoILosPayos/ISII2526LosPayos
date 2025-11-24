@@ -43,6 +43,9 @@ string? URI2API = builder.Configuration.GetValue(typeof(string), "LosPayos_API")
 
 builder.Services.AddScoped<APiClient>(sp => new APiClient(URI2API, new HttpClient()));
 
+// adding a InMemory State Container for Return Purchase Order
+builder.Services.AddScoped<ReturnPurchaseOrderStateContainer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
