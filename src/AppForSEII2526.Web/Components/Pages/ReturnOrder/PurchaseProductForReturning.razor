@@ -1,7 +1,10 @@
-﻿@page "/returnorder/purchaseproductforreturning"
-@inject 
+﻿@using AppForSEII2526.Web.API
+@inject APiClient apiclient
+@inject ILogger<PurchaseProductForReturning> logger
+@page "/returnorder/purchaseproductforreturning"
 
-<h3>PurchaseProductForReturning</h3>
+
+<h3>Purchase Product For Returning</h3>
 <div class="container-fluid">
     <div class="row" hidden="@hideErrors">
         <p>here i will show the errors</p>
@@ -10,9 +13,20 @@
         <div class="col-8">
             <div class="row">
                 <p>here i will show the filters</p>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@SearchPurchaseProductForReturning id="purchaeProductForReturning">Purchase Product For Returning </button>
+                </div>
             </div>
             <div class="row">
-                <p>here i will show the list of movies</p>
+                @if (purchaseProductForReturn == null)
+                {
+                    <p>Loading purchaseProductsForReturning....</p>
+                }
+                else
+                {
+                    <p>number of purchaseProductsForReturning @purchaseProductForReturn.Count</p>
+
+                }
             </div>
         </div>
         <div class="col-2">
@@ -29,14 +43,14 @@
     private string errors = "";
     private string userName { get; set; }
     private string productName { get; set; }
-    private string quantity { get; set; }
+    private int quantity { get; set; }
 
 
     public async void SearchPurchaseProductForReturning()
     {
         try
         {
-            movies = await apiclient.GetPurchaseProductsForReturning(userName, productName, quantity);
+            purchaseProductForReturn = await apiclient.GetPurchasedProductsForReturningAsync(userName, productName, quantity);
 
         }
         catch (ApiException ex)
@@ -47,5 +61,7 @@
         StateHasChanged();
 
 
+
+    }
 
 }

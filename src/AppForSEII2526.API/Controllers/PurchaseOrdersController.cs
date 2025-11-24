@@ -85,6 +85,11 @@ namespace AppForSEII2526.API.Controllers
             if (ModelState.ErrorCount > 0)
                 return BadRequest(new ValidationProblemDetails(ModelState));
 
+            //Method for the exam
+            if (purchaseForCreate.Street == null || !purchaseForCreate.Street.Contains(","))
+                ModelState.AddModelError("Street", "Error! You must include a comma to separate the street from the number of the house");
+            
+
             var productNames = purchaseForCreate.PurchaseProducts.Select(p => p.Name).ToList();
 
             var products = _context.Products

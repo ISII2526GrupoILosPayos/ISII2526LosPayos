@@ -96,6 +96,11 @@ namespace AppForSEII2526.API.Controllers
                     ModelState.AddModelError(nameof(model.ReturningOptionSelected),
                         "PaymentMethod is required (credit card, paypal, other).");
 
+                if (model.Rating != null && model.Rating == 3)
+                    ModelState.AddModelError(nameof(model.Rating),
+                        "Error!, Please, select a value either higher or lower than 3.");
+
+
                 if (model.Rating.HasValue &&
                     (model.Rating.Value < 1 || model.Rating.Value > 5))
                     ModelState.AddModelError(nameof(model.Rating),
