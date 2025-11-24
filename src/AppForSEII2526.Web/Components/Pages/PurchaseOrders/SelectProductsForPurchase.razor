@@ -1,17 +1,33 @@
 ﻿@page "/purchaseorder/selectproductsforpurchase"
 
+@using AppForSEII2526.Web.API
+@inject APiClient apiclient
+@inject ILogger<SelectProductsForPurchase> logger
+
+
 <h3>Select Products For Purchase</h3>
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" hidden="@hideErrors">
         <p>here i will show the errors</p>
     </div>
     <div class="row">
         <div class="col-8">
             <div class="row">
                 <p>here i will show the filters</p>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" @onclick=@SearchProducts id="searchProducts">Search products</button>
+                </div>
             </div>
             <div class="row">
-                <p>here i will show the list of products</p>
+                @if (products == null)
+                {
+                    <p>Loading products....</p>
+                }
+                else
+                {
+                    <p>number of products @products.Count</p>
+
+                }
             </div>
         </div>
         <div class="col-2">
@@ -22,5 +38,24 @@
 
 </div>
 @code {
+    private ICollection<ProductForPurchaseDTO> products;
+    private bool hideErrors { get { return errors.Length == 0; } }
+    private string errors = "";
+    private string productName { get; set; }
+    private string productColour { get; set; }
 
+    public async void SearchProducts()
+    {
+        try
+        {
+            products = await apiclient.GetProductsForPurchaseAsync(productName, productColour);
+
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system";
+        }
+        StateHasChanged();
+    }
 }
