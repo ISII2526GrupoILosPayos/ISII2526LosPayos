@@ -12,7 +12,31 @@
     <div class="row">
         <div class="col-8">
             <div class="row">
-                <p>here i will show the filters</p>
+               
+
+                <div class="col">
+                    <div class= "input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">ProductName</span>
+                        <input type="text" id="inputProductName" @bind=productName class="form-control" placeholder="ProductName" aria-label="ProductName" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class= "input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Quantity</span>
+                        <input type="number" id="inputQuantity" @bind=quantity class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class= "input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">UserName</span>
+                        <input type="text" id="inputUserName" @bind=userName class="form-control" placeholder="UserName" aria-label="UserName" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+
+
+
                 <div class="col">
                     <button type="button" class="btn btn-primary" @onclick=@SearchPurchaseProductForReturning id="purchaeProductForReturning">Purchase Product For Returning </button>
                 </div>
@@ -37,20 +61,35 @@
 
 </div>
 
-    @code {
+@code {
     private ICollection<PurchaseProductForReturnDTO> purchaseProductForReturn;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
-    private string userName { get; set; }
     private string productName { get; set; }
     private int quantity { get; set; }
+
+    private string userName;
+    private string userNAME
+    {
+        get { return userName; }
+        set
+        {
+            if(userName != value)
+            {
+                userName = value;
+            }
+        }
+    }
+
+
+
 
 
     public async void SearchPurchaseProductForReturning()
     {
         try
         {
-            purchaseProductForReturn = await apiclient.GetPurchasedProductsForReturningAsync("pau@gmail.com", productName, quantity);
+            purchaseProductForReturn = await apiclient.GetPurchasedProductsForReturningAsync(userName, productName, quantity); //AQUI EL USERNAME NO SE SI DEBO PONER ESTE O OTRA COSA("pau@gmail.com")
 
         }
         catch (ApiException ex)
@@ -60,8 +99,31 @@
         }
         StateHasChanged();
 
-
-
     }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Asignar valores iniciales
+        userName = "pau@gmail.com";  //  un valor válido por defecto (esto es lo que tu API espera)
+        productName = "";            // sin filtro de inicio
+        quantity = 0;                // mínimo 0 permite mostrar todo
+
+        try
+        {
+            // Llamada inicial (como SearchMovies del profesor)
+            purchaseProductForReturn =
+                await apiclient.GetPurchasedProductsForReturningAsync(userName, productName, quantity);
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error loading purchase products from system.";
+        }
+
+        // Forzar render
+        StateHasChanged();
+    }
+
 
 }
