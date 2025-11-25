@@ -82,7 +82,7 @@
         }
     }
 
-
+    //private ReturnPurchaseOrderForCreateDTO returnPurchaseOrderForCreateDTO => returnPurchaseOrderStateContainer.ReturnPurchaseOrderForCreateDTO;
 
 
 
@@ -103,27 +103,17 @@
     }
 
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        // Asignar valores iniciales
-        userName = "pau@gmail.com";  //  un valor válido por defecto (esto es lo que tu API espera)
-        productName = "";            // sin filtro de inicio
-        quantity = 0;                // mínimo 0 permite mostrar todo
+        // Valores iniciales por defecto 
+        userName = "pau@gmail.com";  // el UserName que exista en tu BD, no el email
+        productName = "";
+        quantity = 0;
 
-        try
-        {
-            // Llamada inicial (como SearchMovies del profesor)
-            purchaseProductForReturn =
-                await apiclient.GetPurchasedProductsForReturningAsync(userName, productName, quantity);
-        }
-        catch (ApiException ex)
-        {
-            logger.LogError($"{DateTime.Now} Error: {ex}");
-            errors = "Error loading purchase products from system.";
-        }
+        // llamada inicial, igual que SearchMovies() en el ejemplo
+        SearchPurchaseProductForReturning();
 
-        // Forzar render
-        StateHasChanged();
+        return base.OnInitializedAsync();
     }
 
 
