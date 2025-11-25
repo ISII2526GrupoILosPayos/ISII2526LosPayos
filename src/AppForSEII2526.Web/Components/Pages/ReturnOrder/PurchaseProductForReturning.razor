@@ -4,8 +4,8 @@
 @inject ILogger<PurchaseProductForReturning> logger
 @inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
 @inject NavigationManager navigationManager
+
 @page "/returnorder/purchaseproductforreturning"
-@attribute [Authorize]
 
 
 <h3>Purchase Product For Returning</h3>
@@ -16,24 +16,35 @@
     <div class="row">
         <div class="col-8">
             <div class="row">
-               
 
                 <div class="col">
-                    <div class= "input-group mb-3">
+                    <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">ProductName</span>
-                        <input type="text" id="inputProductName" @bind=productName class="form-control" placeholder="ProductName" aria-label="ProductName" aria-describedby="basic-addon1">
+                        <input type="text"
+                               id="inputProductName"
+                               @bind=ProductName
+                               class="form-control"
+                               placeholder="ProductName"
+                               aria-label="ProductName"
+                               aria-describedby="basic-addon1" />
                     </div>
                 </div>
 
                 <div class="col">
-                    <div class= "input-group mb-3">
+                    <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Quantity</span>
-                        <input type="number" id="inputQuantity" @bind=quantity class="form-control" placeholder="Quantity" aria-label="Quantity" aria-describedby="basic-addon1">
+                        <input type="number"
+                               id="inputQuantity"
+                               @bind=Quantity
+                               class="form-control"
+                               placeholder="Quantity"
+                               aria-label="Quantity"
+                               aria-describedby="basic-addon1" />
                     </div>
                 </div>
 
                 <div class="col">
-                    <div class= "input-group mb-3">
+                    <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">UserName</span>
                         <input type="text"
                                id="inputUserName"
@@ -42,16 +53,19 @@
                                placeholder="UserName"
                                aria-label="UserName"
                                aria-describedby="basic-addon1" />
-
                     </div>
                 </div>
 
-
-
                 <div class="col">
-                    <button type="button" class="btn btn-primary" @onclick=@SearchPurchaseProductForReturning id="purchaeProductForReturning">Purchase Product For Returning </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            @onclick=@SearchPurchaseProductForReturning
+                            id="purchaseProductForReturning">
+                        Purchase Product For Returning
+                    </button>
                 </div>
             </div>
+
             <div class="row">
                 @if (purchaseProductForReturn == null)
                 {
@@ -93,38 +107,35 @@
 
                         </table>
                     </div>
-
                 }
             </div>
         </div>
-        <div class="col-2">
-            <div class="col-2" hidden="@hideReturningCart">
-                <div class="row">
-                    <h3>Return Cart</h3>
-                </div>
 
-                @foreach (var item in returnOrder.Items)
-                {
-                    <div class="row">
-                        <button type="button"
-                                class="btn btn-light"
-                                id="removeProduct_@item.ProductId"
-                                @onclick="@(() => RemoveReturnItem(item))">
-                            x Product @item.ProductId - Qty @item.Quantity
-                        </button>
-                    </div>
-                }
-
-                <div class="row mt-2">
-                    <button type="button"
-                            class="btn btn-primary"
-                            id="continueReturnButton"
-                            @onclick="GoToReturnDetails">
-                        Continue with return
-                    </button>
-                </div>
+        <div class="col-2" hidden="@hideReturningCart">
+            <div class="row">
+                <h3>Return Cart</h3>
             </div>
 
+            @foreach (var item in returnOrder.Items)
+            {
+                <div class="row">
+                    <button type="button"
+                            class="btn btn-light"
+                            id="removeProduct_@item.ProductId"
+                            @onclick="@(() => RemoveReturnItem(item))">
+                        x Product @item.ProductId - Qty @item.Quantity
+                    </button>
+                </div>
+            }
+
+            <div class="row mt-2">
+                <button type="button"
+                        class="btn btn-primary"
+                        id="continueReturnButton"
+                        @onclick="GoToReturnDetails">
+                    Continue with return
+                </button>
+            </div>
         </div>
 
     </div>
@@ -132,26 +143,65 @@
 </div>
 
 @code {
-    private bool hideReturningCart
-    {
-        get { return returnOrder.Items.Count == 0; }
-    }
+    // ▼▼▼ ESTADO BÁSICO ▼▼▼
 
     private ICollection<PurchaseProductForReturnDTO> purchaseProductForReturn;
-    private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
-    private string productName { get; set; }
-    private int quantity { get; set; }
+
+    private bool hideErrors => errors.Length == 0;
+
     // Alias al DTO que se enviará en el POST
     private ReturnPurchaseOrderForCreateDTO returnOrder =>
         returnPurchaseOrderStateContainer.ReturnOrder;
 
-    // Para ocultar/mostrar el “carrito de devolución” si quieres usarlo luego
-   // private bool hiddenReturningCart = true;
+    // Mostrar u ocultar el carrito de devolución
+    private bool hideReturningCart => returnOrder.Items.Count == 0;
 
+    // ▼▼▼ BACKING FIELDS PARA LOS FILTROS ▼▼▼
 
+    private string productName;
+    private int quantity;
     private string userName;
 
+    // Propiedad para el ProductName (para poder enganchar lógica en el cambio)
+    private string ProductName
+    {
+        get => productName;
+        set
+        {
+            if (productName != value)
+            {
+                productName = value;
+
+                // reseteamos items de devolución
+                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+
+                // volvemos a poner el username si ya lo tenemos
+                if (!string.IsNullOrWhiteSpace(userName))
+                    returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+            }
+        }
+    }
+
+    private int Quantity
+    {
+        get => quantity;
+        set
+        {
+            if (quantity != value)
+            {
+                quantity = value;
+
+                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+
+                if (!string.IsNullOrWhiteSpace(userName))
+                    returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+            }
+        }
+    }
+
+
+    // Propiedad para UserName (ya la tenías, le añadimos ResetAfterProcessing)
     private string UserName
     {
         get => userName;
@@ -161,54 +211,58 @@
             {
                 userName = value;
 
-                // sincroniza el StateContainer cuando cambie el usuario
+                // 1º: vaciamos items de devolución
+                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+
+                // 2º: y AHORA sí metemos el username correcto en el DTO nuevo
                 returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
             }
         }
     }
 
 
+    // ▼▼▼ LÓGICA DE CARRITO Y NAVEGACIÓN ▼▼▼
+
     // Añadir un producto al “carrito de devolución”
     private void AddProductToReturn(PurchaseProductForReturnDTO product)
     {
         // De momento usamos cantidad = 1 y reason vacío;
-        // luego lo refinas en la pantalla siguiente
-        returnPurchaseOrderStateContainer.AddProductForReturn(product, quantity: 1, reason: "");
-       // hiddenReturningCart = false;
+        // se rellena luego en la pantalla de detalles
+        returnPurchaseOrderStateContainer.AddProductForReturn(
+            product,
+            quantity: 1,
+            reason: ""
+        );
     }
 
     // Quitar un item del carrito
     private void RemoveReturnItem(ReturnItemForCreateDTO item)
     {
         returnPurchaseOrderStateContainer.RemoveItem(item);
-
-        //if (returnOrder.Items.Count == 0)
-           // hiddenReturningCart = true;
     }
 
+    // Ir al siguiente paso del caso de uso (rellenar razón, método de devolución, rating, etc.)
     private void GoToReturnDetails()
     {
         navigationManager.NavigateTo("/returnorder/createreturnpurchaseorder");
-        // o la ruta que vayáis a usar para el paso donde se rellena reason, payment, rating...
     }
 
-
+    // ▼▼▼ BÚSQUEDA EN LA API ▼▼▼
 
     public async void SearchPurchaseProductForReturning()
     {
-
+        // Validaciones previas simples (equivalente a las de fechas en el ejemplo de películas)
         if (string.IsNullOrWhiteSpace(UserName))
         {
             errors = "UserName is required.";
             return;
         }
 
-        if (quantity < 0)
+        if (Quantity < 0)
         {
             errors = "Quantity must be 0 or greater.";
             return;
         }
-
 
         try
         {
@@ -219,6 +273,7 @@
                     quantity,
                     CancellationToken.None
                 );
+
             errors = "";
         }
         catch (ApiException ex)
@@ -230,19 +285,18 @@
         StateHasChanged();
     }
 
+    // ▼▼▼ INICIALIZACIÓN ▼▼▼
 
     protected override Task OnInitializedAsync()
     {
-        // Valores iniciales por defecto
-        UserName = "pauUser";   // usamos la PROPIEDAD, así también sincroniza el StateContainer
-        productName = "";
-        quantity = 0;
+        // Valores iniciales por defecto (igual idea que fechas From/To en películas)
+        UserName = "pauUser";  // usamos la PROPIEDAD, así sincroniza el StateContainer
+        ProductName = "";
+        Quantity = 0;
 
-        // Llamada inicial, igual idea que SearchMovies() en el ejemplo
+        // Llamada inicial, igual que SearchMovies() en el ejemplo
         SearchPurchaseProductForReturning();
 
         return base.OnInitializedAsync();
     }
-
-
 }
