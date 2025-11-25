@@ -69,9 +69,10 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpPost]
         [Route("[action]")]
-        [ProducesResponseType(typeof(ReturnPurchaseOrderForCreateDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ReturnPurchaseOrderDTO), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.Conflict)]
+
 public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderForCreateDTO model)
 {
     //
