@@ -1,9 +1,11 @@
 ﻿@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
 @inject APiClient apiclient
 @inject ILogger<PurchaseProductForReturning> logger
 @inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
 @inject NavigationManager navigationManager
 @page "/returnorder/purchaseproductforreturning"
+@attribute [Authorize]
 
 
 <h3>Purchase Product For Returning</h3>
@@ -96,7 +98,33 @@
             </div>
         </div>
         <div class="col-2">
-            <p>here i will show the renting cart</p>
+            <div class="col-2" hidden="@hideReturningCart">
+                <div class="row">
+                    <h3>Return Cart</h3>
+                </div>
+
+                @foreach (var item in returnOrder.Items)
+                {
+                    <div class="row">
+                        <button type="button"
+                                class="btn btn-light"
+                                id="removeProduct_@item.ProductId"
+                                @onclick="@(() => RemoveReturnItem(item))">
+                            x Product @item.ProductId - Qty @item.Quantity
+                        </button>
+                    </div>
+                }
+
+                <div class="row mt-2">
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="continueReturnButton"
+                            @onclick="GoToReturnDetails">
+                        Continue with return
+                    </button>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -104,6 +132,11 @@
 </div>
 
 @code {
+    private bool hideReturningCart
+    {
+        get { return returnOrder.Items.Count == 0; }
+    }
+
     private ICollection<PurchaseProductForReturnDTO> purchaseProductForReturn;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
@@ -114,7 +147,7 @@
         returnPurchaseOrderStateContainer.ReturnOrder;
 
     // Para ocultar/mostrar el “carrito de devolución” si quieres usarlo luego
-    private bool hiddenReturningCart = true;
+   // private bool hiddenReturningCart = true;
 
 
     private string userName;
@@ -141,7 +174,7 @@
         // De momento usamos cantidad = 1 y reason vacío;
         // luego lo refinas en la pantalla siguiente
         returnPurchaseOrderStateContainer.AddProductForReturn(product, quantity: 1, reason: "");
-        hiddenReturningCart = false;
+       // hiddenReturningCart = false;
     }
 
     // Quitar un item del carrito
@@ -149,9 +182,16 @@
     {
         returnPurchaseOrderStateContainer.RemoveItem(item);
 
-        if (returnOrder.Items.Count == 0)
-            hiddenReturningCart = true;
+        //if (returnOrder.Items.Count == 0)
+           // hiddenReturningCart = true;
     }
+
+    private void GoToReturnDetails()
+    {
+        navigationManager.NavigateTo("/returnorder/createreturnpurchaseorder");
+        // o la ruta que vayáis a usar para el paso donde se rellena reason, payment, rating...
+    }
+
 
 
     public async void SearchPurchaseProductForReturning()
