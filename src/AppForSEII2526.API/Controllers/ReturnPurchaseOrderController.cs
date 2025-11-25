@@ -279,7 +279,7 @@ public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderFor
     //
     // 5.1 Generar un Name válido (10..20 caracteres máx)
     //
-    string baseName = $"-{""}";
+    string baseName = $"{""}";
 
     if (baseName.Length < 10)
     {
