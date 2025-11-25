@@ -2,6 +2,7 @@
 @inject APiClient apiclient
 @inject ILogger<PurchaseProductForReturning> logger
 @inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
+@inject NavigationManager navigationManager
 @page "/returnorder/purchaseproductforreturning"
 
 
@@ -32,7 +33,14 @@
                 <div class="col">
                     <div class= "input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">UserName</span>
-                        <input type="text" id="inputUserName" @bind=userName class="form-control" placeholder="UserName" aria-label="UserName" aria-describedby="basic-addon1">
+                        <input type="text"
+                               id="inputUserName"
+                               @bind=UserName
+                               class="form-control"
+                               placeholder="UserName"
+                               aria-label="UserName"
+                               aria-describedby="basic-addon1" />
+
                     </div>
                 </div>
 
@@ -183,23 +191,18 @@
     }
 
 
-
     protected override Task OnInitializedAsync()
     {
         // Valores iniciales por defecto
-        userName = "pauUser";   // IMPORTANTE: aquí debe ir el UserName real de BD
+        UserName = "pauUser";   // usamos la PROPIEDAD, así también sincroniza el StateContainer
         productName = "";
         quantity = 0;
-
-        // Sincronizar el StateContainer con este usuario inicial
-        returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
 
         // Llamada inicial, igual idea que SearchMovies() en el ejemplo
         SearchPurchaseProductForReturning();
 
         return base.OnInitializedAsync();
     }
-
 
 
 }
