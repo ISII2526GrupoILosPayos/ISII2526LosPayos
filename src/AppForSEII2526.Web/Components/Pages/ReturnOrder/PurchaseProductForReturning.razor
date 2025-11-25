@@ -148,6 +148,20 @@
 
     public async void SearchPurchaseProductForReturning()
     {
+
+        if (string.IsNullOrWhiteSpace(UserName))
+        {
+            errors = "UserName is required.";
+            return;
+        }
+
+        if (quantity < 0)
+        {
+            errors = "Quantity must be 0 or greater.";
+            return;
+        }
+
+
         try
         {
             purchaseProductForReturn =
