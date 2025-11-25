@@ -267,11 +267,10 @@
         try
         {
             purchaseProductForReturn =
-                await apiclient.GetPurchasedProductsForReturningAsync(
+                await apiclient.GetPurchasedProductsForReturning(
                     productName,
                     userName,
-                    quantity,
-                    CancellationToken.None
+                    quantity
                 );
 
             errors = "";
