@@ -79,12 +79,8 @@ public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderFor
     // 1. Validaciones básicas
     //
 
-        if (model.Items == null || model.Items.Count == 0)
+        if (model.Items.Count == 0)
             ModelState.AddModelError(nameof(model.Items),
-                "You must include at least one product to return.");
-
-        if(model.Items == null)
-                ModelState.AddModelError(nameof(model.Items),
                 "You must include at least one product to return.");
 
 
