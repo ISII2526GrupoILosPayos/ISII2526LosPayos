@@ -78,45 +78,30 @@ public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderFor
     //
     // 1. Validaciones básicas
     //
-    if (model == null)
-    {
-        ModelState.AddModelError("Body", "Request body is required.");
-    }
-    else
-    {
-        if (string.IsNullOrWhiteSpace(model.CustomerUserName))
-            ModelState.AddModelError(nameof(model.CustomerUserName),
-                "CustomerUserName is required.");
 
         if (model.Items == null || model.Items.Count == 0)
             ModelState.AddModelError(nameof(model.Items),
                 "You must include at least one product to return.");
 
-        if (string.IsNullOrWhiteSpace(model.ReturningOptionSelected))
-            ModelState.AddModelError(nameof(model.ReturningOptionSelected),
-                "PaymentMethod is required (credit card, paypal, other).");
+        if(model.Items == null)
+                ModelState.AddModelError(nameof(model.Items),
+                "You must include at least one product to return.");
 
-        if (model.Rating != null && model.Rating == 3)
+
+            if (model.Rating == 3)
             ModelState.AddModelError(nameof(model.Rating),
                 "Error!, Please, select a value either higher or lower than 3.");
 
-        if (model.Rating.HasValue &&
+        if(model.Rating == null)
+            ModelState.AddModelError(nameof(model.Rating),
+                "Error!, Please, select a value either higher or lower than 0.");
+
+            if (model.Rating.HasValue &&
             (model.Rating.Value < 1 || model.Rating.Value > 5))
             ModelState.AddModelError(nameof(model.Rating),
                 "Rating must be between 1 and 5.");
 
-        if (model.Items != null)
-        {
-            foreach (var it in model.Items)
-            {
-                if (string.IsNullOrWhiteSpace(it.Reason))
-                {
-                    ModelState.AddModelError("Reason",
-                        $"Reason is required for product {it.ProductId}.");
-                }
-            }
-        }
-    }
+    
 
     if (!ModelState.IsValid)
     {

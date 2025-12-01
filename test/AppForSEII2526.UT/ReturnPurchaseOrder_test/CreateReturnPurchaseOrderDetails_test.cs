@@ -141,6 +141,14 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 new List<ReturnItemForCreateDTO>()
             );
 
+            // Sin productos
+            var nullItems = new ReturnPurchaseOrderForCreateDTO(
+                "pau@example.com",
+                "PayPal",
+                4,
+                null
+            );
+
             // Usuario no existe
             var userNotFound = new ReturnPurchaseOrderForCreateDTO(
                 "fakeuser@example.com",
@@ -165,12 +173,21 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 validItems
             );
 
+            var ratingNull = new ReturnPurchaseOrderForCreateDTO(
+            "pau@example.com",
+            "PayPal",
+             null,
+             validItems
+            );
+
             return new List<object[]>
             {
                 new object[] { noItems, "You must include at least one product to return" },
                 new object[] { userNotFound, "User not found." },
                 new object[] { invalidRating, "Rating must be between 1 and 5." },
-                new object[] { ratingMalExamen, "Error!, Please, select a value either higher or lower than 3." }
+                new object[] { ratingMalExamen, "Error!, Please, select a value either higher or lower than 3." },
+                new object[] { ratingNull, "Error!, Please, select a value either higher or lower than 0." },
+                new object[] { nullItems, "You must include at least one product to return." }
             };
         }
 
