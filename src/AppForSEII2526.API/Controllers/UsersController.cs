@@ -19,11 +19,12 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<IActionResult> GetUsers(string? surname, string? complaintType)
+        public async Task<IActionResult> GetUsers(string? surname, string? complaintType, DateTime? creationDate)
         {
             var users = await _context.ApplicationUsers
                 .Where(m =>
                     (surname == null || m.Surname.Contains(surname)) &&
+                    (creationDate == null || m.AccountCreationDate > creationDate) &&
                     m.Complaint.Any(n =>
                         !n.Processed &&
                         (complaintType == null || n.Type.Name.Contains(complaintType))))
