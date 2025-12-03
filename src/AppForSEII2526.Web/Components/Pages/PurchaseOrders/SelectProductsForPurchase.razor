@@ -37,7 +37,38 @@
                 }
                 else
                 {
-                    <p>number of products @products.Count</p>
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfProducts">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Location</th>
+                                    <th>Stock</th>
+                                    <th>Add</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var product in products)
+                                {
+                                    <tr id="ProductData_@product.Id">
+                                        <td>@product.Name</td>
+                                        <td>@product.Brand</td>
+                                        <td>@product.Location</td>
+                                        <td>@product.Stock</td>
+                                        <td>
+                                            <button class="btn btn-outline-secondary"
+                                                    id="productToPurchase_@product.Id"
+                                                    @onclick="@(() => AddProduct(product))">
+                                                Add
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
 
                 }
             </div>
