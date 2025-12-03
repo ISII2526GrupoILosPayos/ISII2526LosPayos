@@ -1,0 +1,150 @@
+﻿@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+
+@page "/returnorder/details/{Id:int}"
+@attribute [Authorize]
+
+@inject APiClient apiclient
+@inject ILogger<ReturnPurchaseOrderDetails> logger
+@inject NavigationManager navigationManager
+
+<h3>Return Purchase Order Details</h3>
+
+<div class="container-fluid">
+
+    @if (!string.IsNullOrEmpty(errors))
+    {
+        <div class="row alert alert-danger" role="alert">
+            <div class="col">
+                <p>@errors</p>
+                <button type="button"
+                        class="btn btn-secondary"
+                        @onclick="GoBackToOrders">
+                    Back to orders
+                </button>
+            </div>
+        </div>
+    }
+
+    @if (returnDetails == null && string.IsNullOrEmpty(errors))
+    {
+        <p>Loading return order details...</p>
+    }
+    else if (returnDetails != null)
+    {
+        <!-- Datos del cliente + opción de devolución -->
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Customer data
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Name:</strong> @returnDetails.CustomerName</p>
+                        <p><strong>First surname:</strong> @returnDetails.CustomerFirstSurname</p>
+                        <!-- El UC habla de Second Surname, pero el modelo solo tiene uno -->
+                        <p><strong>Address:</strong> @returnDetails.CustomerAddress</p>
+                        <p><strong>Telephone:</strong> @returnDetails.CustomerTelephoneNumber</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        Returning information
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            <strong>Returning option selected:</strong>
+                            @returnDetails.ReturningOptionSelected
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos devueltos -->
+        <div class="row">
+            <div class="col-12">
+                <h4>Returned products</h4>
+
+                @if (returnDetails.ReturnedProducts == null || !returnDetails.ReturnedProducts.Any())
+                {
+                    <p>No returned products found.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Quantity</th>
+                                    <th>Product</th>
+                                    <th>Firm</th>
+                                    <th>Warehouse location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var rp in returnDetails.ReturnedProducts)
+                                {
+                                    <tr>
+                                        <td>@rp.Quantity</td>
+                                        <td>@rp.ProductName</td>
+                                        <td>@rp.BrandName</td>
+                                        <td>@rp.WarehouseLocation</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }   // viene de la ruta /returnorder/details/{Id:int}
+
+    private ReturnPurchaseOrderDTO? returnDetails;
+    private string errors = "";
+
+    private async Task LoadDetailsAsync()
+    {
+        try
+        {
+            // Llamada al endpoint GetReturnPurchaseOrderDetails(id)
+            returnDetails = await apiclient.GetReturnPurchaseOrderDetailsAsync(Id);
+            errors = "";
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError(ex, "Error loading return purchase order details for Id {Id}", Id);
+
+            if (ex.StatusCode == 404)
+            {
+                errors = $"No return purchase order found with ID {Id}.";
+            }
+            else
+            {
+                errors = "Error while loading the return order details.";
+            }
+
+            returnDetails = null;
+        }
+    }
+
+    private void GoBackToOrders()
+    {
+        // Ajusta la ruta si vuestra lista de órdenes tiene otro path
+        navigationManager.NavigateTo("/purchaseorders");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDetailsAsync();
+        await base.OnInitializedAsync();
+    }
+}
