@@ -87,6 +87,7 @@ namespace AppForSEII2526.UT.UsersController_test
             _context.SaveChanges();
         }
 
+
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
         public async Task GetUsers_null_surname_type()
@@ -154,7 +155,7 @@ namespace AppForSEII2526.UT.UsersController_test
                         new ComplaintTypeDTO("Denuncia", 1)
                     }
                 ),
-                                new UserForBanDTO(
+                new UserForBanDTO(
                     id: "2",
                     name: "Kylian",
                     surname: "Mbappe",
@@ -171,8 +172,9 @@ namespace AppForSEII2526.UT.UsersController_test
                 new object[] { null, "Queja", null, new List<UserForBanDTO> { userDTOs[1] } },
                 new object[] { "Femen", "Denuncia", null, new List<UserForBanDTO> { userDTOs[2] } },
                 new object[] { null, null, null, new List<UserForBanDTO> { userDTOs[0] } },
-                new object[] { "Mbapp", null, null, new List<UserForBanDTO>{userDTOs[3] } },
-                new object[] {null, null, 2010/11/12, new List<UserForBanDTO>{userDTOs[3] } }  
+                new object[] { "Mbapp", null, null, new List<UserForBanDTO>() },
+                new object[] {null, null, new DateTime(2003, 11, 12), new List<UserForBanDTO>{ userDTOs[0] } },
+                new object[] {null, null, new DateTime(2005, 11, 12), new List<UserForBanDTO>() }
             };  
             return allTests;
         }
