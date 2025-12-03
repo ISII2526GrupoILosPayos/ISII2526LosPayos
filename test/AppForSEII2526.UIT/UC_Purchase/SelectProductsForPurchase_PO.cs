@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenQA.Selenium.Support.UI;
 
 namespace AppForSEII2526.UIT.UC_Purchase
 {
@@ -18,7 +19,9 @@ namespace AppForSEII2526.UIT.UC_Purchase
         {
             WaitForBeingClickable(productName);
             _driver.FindElement(productName).SendKeys(name);
+            _driver.FindElement(productColour).SendKeys(name);
             _driver.FindElement(buttonSearchProducts).Click();
+            
         }
     }
 }
