@@ -4,6 +4,7 @@
 @inject APiClient apiclient
 @inject ILogger<SelectProductsForPurchase> logger
 @inject PurchaseStateContainer purchaseState
+@inject NavigationManager navigation
 
 
 <h3>Select Products For Purchase</h3>
@@ -73,14 +74,26 @@
                 }
             </div>
         </div>
-        <div class="col-2">
-            <p>here i will show the purhcase cart</p>
+        <div class="col-2" hidden="@hideRentingCart">
+            <div class="row">
+                <h3>Shopping Cart</h3>
+            </div>
+            @foreach (PurchaseProductForCreateDTO product in purchase.PurchaseProducts)
+            {
+                <div class="row">
+                    <button type="button" class="btn btn-light" id="removeMovie_@product.Name" @onclick="@(() => RemoveProductItem(product))">x @product.Name </button>
+                </div>
+            }
+            <div class="row">
+                <button type="button" class="btn btn-primary" id="purchaseMovieButton" @onclick=@PurchaseProducts>Create a purchase</button>
+            </div>
         </div>
 
     </div>
 
 </div>
 @code {
+    private bool hideRentingCart { get { return purchase.PurchaseProducts.Count == 0; } }
     private ICollection<ProductForPurchaseDTO> products;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
@@ -122,5 +135,10 @@
             errors = "Error while connecting to the system";
         }
         StateHasChanged();
+    }
+
+    private void PurchaseProducts()
+    {
+        navigation.NavigateTo("/purchaseorder/createpurchase");
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AppForSEII2526.Web.API;
 
+
 namespace AppForSEII2526.Web
 {
     public class PurchaseStateContainer
@@ -25,7 +26,7 @@ namespace AppForSEII2526.Web
                 Purchase.PurchaseProducts.Add(new PurchaseProductForCreateDTO()
                 {
                     Name = product.Name,
-                    Quantity = 1
+                    Quantity = 1,
                 });
             }
             else
