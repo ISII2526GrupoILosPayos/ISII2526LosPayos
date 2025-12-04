@@ -1,7 +1,7 @@
 ﻿@using AppForSEII2526.Web.API
 @using Microsoft.AspNetCore.Authorization
 @using System.Linq
-
+@attribute [Authorize]
 @inject APiClient apiclient
 @inject ILogger<PurchaseProductForReturning> logger
 @inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
