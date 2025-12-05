@@ -17,13 +17,13 @@
             <div class="row">
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Title</span>
+                        <span class="input-group-text" id="basic-addon1">Name</span>
                         <input type="text" id="inputTitle" @bind=productName class="form-control" placeholder="Write the name of the product to purchase" aria-label="Product name" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Genre</span>
+                        <span class="input-group-text" id="basic-addon1">Colour</span>
                         <input type="text" id="inputGenre" @bind=productColour class="form-control" placeholder="Write the colour of the product to purchase" aria-label="Product colour" aria-describedby="basic-addon1">
                     </div>
                 </div>
@@ -63,6 +63,13 @@
                                                     @onclick="@(() => AddProduct(product))">
                                                 Add
                                             </button>
+                                            @if (product.Stock == purchase.PurchaseProducts
+                                                    .FirstOrDefault(p => p.Name == product.Name)?.Quantity)
+                                            {
+                                                <div class="text-danger" style="font-size: 12px;">
+                                                    No more stock available
+                                                </div>
+                                            }
                                         </td>
                                     </tr>
                                 }
@@ -81,7 +88,7 @@
             @foreach (PurchaseProductForCreateDTO product in purchase.PurchaseProducts)
             {
                 <div class="row">
-                    <button type="button" class="btn btn-light" id="removeMovie_@product.Name" @onclick="@(() => RemoveProductItem(product))">x @product.Name </button>
+                    <button type="button" class="btn btn-light" id="removeMovie_@product.Name" @onclick="@(() => RemoveProductItem(product))">x @product.Name - @product.Brand - @product.Quantity - @product.Location </button>
                 </div>
             }
             <div class="row">

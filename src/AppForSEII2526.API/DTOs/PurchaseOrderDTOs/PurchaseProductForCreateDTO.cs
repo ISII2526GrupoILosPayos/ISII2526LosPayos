@@ -34,5 +34,6 @@
         public int ProductId { get; set; }
 
         public string Brand { get; set; }
+        public string Location { get; set; }
     }
 }
