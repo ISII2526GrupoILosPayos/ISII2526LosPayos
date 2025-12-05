@@ -5,6 +5,9 @@ namespace AppForSEII2526.Web
 {
     public class PurchaseStateContainer
     {
+        public decimal TotalPrice =>
+            Purchase.PurchaseProducts.Sum(p => p.Price * p.Quantity);
+
         // an order is created when the container is instantiated
         public PurchaseOrderForCreateDTO Purchase { get; private set; } = new PurchaseOrderForCreateDTO()
         {
@@ -31,7 +34,9 @@ namespace AppForSEII2526.Web
                         Name = product.Name,
                         Brand = product.Brand,
                         Quantity = 1,
-                        Location = product.Location
+                        Location = product.Location,
+                        Price = product.Price,
+
                     });
                 }
             }

@@ -20,6 +20,8 @@
         public string Location { get; set; }
 
         public int Stock { get; set; }
+        
+        public decimal Price { get; set; }
 
         public override bool Equals(object? obj)
         {
