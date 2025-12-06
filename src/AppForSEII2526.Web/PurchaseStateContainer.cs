@@ -35,7 +35,6 @@ namespace AppForSEII2526.Web
                         Brand = product.Brand,
                         Quantity = 1,
                         Location = product.Location,
-                        Price = product.Price,
 
                     });
                 }

@@ -88,12 +88,9 @@
             @foreach (PurchaseProductForCreateDTO product in purchase.PurchaseProducts)
             {
                 <div class="row">
-                    <button type="button" class="btn btn-light" id="removeMovie_@product.Name" @onclick="@(() => RemoveProductItem(product))">x @product.Name - @product.Brand - @product.Quantity - @product.Location - @product.Price € </button>
+                    <button type="button" class="btn btn-light" id="removeMovie_@product.Name" @onclick="@(() => RemoveProductItem(product))">x @product.Name - @product.Brand - @product.Quantity - @product.Location </button>
                 </div>
             }
-            <div class="row">
-                <h5>Total price: @purchaseState.TotalPrice €</h5>
-            </div>
             <div class="row">
                 <button type="button" class="btn btn-primary" id="purchaseMovieButton" @onclick=@PurchaseProducts>Create a purchase</button>
             </div>
