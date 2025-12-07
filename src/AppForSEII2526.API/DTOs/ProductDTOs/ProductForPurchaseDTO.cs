@@ -10,6 +10,15 @@
             Location = location;
             Stock = stock;
         }
+        public ProductForPurchaseDTO(int id, string name, string brandName, string location, int stock, decimal price)
+        {
+            Id = id;
+            Name = name;
+            Brand = brandName;
+            Location = location;
+            Stock = stock;
+            Price = price;
+        }
 
         public int Id { get; set; }
 
