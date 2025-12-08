@@ -1,7 +1,12 @@
 ﻿@page "/purchaseorder/createpurchase"
 
+@using AppForSEII2526.Web.API
+@inject APiClient apiclient
+@inject ILogger<SelectProductsForPurchase> logger
+@inject PurchaseStateContainer purchaseState
+
 <h3>Create a Purchase</h3>
 
 @code {
-
+    private PurchaseOrderForCreateDTO purchase => purchaseState.Purchase;
 }
