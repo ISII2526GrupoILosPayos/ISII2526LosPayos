@@ -1,5 +1,6 @@
 ﻿@page "/purchaseorder/createpurchase"
 
+@using AppForSEII2526.Web.Components.Shared
 @using AppForSEII2526.Web.API
 @inject APiClient apiclient
 @inject ILogger<SelectProductsForPurchase> logger
@@ -22,11 +23,33 @@
     </div>
 </EditForm>
 
+@*a modal popup dialog for checking if user wants to proceed to rent*@
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Purchase prdocuts"
+            Message="Do you want to proceed to purchase the selected products?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
 @code {
+    private bool DialogIsOpen;
+
     private PurchaseOrderForCreateDTO purchase => purchaseState.Purchase;
     
     private void OpenDialog()
     {
+        DialogIsOpen = true;
+    }
 
+    private async Task OnDialogClose(bool isOk)
+    {
+
+        DialogIsOpen = false;
+        if (isOk)
+        {
+            // Process the data introduced by the user if they are valid
+        }
     }
 }
