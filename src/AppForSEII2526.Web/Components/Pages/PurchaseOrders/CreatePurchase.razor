@@ -7,6 +7,26 @@
 
 <h3>Create a Purchase</h3>
 
+@* purchase is the object that will be edited thanks to the form *@
+<EditForm Model="purchase" OnValidSubmit="OpenDialog">
+    <div class="row">
+
+        <div class="col-md">
+            <div class="form-floating">
+                @*this button will be used to ask the user if he wants to proceed to purchase the products*@
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Purchase your products
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
 @code {
     private PurchaseOrderForCreateDTO purchase => purchaseState.Purchase;
+    
+    private void OpenDialog()
+    {
+
+    }
 }
