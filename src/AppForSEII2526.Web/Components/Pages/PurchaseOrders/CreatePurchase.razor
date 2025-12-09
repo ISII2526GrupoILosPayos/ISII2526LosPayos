@@ -21,6 +21,34 @@
             </div>
         </div>
     </div>
+    <div class="mh-100 table-responsive">
+        <table class="table table-condensed table-hover" id="TableOfRentalItems">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Brand</th>
+                    <th>Colour</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in purchase.PurchaseProducts)
+                {
+                    <tr id="ProductData_@item.Name">
+                        <td>@item.Name</td>
+                        <td>@item.Brand</td>
+                        <td>@item.Colour</td> 
+                        <td>@item.Quantity</td>
+                        <td>@item.Price €</td>
+                        <td>@(item.Price * item.Quantity) €</td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
 </EditForm>
 
 @*a modal popup dialog for checking if user wants to proceed to rent*@

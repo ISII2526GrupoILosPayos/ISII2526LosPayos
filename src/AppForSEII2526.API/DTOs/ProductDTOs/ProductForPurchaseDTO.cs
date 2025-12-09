@@ -32,6 +32,8 @@
         
         public decimal Price { get; set; }
 
+        public string Colour { get; set; }
+
         public override bool Equals(object? obj)
         {
             return obj is ProductForPurchaseDTO dTO &&
