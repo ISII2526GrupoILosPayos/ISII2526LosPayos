@@ -10,7 +10,7 @@
             Location = location;
             Stock = stock;
         }
-        public ProductForPurchaseDTO(int id, string name, string brandName, string location, int stock, decimal price)
+        public ProductForPurchaseDTO(int id, string name, string brandName, string location, int stock, decimal price, string colour)
         {
             Id = id;
             Name = name;
@@ -18,6 +18,7 @@
             Location = location;
             Stock = stock;
             Price = price;
+            Colour = colour;
         }
 
         public int Id { get; set; }
