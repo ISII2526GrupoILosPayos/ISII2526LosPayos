@@ -44,6 +44,7 @@ namespace AppForSEII2526.API.Controllers
                         .Select(pp => new PurchaseProductDTO(
                             pp.Product.ProductId,
                             pp.Product.Name,
+                            pp.Product.Colour,
                             pp.Product.Brand.Name,
                             pp.Quantity,
                             pp.Price))
@@ -142,6 +143,7 @@ namespace AppForSEII2526.API.Controllers
                     purchasedProductsDto.Add(new PurchaseProductDTO(
                         product.ProductId,
                         product.Name,
+                        product.Colour,
                         product.Brand.Name,
                         item.Quantity,
                         product.Price

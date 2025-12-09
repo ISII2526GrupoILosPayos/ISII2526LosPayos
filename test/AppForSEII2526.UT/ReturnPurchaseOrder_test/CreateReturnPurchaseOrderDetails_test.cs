@@ -1,10 +1,15 @@
-﻿using AppForSEII2526.API.Controllers;
-using AppForSEII2526.API.DTOs.ReturnProductDTOs;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using AppForSEII2526.API.Controllers;
 using AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs;
 using AppForSEII2526.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Xunit;
 
 namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
 {
@@ -20,57 +25,69 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
 
         public CreateReturnPurchaseOrderDetails_test()
         {
-            // === 1️⃣ Crear usuario y método de pago ===
             var user = new ApplicationUser
             {
                 Id = "U1",
-                UserName = _userName,
+                UserName = _userName,          // 👈 coincide con CustomerUserName del DTO
                 Email = _userName,
                 Name = _name,
                 Surname = _surname,
                 Address = _address,
                 PhoneNumber = _phone,
-                AccountCreationDate = DateTime.Now
+                AccountCreationDate = DateTime.Now,
+                PurchaseOrders = new List<PurchaseOrder>()
             };
 
+            // === 2️⃣ Método de pago (PayPal) ===
             var pm = new PayPal
             {
-                User = user,
-                Email = "paypal-pau@example.com"
+                Email = "paypal-pau@example.com",
+                User = user
             };
 
-            // === 2️⃣ Crear datos de compra previos (producto, marca, pedido) ===
+            // === 3️⃣ Marca ===
             var brand = new Brand
             {
                 Id = 1,
                 Name = "Brand X",
-                Location = "Warehouse 1"
+                Location = "Warehouse 1",
+                Products = new List<Product>()
             };
 
+            // === 4️⃣ Producto comprado (NOT NULL cubiertos) ===
             var product = new Product
             {
                 ProductId = 1,
                 Name = "Producto de ejemplo",
-                Brand = brand,
-                Price = 10m,
+                Description = "Bad",          // NOT NULL
+                Colour = "Blue",              // NOT NULL
+                Price = 10m,                  // NOT NULL
+                Stock = 100,                  // NOT NULL
                 IsReturnable = true,
-                Description = "Bad",
-                Colour = "Blue"
+                Brand = brand,
+                PurchaseProducts = new List<PurchaseProduct>()
             };
 
+            // === 5️⃣ Pedido de compra original ===
             var purchaseOrder = new PurchaseOrder
             {
                 Id = 1,
-                ApplicationUser = user,
+                City = "Albacete",           // NOT NULL
+                TotalPrice = 20m,            // NOT NULL
                 Date = DateTime.Now,
-                TotalPrice = 20m,
-                City = "Albacete",
+                Description = "Pedido de prueba",
                 NameSurname = "Pau Femenia",
                 PostalCode = "03730",
                 Street = "Campus",
-                PaymentMethod = pm
+                Rating = 5,
+                State = PurchaseState.Done,
+                ApplicationUserId = user.Id,
+                ApplicationUser = user,
+                PaymentMethod = pm,
+                Products = new List<PurchaseProduct>()
             };
 
+            // === 6️⃣ Línea de compra (PurchaseProduct) ===
             var purchaseProduct = new PurchaseProduct
             {
                 Product = product,
@@ -78,26 +95,30 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 PurchaseOrder = purchaseOrder,
                 PurchaseOrderId = purchaseOrder.Id,
                 Quantity = 2,
-                Price = 10m
+                Price = 10m,
+                ReturnProduct = null
             };
 
-            // === 3️⃣ Añadir todo al contexto ===
+            // === 7️⃣ Navegación coherente ===
+            brand.Products.Add(product);
+            product.PurchaseProducts.Add(purchaseProduct);
+            user.PurchaseOrders.Add(purchaseOrder);
+            purchaseOrder.Products.Add(purchaseProduct);
+
+            // === 8️⃣ Guardar en BD en memoria ===
             _context.Brands.Add(brand);
             _context.Products.Add(product);
             _context.ApplicationUsers.Add(user);
             _context.PaymentMethods.Add(pm);
             _context.PurchaseOrders.Add(purchaseOrder);
-
             _context.PurchaseProducts.Add(purchaseProduct);
-
-
             _context.SaveChanges();
 
             var logger = new Mock<ILogger<ReturnPurchaseOrderController>>();
             _controller = new ReturnPurchaseOrderController(_context, logger.Object);
         }
 
-        // ==== 4️⃣ TESTS DE ERROR ====
+        // ==== 9️⃣ Casos de error (BadRequest) ====
 
         public static IEnumerable<object[]> TestCasesFor_CreateReturnPurchaseOrder()
         {
@@ -120,6 +141,7 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 new List<ReturnItemForCreateDTO>()
             );
 
+
             // Usuario no existe
             var userNotFound = new ReturnPurchaseOrderForCreateDTO(
                 "fakeuser@example.com",
@@ -136,27 +158,35 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 validItems
             );
 
-
-            // Rating fuera de rango
-            var ratnigmalExamen = new ReturnPurchaseOrderForCreateDTO(
+            // Rating = 3 (caso especial examen)
+            var ratingMalExamen = new ReturnPurchaseOrderForCreateDTO(
                 "pau@example.com",
                 "PayPal",
                 3,
                 validItems
             );
 
+            var ratingNull = new ReturnPurchaseOrderForCreateDTO(
+            "pau@example.com",
+            "PayPal",
+             null,
+             validItems
+            );
 
             return new List<object[]>
             {
                 new object[] { noItems, "You must include at least one product to return" },
                 new object[] { userNotFound, "User not found." },
                 new object[] { invalidRating, "Rating must be between 1 and 5." },
-                new object[] { ratnigmalExamen, "Error!, Please, select a value either higher or lower than 3." }
+                new object[] { ratingMalExamen, "Error!, Please, select a value either higher or lower than 3." },
+                new object[] { ratingNull, "Error!, Please, select a value either higher or lower than 0." },
+              
             };
         }
 
         [Theory]
         [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
         [MemberData(nameof(TestCasesFor_CreateReturnPurchaseOrder))]
         public async Task CreateReturnPurchaseOrder_Error_test(ReturnPurchaseOrderForCreateDTO dto, string expectedError)
         {
@@ -169,71 +199,61 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
             Assert.Contains(expectedError, actualError);
         }
 
+        // ==== 🔟 Caso de éxito: 201 + ReturnPurchaseOrderDTO completo ====
 
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
+        [Trait("Database", "WithoutFixture")]
         public async Task CreateReturnPurchaseOrder_Success_test()
         {
-            // Arrange
+            // Arrange: DTO de entrada válido
             var dto = new ReturnPurchaseOrderForCreateDTO(
-                _userName,
+                _userName,      // 👈 coincide con user.UserName
                 "PayPal",
                 5,
                 new List<ReturnItemForCreateDTO>
                 {
-            new ReturnItemForCreateDTO
-            {
-                ProductId = 1,
-                PurchaseOrderId = 1,
-                Quantity = 2,
-                Reason = "Producto dañado"
-            }
+                    new ReturnItemForCreateDTO
+                    {
+                        ProductId = 1,
+                        PurchaseOrderId = 1,
+                        Quantity = 2,
+                        Reason = "Producto dañado"
+                    }
                 }
             );
 
             // Act
             var result = await _controller.CreateReturnPurchaseOrder(dto);
 
-            // Assert 1: debe devolver un 201 Created
+            // Assert 1: 201 Created
             var createdAt = Assert.IsType<CreatedAtActionResult>(result);
 
-            // Assert 2: el valor devuelto NO es un DTO, sino un objeto anónimo
-            var response = createdAt.Value!;
-            var t = response.GetType();
+            // Assert 2: el Value es un ReturnPurchaseOrderDTO (ya NO es objeto anónimo)
+            var actual = Assert.IsType<ReturnPurchaseOrderDTO>(createdAt.Value);
 
-            // --- Leer propiedades del objeto anónimo ---
-            string customerName = (string)t.GetProperty("CustomerName")!.GetValue(response)!;
-            string customerSurname = (string)t.GetProperty("CustomerSurname")!.GetValue(response)!;
-            string customerAddress = (string)t.GetProperty("CustomerAddress")!.GetValue(response)!;
-            string customerTelephone = (string)t.GetProperty("CustomerTelephoneNumber")!.GetValue(response)!;
-            string returningOption = (string)t.GetProperty("ReturningOptionSelected")!.GetValue(response)!;
-            int rating = (int)t.GetProperty("Rating")!.GetValue(response)!;
+            // Esperado: un solo producto devuelto
+            var expectedProducts = new List<ReturnedProductDTO>
+            {
+                new ReturnedProductDTO(
+                    quantity: 2,
+                    productName: "Producto de ejemplo",
+                    brandName: "Brand X",
+                    warehouseLocation: "Warehouse 1"
+                )
+            };
 
-            var returnedProducts =
-                ((IEnumerable<object>)t.GetProperty("ReturnedProducts")!.GetValue(response)!)
-                .ToList();
+            var expected = new ReturnPurchaseOrderDTO(
+                customerName: _name,
+                customerFirstSurname: _surname,
+                customerAddress: _address,
+                customerTelephoneNumber: _phone,
+                returnedProducts: expectedProducts,
+                returningOptionSelected: "PayPal"
+            );
 
-            // --- Comprobaciones equivalentes al ejemplo
-            Assert.Equal(_name, customerName);
-            Assert.Equal(_surname, customerSurname);
-            Assert.Equal(_address, customerAddress);
-            Assert.Equal(_phone, customerTelephone);
-            Assert.Equal("PayPal", returningOption);
-            Assert.Equal(5, rating);
-
-            // --- Validar los productos devueltos ---
-            Assert.Single(returnedProducts);
-
-            var rp = returnedProducts.First();
-            var tRP = rp.GetType();
-
-            Assert.Equal(2, (int)tRP.GetProperty("Quantity")!.GetValue(rp)!);
-            Assert.Equal("Producto de ejemplo", (string)tRP.GetProperty("ProductName")!.GetValue(rp)!);
-            Assert.Equal("Brand X", (string)tRP.GetProperty("BrandName")!.GetValue(rp)!);
-            Assert.Equal("Warehouse 1", (string)tRP.GetProperty("WarehouseLocation")!.GetValue(rp)!);
-            Assert.Equal("Producto dañado", (string)tRP.GetProperty("Reason")!.GetValue(rp)!);
+            // ✅ Igual que con el GET: un único Assert.Equal(expected, actual)
+            Assert.Equal(expected, actual);
         }
-
-
     }
 }
