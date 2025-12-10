@@ -15,6 +15,32 @@
 }
 else
 {
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Name and Surname</th>
+            <td id="NameSurname">@purchase.CustomerName @purchase.CustomerSurname</td>
+        </tr>
+        <tr>
+            <th>Date of Purchase</th>
+            <td id="Date">@purchase.Date</td>
+        </tr>
+        <tr>
+            <th>Street</th>
+            <td id="DeliveryAddress">@purchase.Street</td>
+        </tr>
+        <tr>
+            <th>City</th>
+            <td id="City">@purchase.City</td>
+        </tr>
+        <tr>
+            <th>PostalCode</th>
+            <td id="PostalCode">@purchase.PostalCode</td>
+        </tr>
+        <tr>
+            <th>Payment Method</th>
+            <td id="PaymentMethod">@purchase.PaymentMethodName</td>
+        </tr>
+    </table>
 
 
 }
