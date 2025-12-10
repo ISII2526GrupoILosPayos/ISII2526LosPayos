@@ -11,7 +11,41 @@
 @* purchase is the object that will be edited thanks to the form *@
 <EditForm Model="purchase" OnValidSubmit="OpenDialog">
     <div class="row">
-
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+    </div>
+    <div class="row g-3">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="purchase.NameSurname" class="form-control" id="Name" />
+                <label for="Name">Name and Surname</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="purchase.CustomerUserName" class="form-control" id="Name" />
+                <label for="Name">UserName</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="purchase.Street" class="form-control" id="DeliveryAddress" />
+                <label for="DeliveryAddress">Delivery Address</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="purchase.City" class="form-control" id="Name" />
+                <label for="Name">City</label>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="purchase.PostalCode" class="form-control" id="Name" />
+                <label for="Name">Postal Code</label>
+            </div>
+        </div>
+    </div>
         <div class="col-md">
             <div class="form-floating">
                 @*this button will be used to ask the user if he wants to proceed to purchase the products*@
@@ -20,7 +54,6 @@
                 </button>
             </div>
         </div>
-    </div>
     <div class="mh-100 table-responsive">
         <table class="table table-condensed table-hover" id="TableOfRentalItems">
             <thead>
@@ -63,7 +96,7 @@
 
 @code {
     private bool DialogIsOpen;
-
+    private object? errors;
     private PurchaseOrderForCreateDTO purchase => purchaseState.Purchase;
     
     private void OpenDialog()
