@@ -74,6 +74,17 @@
             </div>
         </div>
     </div>
+    <div class="row g-2 mt-2">
+        <div class="col-md-3">
+            <div class="form-floating">
+                <InputNumber @bind-Value="purchase.Rating"
+                             class="form-control"
+                             min="0" max="5" />
+                <label>Rating (optional)</label>
+            </div>
+        </div>
+    </div>
+
     <h4>Rental detail</h4>
     <p>
         <b>Total price:</b> @TotalCost €
@@ -86,7 +97,7 @@
         <table class="table table-condensed table-hover" id="TableOfRentalItems">
             <thead>
                 <tr>
-                    <th>Title</th>
+                    <th>Name</th>
                     <th>Brand</th>
                     <th>Colour</th>
                     <th>Quantity</th>
