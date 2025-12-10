@@ -1,17 +1,21 @@
-﻿using AppForSEII2526.Web.API;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using AppForSEII2526.Web.API;
 
 namespace AppForSEII2526.Web
 {
     public class ReturnPurchaseOrderStateContainer
     {
-        // Instancia del objeto que se enviará en el POST
+        // Objeto que iremos rellenando durante el proceso de devolución
         public ReturnPurchaseOrderForCreateDTO ReturnOrder { get; private set; } =
-            new ReturnPurchaseOrderForCreateDTO(
-                customerUserName: "",
-                returningOptionSelected: "",
-                rating: null,
-                items: new List<ReturnItemForCreateDTO>()
-            );
+            new ReturnPurchaseOrderForCreateDTO()
+            {
+                CustomerUserName = "",
+                ReturningOptionSelected = "",
+                Rating = null,
+                Items = new List<ReturnItemForCreateDTO>()
+            };
 
         public event Action? OnChange;
         private void NotifyStateChanged() => OnChange?.Invoke();
@@ -19,10 +23,14 @@ namespace AppForSEII2526.Web
         // Añadir un producto que el usuario quiere devolver
         public void AddProductForReturn(PurchaseProductForReturnDTO product, int quantity, string reason)
         {
-            if (!ReturnOrder.Items.Any(i =>
-                    i.ProductId == product.Id &&
-                    i.PurchaseOrderId == product.PurchaseOrderId))
+            // ¿Ya está este producto de ese pedido en el carrito?
+            var existingItem = ReturnOrder.Items
+                .FirstOrDefault(i => i.ProductId == product.Id &&
+                                     i.PurchaseOrderId == product.PurchaseOrderId);
+
+            if (existingItem == null)
             {
+                // No estaba → lo añadimos
                 ReturnOrder.Items.Add(new ReturnItemForCreateDTO
                 {
                     ProductId = product.Id,
@@ -30,15 +38,29 @@ namespace AppForSEII2526.Web
                     Quantity = quantity,
                     Reason = reason
                 });
-
-                NotifyStateChanged();
             }
+            else
+            {
+                // Ya estaba → sumamos cantidad y, si viene, actualizamos razón
+                existingItem.Quantity += quantity;
+                if (!string.IsNullOrWhiteSpace(reason))
+                    existingItem.Reason = reason;
+            }
+
+            NotifyStateChanged();
         }
 
         // Eliminar un producto de la devolución
         public void RemoveItem(ReturnItemForCreateDTO item)
         {
             ReturnOrder.Items.Remove(item);
+            NotifyStateChanged();
+        }
+
+        // Vaciar el carrito de devolución
+        public void ClearReturningCart()
+        {
+            ReturnOrder.Items.Clear();
             NotifyStateChanged();
         }
 
@@ -63,15 +85,16 @@ namespace AppForSEII2526.Web
             NotifyStateChanged();
         }
 
-        // Reiniciar la devolución después del POST
+        // Hemos terminado una devolución → empezamos otra desde 0
         public void ResetAfterProcessing()
         {
-            ReturnOrder = new ReturnPurchaseOrderForCreateDTO(
-                customerUserName: "",
-                returningOptionSelected: "",
-                rating: null,
-                items: new List<ReturnItemForCreateDTO>()
-            );
+            ReturnOrder = new ReturnPurchaseOrderForCreateDTO()
+            {
+                CustomerUserName = "",
+                ReturningOptionSelected = "",
+                Rating = null,
+                Items = new List<ReturnItemForCreateDTO>()
+            };
 
             NotifyStateChanged();
         }

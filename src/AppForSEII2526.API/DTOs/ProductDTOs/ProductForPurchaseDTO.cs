@@ -10,6 +10,15 @@
             Location = location;
             Stock = stock;
         }
+        public ProductForPurchaseDTO(int id, string name, string brandName, string location, int stock, decimal price)
+        {
+            Id = id;
+            Name = name;
+            Brand = brandName;
+            Location = location;
+            Stock = stock;
+            Price = price;
+        }
 
         public int Id { get; set; }
 
@@ -20,6 +29,8 @@
         public string Location { get; set; }
 
         public int Stock { get; set; }
+        
+        public decimal Price { get; set; }
 
         public override bool Equals(object? obj)
         {

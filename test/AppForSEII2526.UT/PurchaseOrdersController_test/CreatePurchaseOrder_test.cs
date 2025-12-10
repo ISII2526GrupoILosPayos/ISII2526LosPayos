@@ -21,8 +21,10 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
         private const string _postalCode = "02600";
 
         private const string _product1Name = "Water";
+        private const string _product1Colour = "Blue";
         private const string _product1Brand = "Bezoya";
         private const string _product2Name = "Hoodie";
+        private const string _product2Colour = "Red";
         private const string _product2Brand = "Nike";
 
         private int _paymentMethodId;
@@ -148,7 +150,7 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             var expectedName = nameParts[0];
             var expectedSurname = nameParts.Length > 1 ? nameParts[1] : "";
 
-            var expectedrentalDetailDTO = new PurchaseOrderDetailDTO(2, DateTime.Today, expectedName, expectedSurname, _street, _city, _postalCode, 1 * 1, "Bizum", new List<PurchaseProductDTO>() { new PurchaseProductDTO(1, _product1Name, _product1Brand, 1, 1)});
+            var expectedrentalDetailDTO = new PurchaseOrderDetailDTO(2, DateTime.Today, expectedName, expectedSurname, _street, _city, _postalCode, 1 * 1, "Bizum", new List<PurchaseProductDTO>() { new PurchaseProductDTO(1, _product1Name, _product1Colour, _product1Brand, 1, 1)});
 
             // Act
             var result = await controller.CreatePurchaseOrder(purchaseOrderDTO);

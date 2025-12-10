@@ -42,6 +42,8 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 string? URI2API = builder.Configuration.GetValue(typeof(string), "LosPayos_API") as string;
 
 builder.Services.AddScoped<APiClient>(sp => new APiClient(URI2API, new HttpClient()));
+builder.Services.AddScoped<PurchaseStateContainer>();
+
 
 // adding a InMemory State Container for Return Purchase Order
 builder.Services.AddScoped<ReturnPurchaseOrderStateContainer>();

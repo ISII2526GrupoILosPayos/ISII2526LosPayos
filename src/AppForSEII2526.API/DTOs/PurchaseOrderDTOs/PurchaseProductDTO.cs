@@ -2,10 +2,11 @@
 {
     public class PurchaseProductDTO
     {
-        public PurchaseProductDTO(int productId, string name, string brand, int quantity, decimal price)
+        public PurchaseProductDTO(int productId, string name, string colour, string brand, int quantity, decimal price)
         {
             ProductId = productId;
             Name = name;
+            Colour = colour;
             Brand = brand;
             Quantity = quantity;
             Price = price;
@@ -17,12 +18,14 @@
         public int Quantity { get; set; }
 
         public decimal Price { get; set; }
+        public string Colour { get; set; }
 
         public override bool Equals(object? obj)
         {
             return obj is PurchaseProductDTO dto &&
                    ProductId == dto.ProductId &&
                    Name == dto.Name &&
+                   Colour == dto.Colour &&
                    Brand == dto.Brand &&
                    Quantity == dto.Quantity &&
                    Price == dto.Price;
@@ -30,7 +33,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(ProductId, Name, Brand, Quantity, Price);
+            return HashCode.Combine(ProductId, Name, Colour, Brand, Quantity, Price);
         }
     }
 }

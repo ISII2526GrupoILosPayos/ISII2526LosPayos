@@ -1,4 +1,5 @@
 ﻿
+
 namespace AppForSEII2526.API.DTOs.UserDTOs
 {
     public class UserForBanDTO
@@ -20,25 +21,13 @@ namespace AppForSEII2526.API.DTOs.UserDTOs
 
         public override bool Equals(object? obj)
         {
-            if (obj is not UserForBanDTO other)
-                return false;
-
-            if (Id != other.Id ||
-                Name != other.Name ||
-                Surname != other.Surname ||
-                AccountCreationDate != other.AccountCreationDate)
-                return false;
-
-            if (ComplaintTypes.Count != other.ComplaintTypes.Count)
-                return false;
-
-            for (int i = 0; i < ComplaintTypes.Count; i++)
-            {
-                if (!ComplaintTypes[i].Equals(other.ComplaintTypes[i]))
-                    return false;
-            }
-
-            return true;
+            return obj is UserForBanDTO dTO &&
+                   Id == dTO.Id &&
+                   Name == dTO.Name &&
+                   Surname == dTO.Surname &&
+                   AccountCreationDate == dTO.AccountCreationDate &&
+                   ComplaintTypes.SequenceEqual(dTO.ComplaintTypes);
+                   //EqualityComparer<IList<ComplaintTypeDTO>>.Default.Equals(ComplaintTypes, dTO.ComplaintTypes);
         }
 
         public override int GetHashCode()
