@@ -1,0 +1,336 @@
+﻿@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@using System.Linq
+@attribute [Authorize]
+@inject APiClient apiclient
+@inject ILogger<PurchaseProductForReturning> logger
+@inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
+@inject NavigationManager navigationManager
+
+@page "/returnorder/purchaseproductforreturning"
+
+<h3>Purchase Product For Returning</h3>
+
+<div class="container-fluid">
+
+    <!-- Zona de errores -->
+    <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
+        <div class="col">
+            <p id="ErrorsShown">Errors: @errors</p>
+
+            @if (noProductsToReturn)
+            {
+                <button type="button"
+                        class="btn btn-secondary mt-2"
+                        id="backToOrdersButton"
+                        @onclick="GoBackToOrders">
+                    Back to orders
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Columna izquierda: filtros + tabla -->
+        <div class="col-8">
+            <div class="row">
+
+                <!-- Filtro por nombre -->
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">ProductName</span>
+                        <input type="text"
+                               id="inputProductName"
+                               @bind="ProductName"
+                               class="form-control"
+                               placeholder="ProductName"
+                               aria-label="ProductName"
+                               aria-describedby="basic-addon1" />
+                    </div>
+                </div>
+
+                <!-- Filtro por cantidad -->
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Quantity</span>
+                        <input type="number"
+                               id="inputQuantity"
+                               @bind="Quantity"
+                               class="form-control"
+                               placeholder="Quantity"
+                               aria-label="Quantity"
+                               aria-describedby="basic-addon1" />
+                    </div>
+                </div>
+
+                <!-- UserName (para saber de qué pedido / usuario) -->
+                <div class="col">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">UserName</span>
+                        <input type="text"
+                               id="inputUserName"
+                               @bind="UserName"
+                               class="form-control"
+                               placeholder="UserName"
+                               aria-label="UserName"
+                               aria-describedby="basic-addon1" />
+                    </div>
+                </div>
+
+                <!-- Botón de búsqueda -->
+                <div class="col">
+                    <button type="button"
+                            class="btn btn-primary"
+                            @onclick="SearchPurchaseProductForReturning"
+                            id="purchaseProductForReturning">
+                        Purchase Product For Returning
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de productos disponibles para devolver -->
+            <div class="row">
+                @if (purchaseProductForReturn == null)
+                {
+                    <p>Loading purchaseProductsForReturning....</p>
+                }
+                else if (!purchaseProductForReturn.Any())
+                {
+                    <p>No products to show.</p>
+                }
+                else
+                {
+                    <div class="mh-100 table-responsive">
+                        <table class="table table-condensed table-hover" id="TableOfReturnedProducts">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Brand</th>
+                                    <th>Quantity Bought</th>
+                                    <th>Warehouse</th>
+                                    <th>Add</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var pp in purchaseProductForReturn)
+                                {
+                                    <tr id="ProductData_@pp.Name.Replace(" ", "")">
+                                        <td>@pp.Name</td>
+                                        <td>@pp.Brand</td>
+                                        <td>@pp.Quantity</td>
+                                        <td>@pp.Location</td>
+
+                                        <td>
+                                            <button class="btn btn-outline-secondary"
+                                                    id="productToReturn_@pp.Name.Replace(" ", "")"
+                                                    @onclick="@(() => AddProductToReturn(pp))">
+                                                Add
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Columna derecha: carrito de devolución -->
+        <div class="col-2" hidden="@hideReturningCart">
+            <div class="row">
+                <h3>Return Cart</h3>
+            </div>
+
+            @foreach (var item in returnOrder.Items)
+            {
+                <div class="row">
+                    <button type="button"
+                            class="btn btn-light"
+                            id="removeProduct_@item.ProductId"
+                            @onclick="@(() => RemoveReturnItem(item))">
+                        x Product @item.ProductId - Qty @item.Quantity
+                    </button>
+                </div>
+            }
+
+            <div class="row mt-2">
+                <button type="button"
+                        class="btn btn-primary"
+                        id="continueReturnButton"
+                        @onclick="GoToReturnDetails">
+                    Continue with return
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    // ===== Estado básico =====
+
+    private ICollection<PurchaseProductForReturnDTO>? purchaseProductForReturn;
+    private string errors = "";
+    private bool noProductsToReturn = false;
+
+    private bool hideErrors => string.IsNullOrEmpty(errors);
+
+    // Alias al DTO que se enviará en el POST
+    private ReturnPurchaseOrderForCreateDTO returnOrder =>
+        returnPurchaseOrderStateContainer.ReturnOrder;
+
+    // Mostrar u ocultar el carrito de devolución
+    private bool hideReturningCart => returnOrder.Items.Count == 0;
+
+    // ===== Backing fields filtros =====
+
+    private string productName = "";
+    private int quantity = 0;
+    private string userName = "";
+
+    private string ProductName
+    {
+        get => productName;
+        set
+        {
+            if (productName != value)
+            {
+                productName = value;
+
+                // Al cambiar filtros, limpiamos el carrito
+                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+
+                // Si ya había username, lo restauramos
+                if (!string.IsNullOrWhiteSpace(userName))
+                    returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+            }
+        }
+    }
+
+    private int Quantity
+    {
+        get => quantity;
+        set
+        {
+            if (quantity != value)
+            {
+                quantity = value;
+
+                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+
+                if (!string.IsNullOrWhiteSpace(userName))
+                    returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+            }
+        }
+    }
+
+    private string UserName
+    {
+        get => userName;
+        set
+        {
+            if (userName != value)
+            {
+                userName = value;
+
+                // Reseteamos carrito y fijamos el nuevo usuario
+                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+                returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+            }
+        }
+    }
+
+    // ===== Lógica de carrito y navegación =====
+
+    private void AddProductToReturn(PurchaseProductForReturnDTO product)
+    {
+        // Por ahora añadimos 1 unidad y razón vacía
+        returnPurchaseOrderStateContainer.AddProductForReturn(
+            product,
+            quantity: 1,
+            reason: ""
+        );
+    }
+
+    private void RemoveReturnItem(ReturnItemForCreateDTO item)
+    {
+        returnPurchaseOrderStateContainer.RemoveItem(item);
+    }
+
+    private void GoToReturnDetails()
+    {
+        navigationManager.NavigateTo("/returnorder/createreturnpurchaseorder");
+    }
+
+    private void GoBackToOrders()
+    {
+        // Ajusta la ruta si el listado es otro
+        navigationManager.NavigateTo("/purchaseorders");
+    }
+
+    // ===== Búsqueda en la API =====
+
+    private async Task SearchPurchaseProductForReturning()
+    {
+        noProductsToReturn = false;
+
+        if (string.IsNullOrWhiteSpace(UserName))
+        {
+            errors = "UserName is required.";
+            purchaseProductForReturn = null;
+            return;
+        }
+
+        if (Quantity < 0)
+        {
+            errors = "Quantity must be 0 or greater.";
+            purchaseProductForReturn = null;
+            return;
+        }
+
+        try
+        {
+            var result = await apiclient.GetPurchasedProductsForReturningAsync(
+                productName,
+                userName,
+                quantity
+            );
+
+            purchaseProductForReturn = result?.ToList() ?? new List<PurchaseProductForReturnDTO>();
+
+            if (!purchaseProductForReturn.Any())
+            {
+                errors = "The selected order has no products available for returning.";
+                noProductsToReturn = true;
+            }
+            else
+            {
+                errors = "";
+            }
+        }
+        catch (ApiException ex)
+        {
+            logger.LogError($"{DateTime.Now} Error: {ex}");
+            errors = "Error while connecting to the system.";
+            purchaseProductForReturn = null;
+            noProductsToReturn = false;
+        }
+
+        StateHasChanged();
+    }
+
+    // ===== Inicialización =====
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Valores por defecto (igual que en el ejemplo de películas)
+        UserName = "pauUser";
+        ProductName = "";
+        Quantity = 0;
+
+        await SearchPurchaseProductForReturning();
+        await base.OnInitializedAsync();
+    }
+}
