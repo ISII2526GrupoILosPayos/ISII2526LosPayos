@@ -21,7 +21,7 @@ else
             <td id="NameSurname">@purchase.CustomerName @purchase.CustomerSurname</td>
         </tr>
         <tr>
-            <th>Date of Purchase</th>
+            <th>Date of the Purchase</th>
             <td id="Date">@purchase.Date</td>
         </tr>
         <tr>
@@ -33,13 +33,44 @@ else
             <td id="City">@purchase.City</td>
         </tr>
         <tr>
-            <th>PostalCode</th>
+            <th>Postal Code</th>
             <td id="PostalCode">@purchase.PostalCode</td>
         </tr>
         <tr>
             <th>Payment Method</th>
             <td id="PaymentMethod">@purchase.PaymentMethodName</td>
         </tr>
+    </table>
+    <h4>Purchased products</h4>
+
+    <table class="table" id="PurchasedProducts">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price of the Product</th>
+                <th scope="col">Total price by Product</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in purchase.PurchaseProducts)
+            {
+                <tr id="PurchaseProduct_@product.Name">
+                    <td>@product.Name</td>
+                    <td>@product.Brand</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.Price €</td>
+                    <td>@(product.Price * product.Quantity) €</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            @*colspan is used to state that TWO columns are collapsed*@
+        <th scope="row" colspan="4" class="text-end fs-4 fw-bold">Total Price</th>
+        <td id="TotalPrice" class="fs-4 fw-bold text-success">@purchase.TotalPrice €</td>
+        </tfoot>
+
     </table>
 
 
