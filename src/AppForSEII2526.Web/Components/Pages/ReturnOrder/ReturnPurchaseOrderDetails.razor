@@ -16,9 +16,10 @@
     {
         <div class="row alert alert-danger" role="alert">
             <div class="col">
-                <p>@errors</p>
+                <p id="ErrorsShown">@errors</p>
                 <button type="button"
                         class="btn btn-secondary"
+                        id="BackToOrders"
                         @onclick="GoBackToOrders">
                     Back to orders
                 </button>
@@ -40,11 +41,11 @@
                         Customer data
                     </div>
                     <div class="card-body">
-                        <p><strong>Name:</strong> @returnDetails.CustomerName</p>
-                        <p><strong>First surname:</strong> @returnDetails.CustomerFirstSurname</p>
+                        <p><strong>Name:</strong> <span id="CustomerName">@returnDetails.CustomerName</span></p>
+                        <p><strong>First surname:</strong> <span id="CustomerFirstSurname">@returnDetails.CustomerFirstSurname</span></p>
                         <!-- El UC habla de Second Surname, pero el modelo solo tiene uno -->
-                        <p><strong>Address:</strong> @returnDetails.CustomerAddress</p>
-                        <p><strong>Telephone:</strong> @returnDetails.CustomerTelephoneNumber</p>
+                        <p><strong>Address:</strong> <span id="CustomerAddress">@returnDetails.CustomerAddress</span></p>
+                        <p><strong>Telephone:</strong> <span id="CustomerTelephoneNumber">@returnDetails.CustomerTelephoneNumber</span></p>
                     </div>
                 </div>
             </div>
@@ -57,7 +58,7 @@
                     <div class="card-body">
                         <p>
                             <strong>Returning option selected:</strong>
-                            @returnDetails.ReturningOptionSelected
+                            <span id="ReturningOptionSelected">@returnDetails.ReturningOptionSelected</span>
                         </p>
                     </div>
                 </div>
@@ -76,7 +77,7 @@
                 else
                 {
                     <div class="table-responsive">
-                        <table class="table table-condensed table-hover">
+                        <table class="table table-condensed table-hover" id="TableOfReturnedProducts">
                             <thead>
                                 <tr>
                                     <th>Quantity</th>
@@ -88,7 +89,7 @@
                             <tbody>
                                 @foreach (var rp in returnDetails.ReturnedProducts)
                                 {
-                                    <tr>
+                                    <tr id="@($"ReturnedProduct_{rp.ProductName.Replace(" ", "")}")">
                                         <td>@rp.Quantity</td>
                                         <td>@rp.ProductName</td>
                                         <td>@rp.BrandName</td>
