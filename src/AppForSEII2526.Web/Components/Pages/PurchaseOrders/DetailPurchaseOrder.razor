@@ -1,5 +1,14 @@
-﻿<h3>DetailPurchase</h3>
+﻿@page "/purchaseord/detailpurchase"
+
+
 @using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject APiClient apiclient
+
+<h3>DetailPurchase</h3>
+
+@attribute [Authorize]
+
 
 @code {
     [Parameter]
@@ -10,5 +19,41 @@
 
     [CascadingParameter]
     private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //we check the user is logged in
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+
+        try
+        {
+            purchase = await apiclient.GetPurchaseOrderAsync(PurchaseID);
+        }
+        catch (ApiException exception)
+        {
+            purchase = null;
+        }
+        if (purchase == null)
+        {
+            error = $"Error! You are not authorized to see this purchase or there is not a purchase with id={PurchaseID}";
+        }
+
+
+    }
 
 }
