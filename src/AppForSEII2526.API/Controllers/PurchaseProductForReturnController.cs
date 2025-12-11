@@ -52,7 +52,7 @@ namespace AppForSEII2526.API.Controllers
                         && pp.ReturnProduct == null
                     )
                     && (
-                         pp.Quantity > quantity
+                         pp.Quantity >= quantity
                     )
                     && (
                         pp.Product.IsReturnable == true
