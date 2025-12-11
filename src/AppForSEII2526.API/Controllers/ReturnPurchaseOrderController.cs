@@ -42,6 +42,7 @@ namespace AppForSEII2526.API.Controllers
                 .Where(rpo => rpo.Id == id)
                 .Select(rpo =>
                     new ReturnPurchaseOrderDTO(
+                          rpo.Id,
                         rpo.Customer.Name,
                         rpo.Customer.Surname,
                         rpo.Customer.Address,
@@ -88,9 +89,6 @@ public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderFor
             ModelState.AddModelError(nameof(model.Rating),
                 "Error!, Please, select a value either higher or lower than 3.");
 
-        if(model.Rating == null)
-            ModelState.AddModelError(nameof(model.Rating),
-                "Error!, Please, select a value either higher or lower than 0.");
 
             if (model.Rating.HasValue &&
             (model.Rating.Value < 1 || model.Rating.Value > 5))
@@ -322,6 +320,7 @@ public async Task<ActionResult> CreateReturnPurchaseOrder(ReturnPurchaseOrderFor
     // 6. Respuesta 201 - usar ReturnPurchaseOrderDTO + ReturnedProductDTO
     //
     var responseDto = new ReturnPurchaseOrderDTO(
+        returnOrder.Id,
         customerName:            user.Name,
         customerFirstSurname:    user.Surname,
         customerAddress:         user.Address,
