@@ -209,44 +209,61 @@ else
 
         try
         {
+            // Para depurar: nos aseguramos de leer la respuesta como string
+            apiClient.ReadResponseAsString = true;
+
             // Llamada al API: CreateReturnPurchaseOrder
             var created = await apiClient.CreateReturnPurchaseOrderAsync(returnOrder);
 
             // Limpiamos el estado para una futura devolución
             returnPurchaseOrderStateContainer.ResetAfterProcessing();
 
-            // Por ahora mostramos mensaje de éxito.
-            // Más adelante, cuando tengas la página de detalle, puedes navegar a ella.
-            infoDialogMessage = "Return processed successfully.";
-            infoDialogOpen = true;
-
-            // Ejemplo cuando tengas detalle:
-             Navigation.NavigateTo($"/returnorder/details/{created.Id}");
+            // Si todo va OK, navegamos al details directamente
+            Navigation.NavigateTo($"/returnorder/details/{created.Id}");
         }
         catch (ApiException<ValidationProblemDetails> apiEx)
         {
-            // Errores de validación (400)
             var messages = new List<string>();
 
             if (apiEx.Result?.Errors != null)
             {
                 foreach (var kvp in apiEx.Result.Errors)
-                    messages.AddRange(kvp.Value);
+                {
+                    // kvp.Key = nombre del campo, kvp.Value = lista de mensajes
+                    var field = kvp.Key;
+                    var fieldErrors = string.Join(", ", kvp.Value);
+                    messages.Add($"{field}: {fieldErrors}");
+                }
             }
 
-            infoDialogMessage = messages.Any()
-                ? string.Join(" (*) ", messages)
-                : "Error while processing your request. Please, check the data and try again.";
+            // Si hay mensajes de validación, los mostramos todos
+            if (messages.Any())
+            {
+                infoDialogMessage =
+                    "VALIDATION ERRORS:\n" +
+                    string.Join("\n", messages);
+            }
+            else
+            {
+                // Mensaje genérico de validación
+                infoDialogMessage =
+                    $"Validation error ({apiEx.StatusCode}): " +
+                    (apiEx.Result?.Title ?? apiEx.Message);
+            }
 
             infoDialogOpen = true;
         }
-        catch (ApiException)
+        catch (ApiException ex)
         {
-            // Otros errores de API
-            infoDialogMessage = "Error while connecting to the system. Please, try again later.";
+            // Aquí podemos ver status y el cuerpo bruto devuelto por el API
+            infoDialogMessage =
+                $"API ERROR ({ex.StatusCode}):\n" +
+                $"{ex.Response}";
+
             infoDialogOpen = true;
         }
     }
+
 
     private Task OnInfoDialogClose()
     {
