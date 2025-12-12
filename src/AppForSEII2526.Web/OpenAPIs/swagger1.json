@@ -481,17 +481,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReturnPurchaseOrderForCreateDTO"
+                  "$ref": "#/components/schemas/ReturnPurchaseOrderDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReturnPurchaseOrderForCreateDTO"
+                  "$ref": "#/components/schemas/ReturnPurchaseOrderDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReturnPurchaseOrderForCreateDTO"
+                  "$ref": "#/components/schemas/ReturnPurchaseOrderDTO"
                 }
               }
             }
@@ -558,6 +558,14 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "creationDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
             }
           }
         ],
@@ -674,6 +682,14 @@
           "stock": {
             "type": "integer",
             "format": "int32"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "colour": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -808,6 +824,10 @@
           "price": {
             "type": "number",
             "format": "double"
+          },
+          "colour": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -828,6 +848,26 @@
             "minimum": 1,
             "type": "integer",
             "format": "int32"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "brand": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "colour": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

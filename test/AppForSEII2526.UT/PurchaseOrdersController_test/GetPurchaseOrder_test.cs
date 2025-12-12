@@ -80,8 +80,8 @@ namespace AppForSEII2526.UT.PurchaseOrdersController_test
             var expectedPurchaseOrder = new PurchaseOrderDetailDTO(1, new DateTime(2025, 11, 7, 0, 0, 0), "Luis", "Melero Jareño",
                         "Avenida Reyes Catolicos","Villarrobledo", "02600",
                         new List<PurchaseProductDTO>());
-            expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(1, "Water", "Bezoya", 1, 1));
-            expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(2, "Hoodie", "Nike", 1, 69));
+            expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(1, "Water", "Blue", "Bezoya", 1, 1));
+            expectedPurchaseOrder.PurchaseProducts.Add(new PurchaseProductDTO(2, "Hoodie", "Red", "Nike", 1, 69));
 
             // Act 
             var result = await controller.GetPurchaseOrder(1);

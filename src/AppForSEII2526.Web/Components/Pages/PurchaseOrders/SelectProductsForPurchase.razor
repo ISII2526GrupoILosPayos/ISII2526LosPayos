@@ -1,11 +1,13 @@
 ﻿@page "/purchaseorder/selectproductsforpurchase"
 
+@using Microsoft.AspNetCore.Authorization
 @using AppForSEII2526.Web.API
 @inject APiClient apiclient
 @inject ILogger<SelectProductsForPurchase> logger
 @inject PurchaseStateContainer purchaseState
+@inject NavigationManager navigation
 
-
+@attribute [Authorize]
 <h3>Select Products For Purchase</h3>
 <div class="container-fluid">
     <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
@@ -17,13 +19,13 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Name</span>
-                        <input type="text" id="inputName" @bind=productName class="form-control" placeholder="Write the name of the product to purchase" aria-label="Product name" aria-describedby="basic-addon1">
+                        <input type="text" id="inputTitle" @bind=productName class="form-control" placeholder="Write the name of the product to purchase" aria-label="Product name" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Colour</span>
-                        <input type="text" id="inputColour" @bind=productColour class="form-control" placeholder="Write the colour of the product to purchase" aria-label="Product colour" aria-describedby="basic-addon1">
+                        <input type="text" id="inputGenre" @bind=productColour class="form-control" placeholder="Write the colour of the product to purchase" aria-label="Product colour" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
@@ -62,6 +64,13 @@
                                                     @onclick="@(() => AddProduct(product))">
                                                 Add
                                             </button>
+                                            @if (product.Stock == purchase.PurchaseProducts
+                                                    .FirstOrDefault(p => p.Name == product.Name)?.Quantity)
+                                            {
+                                                <div class="text-danger" style="font-size: 12px;">
+                                                    No more stock available
+                                                </div>
+                                            }
                                         </td>
                                     </tr>
                                 }
@@ -73,21 +82,43 @@
                 }
             </div>
         </div>
-        <div class="col-2">
-            <p>here i will show the purhcase cart</p>
+        <div class="col-4" hidden="@hideRentingCart">
+            <h3>Shopping Cart</h3>
+            <div class="w-100">
+                @foreach (PurchaseProductForCreateDTO product in purchase.PurchaseProducts)
+                {
+                    <div class="mb-1">
+                        <button type="button"
+                                class="btn btn-light w-100 text-start"
+                                @onclick="@(() => RemoveProductItem(product))">
+                            x @product.Name - @product.Brand - @product.Quantity - @product.Location - @product.Price €
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-3">
+                <h5>Total price: @purchaseState.TotalPrice.ToString("N2") €</h5>
+            </div>
+
+            <button type="button"
+                    class="btn btn-primary w-100 mt-2"
+                    @onclick=@PurchaseProducts>
+                Create a purchase
+            </button>
         </div>
+
 
     </div>
 
 </div>
 @code {
+    private bool hideRentingCart { get { return purchase.PurchaseProducts.Count == 0; } }
     private ICollection<ProductForPurchaseDTO> products;
     private bool hideErrors { get { return errors.Length == 0; } }
     private string errors = "";
     private string productName { get; set; }
     private string productColour { get; set; }
-    private string _productName;
-    private string _productColour;
 
     private PurchaseOrderForCreateDTO purchase => purchaseState.Purchase;
 
@@ -122,5 +153,10 @@
             errors = "Error while connecting to the system";
         }
         StateHasChanged();
+    }
+
+    private void PurchaseProducts()
+    {
+        navigation.NavigateTo("/purchaseorder/createpurchase");
     }
 }

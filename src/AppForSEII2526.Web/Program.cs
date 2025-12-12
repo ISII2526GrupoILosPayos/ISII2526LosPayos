@@ -45,6 +45,9 @@ builder.Services.AddScoped<APiClient>(sp => new APiClient(URI2API, new HttpClien
 builder.Services.AddScoped<PurchaseStateContainer>();
 
 
+// adding a InMemory State Container for Return Purchase Order
+builder.Services.AddScoped<ReturnPurchaseOrderStateContainer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

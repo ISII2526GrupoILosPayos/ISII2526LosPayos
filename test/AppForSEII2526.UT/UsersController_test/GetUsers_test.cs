@@ -4,6 +4,7 @@ using AppForSEII2526.UT;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Net;
 
 namespace AppForSEII2526.UT.UsersController_test
 {
@@ -86,6 +87,7 @@ namespace AppForSEII2526.UT.UsersController_test
             _context.SaveChanges();
         }
 
+
         [Fact]
         [Trait("LevelTesting", "Unit Testing")]
         public async Task GetUsers_null_surname_type()
@@ -111,7 +113,7 @@ namespace AppForSEII2526.UT.UsersController_test
             ILogger<UsersController> logger = mock.Object;
             UsersController controller = new UsersController(_context, logger);
 
-            var result = await controller.GetUsers(null, null);
+            var result = await controller.GetUsers(null, null, null);
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             var usersActual = Assert.IsType<List<UserForBanDTO>>(okResult.Value);
@@ -152,15 +154,27 @@ namespace AppForSEII2526.UT.UsersController_test
                     {
                         new ComplaintTypeDTO("Denuncia", 1)
                     }
+                ),
+                new UserForBanDTO(
+                    id: "2",
+                    name: "Kylian",
+                    surname: "Mbappe",
+                    accountCreationDate: new DateTime(2025, 10, 10),
+                    complaintTypes: new List<ComplaintTypeDTO>()
+                    {
+                        new ComplaintTypeDTO("Denuncia", 1)
+                    }
                 )
             };
             var allTests = new List<object[]>
             {
-                new object[] { "Femen", null, new List<UserForBanDTO> { userDTOs[0] } },
-                new object[] { null, "Queja", new List<UserForBanDTO> { userDTOs[1] } },
-                new object[] { "Femen", "Denuncia", new List<UserForBanDTO> { userDTOs[2] } },
-                new object[] { null, null, new List<UserForBanDTO> { userDTOs[0] } },
-                new object[] { "Mbapp", null, new List<UserForBanDTO>() }
+                new object[] { "Femen", null, null, new List<UserForBanDTO> { userDTOs[0] } },
+                new object[] { null, "Queja", null, new List<UserForBanDTO> { userDTOs[1] } },
+                new object[] { "Femen", "Denuncia", null, new List<UserForBanDTO> { userDTOs[2] } },
+                new object[] { null, null, null, new List<UserForBanDTO> { userDTOs[0] } },
+                new object[] { "Mbapp", null, null, new List<UserForBanDTO>() },
+                new object[] {null, null, new DateTime(2003, 11, 12), new List<UserForBanDTO>{ userDTOs[0] } },
+                new object[] {null, null, new DateTime(2005, 11, 12), new List<UserForBanDTO>() }
             };  
             return allTests;
         }
@@ -168,20 +182,19 @@ namespace AppForSEII2526.UT.UsersController_test
         [Theory]
         [MemberData(nameof(TestCasesFor_GetUsersForBan_OK))]
         [Trait("LevelTesting", "Unit Testing")]
-        public async Task GetUsersForBan_OK_test(string? surname, string? type, List<UserForBanDTO> expectedUsers)
+        public async Task GetUsersForBan_OK_test(string? surname, string? type, DateTime? fechaCreacion, List<UserForBanDTO> expectedUsers)
         {
             // Arrange
             var controller = new UsersController(_context, null);
 
             // Act
-            var result = await controller.GetUsers(surname, type);
+            var result = await controller.GetUsers(surname, type, fechaCreacion);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
 
             var usersActual = Assert.IsType<List<UserForBanDTO>>(okResult.Value);
 
-            // Igual que en el ejemplo de la profesora, pero con comparación profunda real
             Assert.Equal(expectedUsers, usersActual);
         }
     }

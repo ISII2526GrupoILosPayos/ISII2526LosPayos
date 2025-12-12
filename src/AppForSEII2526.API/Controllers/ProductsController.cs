@@ -45,7 +45,7 @@ namespace AppForSEII2526.API.Controllers
                     (productColour == null || product.Colour.Contains(productColour))
                 )
                 .OrderBy(product=>product.Name)
-                .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name, product.Brand.Location, product.Stock))
+                .Select(product=>new ProductForPurchaseDTO(product.ProductId, product.Name, product.Brand.Name, product.Brand.Location, product.Stock, product.Price, product.Colour))
                 .ToListAsync();
 
             return Ok(productDTOS);
