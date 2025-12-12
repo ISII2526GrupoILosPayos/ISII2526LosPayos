@@ -35,16 +35,18 @@ namespace AppForSEII2526.UIT.UC_Purchase
             _driver.FindElement(By.Id("CreatePurchaseOrder")).Click();
         }
 
-        [Fact]
+        [Theory]
+        [InlineData(productName1, productBrand1, productLocation1, productQuantity1, "PS5", "")]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC77_AF1_UC2_4_5filtering()
+        public void UC77_AF1_UC2_4_5filtering(string productName, string productBrand, string productLocation, string productQuantity,
+            string filterName, string filterColour)
         {
             //Arrange
             InitialStepsForPurchaseProducts();
-            var expectedProducts = new List<string[]> { new string[] { productName1, productBrand1, productLocation1, productQuantity1 }, };
+            var expectedProducts = new List<string[]> { new string[] { productName, productBrand, productLocation, productQuantity }, };
 
             //Act
-            selectProductsForPurchase_PO.SearchProducts("PS5", "");
+            selectProductsForPurchase_PO.SearchProducts(filterName, filterColour);
 
             //Assert
 
