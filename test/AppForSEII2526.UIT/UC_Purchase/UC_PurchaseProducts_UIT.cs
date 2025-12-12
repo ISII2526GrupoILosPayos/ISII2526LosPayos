@@ -59,5 +59,22 @@ namespace AppForSEII2526.UIT.UC_Purchase
             Assert.True(selectProductsForPurchase_PO.CheckListOfProducts(expectedProducts));
 
         }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+
+        public void UC2_AF1_UC2_11_RentingNotavailable()
+        {
+            //Arrange
+            InitialStepsForPurchaseProducts();
+            //Act
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+            selectProductsForPurchase_PO.RemoveProductFromPurchaseCart(productName1);
+
+            //Assert
+
+            Assert.True(selectProductsForPurchase_PO.PurchaseNotAvailable());
+
+        }
     }
 }
