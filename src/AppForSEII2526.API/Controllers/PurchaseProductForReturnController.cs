@@ -54,9 +54,9 @@ namespace AppForSEII2526.API.Controllers
                     && (
                          pp.Quantity >= quantity
                     )
-                    && (
-                        pp.Product.IsReturnable == true
-                    )
+                    //&& (
+                        //pp.Product.IsReturnable == true
+                   // )
                 )
                 .OrderBy(pp => pp.Product.Name)
                 .Select(pp => new PurchaseProductForReturnDTO(pp.Product.ProductId, pp.Product.Name, pp.Product.Brand.Name, pp.Quantity, pp.Product.Brand.Location)
