@@ -20,12 +20,14 @@ namespace AppForSEII2526.UIT.UC_Purchase
         public void SearchProducts(string name, string colour)
         {
             WaitForBeingClickable(productName);
+            _driver.FindElement(productName).Clear();
             _driver.FindElement(productName).SendKeys(name);
-            if (colour == "") colour = "All";
-            SelectElement selectElement = new SelectElement(_driver.FindElement(productColour));
-            selectElement.SelectByText(colour);
+
+            _driver.FindElement(productColour).Clear();
+            _driver.FindElement(productColour).SendKeys(colour);
+
             _driver.FindElement(buttonSearchProducts).Click();
-            
+
         }
 
         public bool CheckListOfProducts(List<string[]> expectedProducts)
