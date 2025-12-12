@@ -16,6 +16,11 @@ namespace AppForSEII2526.UIT.UC_Purchase
         private const string productLocation1 = "USA";
         private const string productQuantity1 = "10";
 
+        private const string productName2 = "Pantalon";
+        private const string productBrand2 = "Pull&Bear";
+        private const string productLocation2 = "Albacete";
+        private const string productQuantity2 = "30";
+
         public UC_PurchaseProducts_UIT(ITestOutputHelper output) : base(output)
         {
             selectProductsForPurchase_PO = new SelectProductsForPurchase_PO(_driver, _output);
@@ -37,6 +42,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
         [Theory]
         [InlineData(productName1, productBrand1, productLocation1, productQuantity1, "PS5", "")]
+        [InlineData(productName2, productBrand2, productLocation2, productQuantity2, "", "Negro")]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC77_AF1_UC2_4_5filtering(string productName, string productBrand, string productLocation, string productQuantity,
             string filterName, string filterColour)
