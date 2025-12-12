@@ -1,0 +1,242 @@
+﻿@page "/banreports/selectusersforban"
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@using AppForSEII2526.Web.Components.Shared
+
+@inject ILogger<SelectUserForBan> logger
+@inject APiClient apiservice
+@inject BanUserProcessStateContainer banState
+@inject NavigationManager navigation
+
+@attribute [Authorize]
+
+<h3>Select Users For Ban</h3>
+
+<div class="container-fluid">
+
+    <!-- TOP BAR -->
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <div><b>Users Selected:</b> @SelectedUsers.Count</div>
+            <button class="btn btn-primary"
+                    id="Continue"
+                    @onclick="ContinueToCreateReport"
+                    disabled="@ContinueDisabled">
+                Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- CART TOGGLE -->
+    <div class="row">
+        <button class="btn btn-outline-primary"
+                id="showBanCart"
+                @onclick="ToggleBanCart">
+            Selected users: @SelectedUsers.Count
+        </button>
+    </div>
+
+    <!-- CART CONTENT (como el RentalItem list, pero en tabla simple) -->
+    <div class="row" hidden="@hiddenBanCart">
+        @if (SelectedUsers.Count == 0)
+        {
+            <p><em>No users selected.</em></p>
+        }
+        else
+        {
+            <div class="mh-100 table-responsive">
+                <table class="table table-condensed table-hover" id="TableOfSelectedUsers">
+                    <thead>
+                        <tr>
+                            <th>CustomerId</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in SelectedUsers)
+                        {
+                            <tr id="SelectedUser_@u.CustomerId">
+                                <td>@u.CustomerId</td>
+                                <td>
+                                    <button class="btn btn-outline-secondary"
+                                            id="removeUser_@u.CustomerId"
+                                            @onclick="@(() => RemoveSelectedUser(u))">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <!-- FILTERS -->
+    <div class="row">
+        <p></p>
+        <h5>Filter Users</h5>
+        <div class="input-group">
+
+            <div class="input-group-prepend">
+                <span class="input-group-text">Surname</span>
+            </div>
+            <input type="text" class="form-control" @bind="surnameFilter" id="surnameFilter" />
+
+            <div class="input-group-prepend">
+                <span class="input-group-text">Complaint type</span>
+            </div>
+            <input type="text" class="form-control" @bind="complaintTypeFilter" id="complaintTypeFilter" />
+
+            <div class="input-group-prepend">
+                <span class="input-group-text">Created after</span>
+            </div>
+            <InputDate TValue="DateTime?" @bind-Value="CreationDate" id="creationDateFilter" />
+
+            <div class="input-group-append">
+                <button class="btn btn-outline-primary"
+                        id="searchUsers"
+                        @onclick="SearchUsers">
+                    Search users
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="d-flex justify-content-between">
+        <div class="container-fluid">
+            @if (Users.Count == 0)
+            {
+                <p><em>There are no users with complaints to be addressed</em></p>
+            }
+            else
+            {
+                <div class="mh-100 table-responsive">
+                    <table class="table table-condensed table-hover" id="TableOfUsersForBan">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Surname</th>
+                                <th>Account creation date</th>
+                                <th>Unprocessed complaint types</th>
+                                <th>Add</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Users)
+                            {
+                                <tr id="UserData_@user.Id">
+                                    <td>@user.Name</td>
+                                    <td>@user.Surname</td>
+                                    <td>@user.AccountCreationDate.ToShortDateString()</td>
+                                    <td>
+                                        @if (user.ComplaintTypes == null || user.ComplaintTypes.Count == 0)
+                                        {
+                                            <span>-</span>
+                                        }
+                                        else
+                                        {
+                                            @string.Join(", ", user.ComplaintTypes.Select(ct => $"{ct.Name} ({ct.Count})"))
+                                        }
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-secondary"
+                                                id="userToBan_@user.Id"
+                                                @onclick="@(() => AddUserToCart(user))">
+                                            Add
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@code {
+    private bool hiddenBanCart = true;
+    private void ToggleBanCart() => hiddenBanCart = !hiddenBanCart;
+
+    // Lista de usuarios devuelta por la API (GetUsers)
+    private ICollection<UserForBanDTO> Users { get; set; } = new List<UserForBanDTO>();
+
+    // Filtros
+    private string? surnameFilter;
+    private string? complaintTypeFilter;
+
+    // Igual que la profe: propiedad con backing field y efecto secundario si cambia.
+    // Aquí, si cambias CreationDate, vaciamos selección para evitar inconsistencias (mismo espíritu que ella con fechas).
+    private DateTime? _creationDate;
+    private DateTime? CreationDate
+    {
+        get => _creationDate;
+        set
+        {
+            if (_creationDate != value)
+            {
+                _creationDate = value;
+                banState.ClearBanUserCart();
+                hiddenBanCart = true;
+            }
+        }
+    }
+
+    // Acceso al “carrito” (lista seleccionados)
+    private BanReportForCreateDTO BanReport => banState.BanReport;
+    private IList<BanReportUserForCreateDTO> SelectedUsers => BanReport.Users;
+
+    private bool ContinueDisabled => SelectedUsers.Count == 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Como la profe: cargar datos iniciales y hacer una búsqueda inicial.
+        // Si no quieres filtro por fecha inicialmente, lo dejamos a null.
+        _creationDate = null;
+        await SearchUsers();
+    }
+
+    protected async Task SearchUsers()
+    {
+        try
+        {
+            // Tu API filtra por surname/complaintType/creationDate :contentReference[oaicite:3]{index=3}
+            Users = await apiservice.GetUsersAsync(
+                surname: string.IsNullOrWhiteSpace(surnameFilter) ? null : surnameFilter,
+                complaintType: string.IsNullOrWhiteSpace(complaintTypeFilter) ? null : complaintTypeFilter,
+                creationDate: _creationDate
+            );
+        }
+        catch (ApiException ex)
+        {
+            Users = new List<UserForBanDTO>();
+            logger.LogError("Error! There was an error while connecting to Users/GetUsers");
+        }
+
+        StateHasChanged();
+    }
+
+    private void AddUserToCart(UserForBanDTO user)
+    {
+        banState.AddUserToBanReport(new BanReportUserForCreateDTO
+            {
+                CustomerId = user.Id,
+                PersonalMessage = ""
+            });
+    }
+
+    private void RemoveSelectedUser(BanReportUserForCreateDTO user)
+    {
+        banState.RemoveUserFromBanReport(user);
+        if (SelectedUsers.Count == 0) hiddenBanCart = true;
+    }
+
+    private void ContinueToCreateReport()
+    {
+        navigation.NavigateTo("/banreports/createbanreport");
+    }
+}
