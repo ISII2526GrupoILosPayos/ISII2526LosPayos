@@ -15,11 +15,13 @@ namespace AppForSEII2526.UIT.UC_Purchase
         public SelectProductsForPurchase_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
-        public void SearchProducts(string name)
+        public void SearchProducts(string name, string colour)
         {
             WaitForBeingClickable(productName);
             _driver.FindElement(productName).SendKeys(name);
-            _driver.FindElement(productColour).SendKeys(name);
+            if (colour == "") colour = "All";
+            SelectElement selectElement = new SelectElement(_driver.FindElement(productColour));
+            selectElement.SelectByText(colour);
             _driver.FindElement(buttonSearchProducts).Click();
             
         }
