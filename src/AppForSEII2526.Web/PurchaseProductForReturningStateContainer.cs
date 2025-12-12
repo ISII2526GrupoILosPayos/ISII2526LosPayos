@@ -23,32 +23,46 @@ namespace AppForSEII2526.Web
         // Añadir un producto que el usuario quiere devolver
         public void AddProductForReturn(PurchaseProductForReturnDTO product, int quantity, string reason)
         {
-            // ¿Ya está este producto de ese pedido en el carrito?
             var existingItem = ReturnOrder.Items
                 .FirstOrDefault(i => i.ProductId == product.ProductId &&
                                      i.PurchaseOrderId == product.PurchaseOrderId);
 
             if (existingItem == null)
             {
-                // No estaba → lo añadimos
                 ReturnOrder.Items.Add(new ReturnItemForCreateDTO
                 {
                     ProductId = product.ProductId,
                     PurchaseOrderId = product.PurchaseOrderId,
                     Quantity = quantity,
-                    Reason = reason
+                    Reason = reason,
+
+                    // ✅ INFO PARA PINTAR EN LA UI (Create)
+                    ProductName = product.Name,
+                    BrandName = product.Brand,
+                    BrandLocation = product.Location
                 });
             }
             else
             {
-                // Ya estaba → sumamos cantidad y, si viene, actualizamos razón
                 existingItem.Quantity += quantity;
+
                 if (!string.IsNullOrWhiteSpace(reason))
                     existingItem.Reason = reason;
+
+                // ✅ por si venía vacío (o por si quieres refrescarlo)
+                if (string.IsNullOrWhiteSpace(existingItem.ProductName))
+                    existingItem.ProductName = product.Name;
+
+                if (string.IsNullOrWhiteSpace(existingItem.BrandName))
+                    existingItem.BrandName = product.Brand;
+
+                if (string.IsNullOrWhiteSpace(existingItem.BrandLocation))
+                    existingItem.BrandLocation = product.Location;
             }
 
             NotifyStateChanged();
         }
+
 
         // Eliminar un producto de la devolución
         public void RemoveItem(ReturnItemForCreateDTO item)

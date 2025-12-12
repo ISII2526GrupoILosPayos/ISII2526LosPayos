@@ -108,8 +108,7 @@
                                     <th>Brand</th>
                                     <th>Quantity Bought</th>
                                     <th>Warehouse</th>
-                                    <th>Returnable?</th>
-                                    <th>ProductId</th>
+                                    
                                     <th>Add</th>
                                     
 
@@ -124,8 +123,7 @@
                                         <td>@pp.Brand</td>
                                         <td>@pp.Quantity</td>
                                         <td>@pp.Location</td>
-                                        <td>@pp.IsReturnable</td>
-                                        <td>@pp.ProductId</td>
+                                        
 
 
 
@@ -312,7 +310,7 @@
     private void GoBackToOrders()
     {
         // Ajusta la ruta si el listado es otro
-        navigationManager.NavigateTo("/purchaseorders");
+        navigationManager.NavigateTo("/purchaseorder/selectproductsforpurchase");
     }
 
     // ===== Búsqueda en la API =====

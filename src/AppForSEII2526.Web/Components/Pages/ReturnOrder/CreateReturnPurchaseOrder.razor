@@ -7,7 +7,6 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Text
 
-
 @inject APiClient apiClient
 @inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
 @inject NavigationManager Navigation
@@ -31,12 +30,21 @@
                 <label>Customer name</label>
             </div>
         </div>
+
+        <div class="col-md">
+            <div class="form-floating">
+                <input class="form-control" value="@customerSurname" readonly />
+                <label>Customer surname</label>
+            </div>
+        </div>
+
         <div class="col-md">
             <div class="form-floating">
                 <input class="form-control" value="@customerAddress" readonly />
                 <label>Address</label>
             </div>
         </div>
+
         <div class="col-md">
             <div class="form-floating">
                 <input class="form-control" value="@customerTelephone" readonly />
@@ -49,9 +57,7 @@
     <div class="row g-2 mb-3">
         <div class="col-md">
             <div class="form-floating">
-                <InputSelect class="form-select"
-                             id="ReturningOptionSelected"
-                             @bind-Value="returnOrder.ReturningOptionSelected">
+                <InputSelect class="form-select" id="ReturningOptionSelected" @bind-Value="returnOrder.ReturningOptionSelected">
                     <option value="">-- Select returning option --</option>
                     <option value="CreditCard">Credit Card</option>
                     <option value="PayPal">PayPal</option>
@@ -64,27 +70,23 @@
 
         <div class="col-md">
             <div class="form-floating">
-                <InputNumber @bind-Value="returnOrder.Rating"
-                             class="form-control"
-                             id="Rating"
-                             TValue="int?" />
+                <InputNumber @bind-Value="returnOrder.Rating" class="form-control" id="Rating" TValue="int?" />
                 <label for="Rating">Rating for delivery system (1–5, optional)</label>
             </div>
         </div>
 
         <div class="col-md">
             <div class="form-floating">
-                <button class="btn btn-primary w-100"
-                        type="submit"
-                        id="SubmitReturnOrder"
-                        disabled="@(returnOrder.Items.Count == 0)">
+                <button class="btn btn-primary w-100" type="submit" id="SubmitReturnOrder" disabled="@(returnOrder.Items.Count == 0)">
                     Save return
                 </button>
             </div>
         </div>
     </div>
 
-    <h4>Products selected to be returned</h4>
+</EditForm>
+
+<h4>Products selected to be returned</h4>
 
 @if (!returnOrder.Items.Any())
 {
@@ -96,8 +98,9 @@ else
         <table class="table table-condensed table-hover" id="TableOfReturnItems">
             <thead>
                 <tr>
-                    <th>ProductId</th>
-                    <th>OrderId</th>
+                    <th>Product</th>
+                    <th>Brand</th>
+                    <th>Brand location</th>
                     <th>Quantity</th>
                     <th>Reason for returning</th>
                     <th></th>
@@ -107,23 +110,17 @@ else
                 @foreach (var item in returnOrder.Items)
                 {
                     <tr id="@($"ReturnItem_{item.ProductId}_{item.PurchaseOrderId}")">
-                        <td>@item.ProductId</td>
-                        <td>@item.PurchaseOrderId</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.BrandName</td>
+                        <td>@item.BrandLocation</td>
                         <td>
-                            <!-- CORREGIDO: TValue="int" en vez de atributo int suelto -->
-                            <InputNumber @bind-Value="item.Quantity"
-                                         class="form-control"
-                                         TValue="int" />
+                            <InputNumber @bind-Value="item.Quantity" class="form-control" TValue="int" />
                         </td>
                         <td>
-                            <InputText class="form-control"
-                                       @bind-Value="item.Reason"
-                                       id="@($"reason_{item.ProductId}_{item.PurchaseOrderId}")" />
+                            <InputText class="form-control" @bind-Value="item.Reason" id="@($"reason_{item.ProductId}_{item.PurchaseOrderId}")" />
                         </td>
                         <td>
-                            <button class="btn btn-outline-danger btn-sm"
-                                    type="button"
-                                    @onclick="@(() => RemoveReturnItem(item))">
+                            <button class="btn btn-outline-danger btn-sm" type="button" @onclick="@(() => RemoveReturnItem(item))">
                                 Remove
                             </button>
                         </td>
@@ -133,16 +130,12 @@ else
         </table>
     </div>
 
-        <p class="mt-3">
-            <button class="btn btn-outline-secondary"
-                    type="button"
-                    id="ModifyProducts"
-                    @onclick="GoBackToSelection">
-                Modify selected products
-            </button>
-        </p>
-    }
-</EditForm>
+    <p class="mt-3">
+        <button class="btn btn-outline-secondary" type="button" id="ModifyProducts" @onclick="GoBackToSelection">
+            Modify selected products
+        </button>
+    </p>
+}
 
 @if (infoDialogOpen)
 {
@@ -153,13 +146,13 @@ else
     </Dialog>
 }
 
-@code {
+@code
+{
     // ================= STATE =================
-
-    private ReturnPurchaseOrderForCreateDTO returnOrder =>
-        returnPurchaseOrderStateContainer.ReturnOrder;
+    private ReturnPurchaseOrderForCreateDTO returnOrder => returnPurchaseOrderStateContainer.ReturnOrder;
 
     private string customerName = "";
+    private string customerSurname = "";
     private string customerAddress = "";
     private string customerTelephone = "";
 
@@ -167,7 +160,6 @@ else
     private string infoDialogMessage = "";
 
     // ================= ACCIONES DE UI =================
-
     private void GoBackToSelection()
     {
         Navigation.NavigateTo("/returnorder/purchaseproductforreturning");
@@ -196,7 +188,6 @@ else
             var created = await apiClient.CreateReturnPurchaseOrderAsync(returnOrder);
 
             returnPurchaseOrderStateContainer.ResetAfterProcessing();
-
             Navigation.NavigateTo($"/returnorder/details/{created.Id}");
         }
         catch (ApiException<ValidationProblemDetails> apiEx)
@@ -215,16 +206,13 @@ else
 
             infoDialogMessage = messages.Any()
                 ? "VALIDATION ERRORS:\n" + string.Join("\n", messages)
-                : $"Validation error ({apiEx.StatusCode}): " +
-                  (apiEx.Result?.Title ?? apiEx.Message);
+                : $"Validation error ({apiEx.StatusCode}): " + (apiEx.Result?.Title ?? apiEx.Message);
 
             infoDialogOpen = true;
         }
         catch (ApiException ex)
         {
-            infoDialogMessage =
-                $"API ERROR ({ex.StatusCode}):\n{ex.Response}";
-
+            infoDialogMessage = $"API ERROR ({ex.StatusCode}):\n{ex.Response}";
             infoDialogOpen = true;
         }
     }
@@ -247,7 +235,6 @@ else
     }
 
     // ================= INICIALIZACIÓN =================
-
     protected override async Task OnInitializedAsync()
     {
         if (!returnOrder.Items.Any())
@@ -258,8 +245,9 @@ else
 
         // Si todavía no tenemos rellenos los datos del cliente en el StateContainer,
         // los pedimos al API a partir del PurchaseOrderId del primer ítem.
-        if (string.IsNullOrWhiteSpace(returnOrder.CustomerName)
-            || string.IsNullOrWhiteSpace(returnOrder.CustomerAddress))
+        if (string.IsNullOrWhiteSpace(returnOrder.CustomerName) 
+            || string.IsNullOrWhiteSpace(returnOrder.CustomerSurname)
+        || string.IsNullOrWhiteSpace(returnOrder.CustomerAddress))
         {
             // Cogemos el primer pedido asociado a los ítems devueltos
             var orderId = returnOrder.Items.First().PurchaseOrderId;
@@ -269,26 +257,24 @@ else
 
             // Construimos una dirección "bonita" con los campos del DTO
             var fullAddress = $"{order.Street}, {order.PostalCode} {order.City}";
-
             var phone = "65432451";
 
             // Guardamos TODO en el StateContainer
             returnPurchaseOrderStateContainer.SetCustomerData(
-                userName: returnOrder.CustomerUserName,   // ya lo tenías en el modelo
+                userName: returnOrder.CustomerUserName, // ya lo tenías en el modelo
                 name: order.CustomerName,
                 surname: order.CustomerSurname,
                 address: fullAddress,
-                telephone:phone
-                // aquí pon lo que tengas; si no hay teléfono en el DTO, lo dejamos vacío
+                telephone: phone // aquí pon lo que tengas; si no hay teléfono en el DTO, lo dejamos vacío
             );
         }
 
         // Ahora ya podemos leer del modelo para pintar en la UI
         customerName = returnOrder.CustomerName;
+        customerSurname = returnOrder.CustomerSurname;
         customerAddress = returnOrder.CustomerAddress;
         customerTelephone = returnOrder.CustomerTelephone;
 
         await base.OnInitializedAsync();
     }
-
 }
