@@ -25,7 +25,7 @@ namespace AppForSEII2526.Web
         {
             // ¿Ya está este producto de ese pedido en el carrito?
             var existingItem = ReturnOrder.Items
-                .FirstOrDefault(i => i.ProductId == product.Id &&
+                .FirstOrDefault(i => i.ProductId == product.ProductId &&
                                      i.PurchaseOrderId == product.PurchaseOrderId);
 
             if (existingItem == null)
@@ -33,7 +33,7 @@ namespace AppForSEII2526.Web
                 // No estaba → lo añadimos
                 ReturnOrder.Items.Add(new ReturnItemForCreateDTO
                 {
-                    ProductId = product.Id,
+                    ProductId = product.ProductId,
                     PurchaseOrderId = product.PurchaseOrderId,
                     Quantity = quantity,
                     Reason = reason
