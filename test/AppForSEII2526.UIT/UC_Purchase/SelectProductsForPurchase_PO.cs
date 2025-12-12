@@ -12,6 +12,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
         By productName = By.Id("inputName");
         By productColour = By.Id("inputColour");
         By buttonSearchProducts = By.Id("searchProducts");
+        By tableOfProductsBy = By.Id("TableOfProducts");
+
         public SelectProductsForPurchase_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
@@ -24,6 +26,12 @@ namespace AppForSEII2526.UIT.UC_Purchase
             selectElement.SelectByText(colour);
             _driver.FindElement(buttonSearchProducts).Click();
             
+        }
+
+        public bool CheckListOfProducts(List<string[]> expectedProducts)
+        {
+
+            return CheckBodyTable(expectedProducts, tableOfProductsBy);
         }
     }
 }
