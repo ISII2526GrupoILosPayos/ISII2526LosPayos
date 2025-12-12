@@ -108,7 +108,11 @@
                                     <th>Brand</th>
                                     <th>Quantity Bought</th>
                                     <th>Warehouse</th>
+                                    <th>Returnable?</th>
+                                    <th>ProductId</th>
                                     <th>Add</th>
+                                    
+
                                 </tr>
                             </thead>
 
@@ -120,6 +124,10 @@
                                         <td>@pp.Brand</td>
                                         <td>@pp.Quantity</td>
                                         <td>@pp.Location</td>
+                                        <td>@pp.IsReturnable</td>
+                                        <td>@pp.ProductId</td>
+
+
 
                                         <td>
                                             <button class="btn btn-outline-secondary"
@@ -261,6 +269,43 @@
 
     private void GoToReturnDetails()
     {
+        // Limpia error anterior
+        errors = "";
+
+        // Seguridad: no continuar sin carrito
+        if (returnOrder.Items.Count == 0)
+        {
+            errors = "Select at least one product to return.";
+            StateHasChanged();
+            return;
+        }
+
+        // Necesitamos la lista cargada para poder validar IsReturnable
+        if (purchaseProductForReturn == null)
+        {
+            errors = "Products list not loaded yet. Please try again.";
+            StateHasChanged();
+            return;
+        }
+
+        // Productos seleccionados que NO son retornables
+        var notReturnables = returnOrder.Items
+       .Select(i => purchaseProductForReturn.FirstOrDefault(p =>
+           p.ProductId == i.ProductId &&
+           p.PurchaseOrderId == i.PurchaseOrderId))
+       .Where(p => p != null && p.IsReturnable == false)
+       .ToList();
+
+
+        if (notReturnables.Any())
+        {
+            errors = "You cannot continue. These products are not returnable: "
+                     + string.Join(", ", notReturnables.Select(p => p!.Name));
+            StateHasChanged();
+            return; // <- te quedas en esta página (la misma)
+        }
+
+        // Todo OK -> navega
         navigationManager.NavigateTo("/returnorder/createreturnpurchaseorder");
     }
 
