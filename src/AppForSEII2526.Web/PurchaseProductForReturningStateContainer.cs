@@ -85,6 +85,22 @@ namespace AppForSEII2526.Web
             NotifyStateChanged();
         }
 
+        public void SetCustomerData(
+   string userName,
+   string name,
+   string surname,
+   string address,
+   string telephone)
+        {
+            ReturnOrder.CustomerUserName = userName;
+            ReturnOrder.CustomerName = name;
+            ReturnOrder.CustomerSurname = surname;
+            ReturnOrder.CustomerAddress = address;
+            ReturnOrder.CustomerTelephone = telephone;
+
+            NotifyStateChanged();
+        }
+
         // Hemos terminado una devolución → empezamos otra desde 0
         public void ResetAfterProcessing()
         {
