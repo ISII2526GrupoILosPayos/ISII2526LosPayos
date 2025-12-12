@@ -10,9 +10,15 @@ namespace AppForSEII2526.UIT.UC_Purchase
     public class UC_PurchaseProducts_UIT : UC_UIT
     {
         private SelectProductsForPurchase_PO selectProductsForPurchase_PO;
+        private const int productId1 = 1;
+        private const string productName1 = "PS5";
+        private const string productBrand1 = "Sony";
+        private const string productLocation1 = "USA";
+        private const string productQuantity1 = "10";
 
         public UC_PurchaseProducts_UIT(ITestOutputHelper output) : base(output)
         {
+            selectProductsForPurchase_PO = new SelectProductsForPurchase_PO(_driver, _output);
         }
 
         private void Precondition_perform_login()
@@ -27,6 +33,23 @@ namespace AppForSEII2526.UIT.UC_Purchase
             selectProductsForPurchase_PO.WaitForBeingVisible(By.Id("CreatePurchaseOrder"));
             //we click on the menu
             _driver.FindElement(By.Id("CreatePurchaseOrder")).Click();
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC77_AF1_UC2_4_5filtering()
+        {
+            //Arrange
+            InitialStepsForPurchaseProducts();
+            var expectedProducts = new List<string[]> { new string[] { productName1, productBrand1, productLocation1, productQuantity1 }, };
+
+            //Act
+            selectProductsForPurchase_PO.SearchProducts("PS5", "");
+
+            //Assert
+
+            Assert.True(selectProductsForPurchase_PO.CheckListOfProducts(expectedProducts));
+
         }
     }
 }
