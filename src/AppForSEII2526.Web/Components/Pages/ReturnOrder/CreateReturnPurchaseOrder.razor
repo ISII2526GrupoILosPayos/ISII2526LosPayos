@@ -1,9 +1,12 @@
 ﻿@page "/returnorder/createreturnpurchaseorder"
 
 @using AppForSEII2526.Web.API
-@using AppForSEII2526.Web.Components.Account.Shared @* Para Dialog *@
+@using AppForSEII2526.Web.Components.Account.Shared
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Text
+
 
 @inject APiClient apiClient
 @inject ReturnPurchaseOrderStateContainer returnPurchaseOrderStateContainer
@@ -13,7 +16,10 @@
 
 <h3>Return products of a purchase</h3>
 
-<EditForm Model="returnOrder" OnValidSubmit="OpenConfirmDialog">
+<EditForm Model="returnOrder"
+          OnValidSubmit="OnSaveReturn"
+          OnInvalidSubmit="HandleInvalidSubmit">
+
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -39,7 +45,7 @@
         </div>
     </div>
 
-    <!-- Opciones de devolución (paso 5 del UC) -->
+    <!-- Opciones de devolución -->
     <div class="row g-2 mb-3">
         <div class="col-md">
             <div class="form-floating">
@@ -47,8 +53,6 @@
                              id="ReturningOptionSelected"
                              @bind-Value="returnOrder.ReturningOptionSelected">
                     <option value="">-- Select returning option --</option>
-                    @* IMPORTANTE: los values deben coincidir con los nombres de las clases
-                       de métodos de pago en el API: "CreditCard", "PayPal", "Cash", "Bizum"... *@
                     <option value="CreditCard">Credit Card</option>
                     <option value="PayPal">PayPal</option>
                     <option value="Cash">Cash</option>
@@ -60,7 +64,6 @@
 
         <div class="col-md">
             <div class="form-floating">
-                <!-- CORREGIDO: TValue="int?" en vez de atributo int? suelto -->
                 <InputNumber @bind-Value="returnOrder.Rating"
                              class="form-control"
                              id="Rating"
@@ -80,9 +83,8 @@
             </div>
         </div>
     </div>
-</EditForm>
 
-<h4>Products selected to be returned</h4>
+    <h4>Products selected to be returned</h4>
 
 @if (!returnOrder.Items.Any())
 {
@@ -131,24 +133,16 @@ else
         </table>
     </div>
 
-    <p class="mt-3">
-        <button class="btn btn-outline-secondary"
-                type="button"
-                id="ModifyProducts"
-                @onclick="GoBackToSelection">
-            Modify selected products
-        </button>
-    </p>
-}
-
-@if (confirmDialogOpen)
-{
-    <Dialog Caption="Confirm return"
-            Message="Do you want to proceed with the return of the selected products?"
-            OnClose="OnConfirmDialogClose"
-            Type="Dialog.Category.SaveNot">
-    </Dialog>
-}
+        <p class="mt-3">
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    id="ModifyProducts"
+                    @onclick="GoBackToSelection">
+                Modify selected products
+            </button>
+        </p>
+    }
+</EditForm>
 
 @if (infoDialogOpen)
 {
@@ -162,17 +156,13 @@ else
 @code {
     // ================= STATE =================
 
-    // Alias al DTO del StateContainer
     private ReturnPurchaseOrderForCreateDTO returnOrder =>
         returnPurchaseOrderStateContainer.ReturnOrder;
 
-    // Datos del cliente para mostrar (rellenados al cargar la página)
     private string customerName = "";
     private string customerAddress = "";
     private string customerTelephone = "";
 
-    // Diálogos
-    private bool confirmDialogOpen = false;
     private bool infoDialogOpen = false;
     private string infoDialogMessage = "";
 
@@ -188,9 +178,10 @@ else
         returnPurchaseOrderStateContainer.RemoveItem(item);
     }
 
-    private void OpenConfirmDialog()
+    // Se ejecuta cuando el formulario pasa todas las validaciones de DataAnnotations
+    private async Task OnSaveReturn()
     {
-        // Solo tiene sentido confirmar si hay items
+        // Seguridad: al menos un producto
         if (!returnOrder.Items.Any())
         {
             infoDialogMessage = "You must select at least one product to return.";
@@ -198,27 +189,14 @@ else
             return;
         }
 
-        confirmDialogOpen = true;
-    }
-
-    private async Task OnConfirmDialogClose(bool isOk)
-    {
-        confirmDialogOpen = false;
-        if (!isOk)
-            return;
-
         try
         {
-            // Para depurar: nos aseguramos de leer la respuesta como string
             apiClient.ReadResponseAsString = true;
 
-            // Llamada al API: CreateReturnPurchaseOrder
             var created = await apiClient.CreateReturnPurchaseOrderAsync(returnOrder);
 
-            // Limpiamos el estado para una futura devolución
             returnPurchaseOrderStateContainer.ResetAfterProcessing();
 
-            // Si todo va OK, navegamos al details directamente
             Navigation.NavigateTo($"/returnorder/details/{created.Id}");
         }
         catch (ApiException<ValidationProblemDetails> apiEx)
@@ -229,41 +207,38 @@ else
             {
                 foreach (var kvp in apiEx.Result.Errors)
                 {
-                    // kvp.Key = nombre del campo, kvp.Value = lista de mensajes
                     var field = kvp.Key;
                     var fieldErrors = string.Join(", ", kvp.Value);
                     messages.Add($"{field}: {fieldErrors}");
                 }
             }
 
-            // Si hay mensajes de validación, los mostramos todos
-            if (messages.Any())
-            {
-                infoDialogMessage =
-                    "VALIDATION ERRORS:\n" +
-                    string.Join("\n", messages);
-            }
-            else
-            {
-                // Mensaje genérico de validación
-                infoDialogMessage =
-                    $"Validation error ({apiEx.StatusCode}): " +
-                    (apiEx.Result?.Title ?? apiEx.Message);
-            }
+            infoDialogMessage = messages.Any()
+                ? "VALIDATION ERRORS:\n" + string.Join("\n", messages)
+                : $"Validation error ({apiEx.StatusCode}): " +
+                  (apiEx.Result?.Title ?? apiEx.Message);
 
             infoDialogOpen = true;
         }
         catch (ApiException ex)
         {
-            // Aquí podemos ver status y el cuerpo bruto devuelto por el API
             infoDialogMessage =
-                $"API ERROR ({ex.StatusCode}):\n" +
-                $"{ex.Response}";
+                $"API ERROR ({ex.StatusCode}):\n{ex.Response}";
 
             infoDialogOpen = true;
         }
     }
 
+    // Cuando FALLA la validación del EditForm
+    private void HandleInvalidSubmit(EditContext editContext)
+    {
+        var messages = editContext.GetValidationMessages();
+        infoDialogMessage = "Validation errors: " + string.Join(" | ", messages);
+        infoDialogOpen = true;
+
+        Console.WriteLine("Validation errors:");
+        foreach (var m in messages) Console.WriteLine(m);
+    }
 
     private Task OnInfoDialogClose()
     {
@@ -275,17 +250,45 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Seguridad mínima: si no hay ningún producto en el carrito, volver a la selección
         if (!returnOrder.Items.Any())
         {
             Navigation.NavigateTo("/returnorder/purchaseproductforreturning");
             return;
         }
 
-        customerName = returnOrder.CustomerUserName;
-        customerAddress = "(address will come from API)";
-        customerTelephone = "(telephone from API)";
+        // Si todavía no tenemos rellenos los datos del cliente en el StateContainer,
+        // los pedimos al API a partir del PurchaseOrderId del primer ítem.
+        if (string.IsNullOrWhiteSpace(returnOrder.CustomerName)
+            || string.IsNullOrWhiteSpace(returnOrder.CustomerAddress))
+        {
+            // Cogemos el primer pedido asociado a los ítems devueltos
+            var orderId = returnOrder.Items.First().PurchaseOrderId;
+
+            // Llamamos al API para obtener los datos completos del pedido
+            var order = await apiClient.GetPurchaseOrderAsync(orderId);
+
+            // Construimos una dirección "bonita" con los campos del DTO
+            var fullAddress = $"{order.Street}, {order.PostalCode} {order.City}";
+
+            var phone = "65432451";
+
+            // Guardamos TODO en el StateContainer
+            returnPurchaseOrderStateContainer.SetCustomerData(
+                userName: returnOrder.CustomerUserName,   // ya lo tenías en el modelo
+                name: order.CustomerName,
+                surname: order.CustomerSurname,
+                address: fullAddress,
+                telephone:phone
+                // aquí pon lo que tengas; si no hay teléfono en el DTO, lo dejamos vacío
+            );
+        }
+
+        // Ahora ya podemos leer del modelo para pintar en la UI
+        customerName = returnOrder.CustomerName;
+        customerAddress = returnOrder.CustomerAddress;
+        customerTelephone = returnOrder.CustomerTelephone;
 
         await base.OnInitializedAsync();
     }
+
 }
