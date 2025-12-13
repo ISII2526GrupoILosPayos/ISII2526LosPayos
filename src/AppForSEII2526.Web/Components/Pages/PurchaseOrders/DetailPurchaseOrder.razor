@@ -1,0 +1,126 @@
+﻿@page "/purchaseord/detailpurchase"
+
+
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@inject APiClient apiclient
+
+<h3>DetailPurchase</h3>
+
+@attribute [Authorize]
+
+@if (purchase == null)
+{
+    <p>@error</p>
+}
+else
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Name and Surname</th>
+            <td id="NameSurname">@purchase.CustomerName @purchase.CustomerSurname</td>
+        </tr>
+        <tr>
+            <th>Date of the Purchase</th>
+            <td id="Date">@purchase.Date</td>
+        </tr>
+        <tr>
+            <th>Street</th>
+            <td id="DeliveryAddress">@purchase.Street</td>
+        </tr>
+        <tr>
+            <th>City</th>
+            <td id="City">@purchase.City</td>
+        </tr>
+        <tr>
+            <th>Postal Code</th>
+            <td id="PostalCode">@purchase.PostalCode</td>
+        </tr>
+        <tr>
+            <th>Payment Method</th>
+            <td id="PaymentMethod">@purchase.PaymentMethodName</td>
+        </tr>
+    </table>
+    <h4>Purchased products</h4>
+
+    <table class="table" id="PurchasedProducts">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Brand</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price of the Product</th>
+                <th scope="col">Total price by Product</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in purchase.PurchaseProducts)
+            {
+                <tr id="PurchaseProduct_@product.Name">
+                    <td>@product.Name</td>
+                    <td>@product.Brand</td>
+                    <td>@product.Quantity</td>
+                    <td>@product.Price €</td>
+                    <td>@(product.Price * product.Quantity) €</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            @*colspan is used to state that TWO columns are collapsed*@
+        <th scope="row" colspan="4" class="text-end fs-4 fw-bold">Total Price</th>
+        <td id="TotalPrice" class="fs-4 fw-bold text-success">@purchase.TotalPrice €</td>
+        </tfoot>
+
+    </table>
+
+
+}
+
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int PurchaseID { get; set; }
+    private PurchaseOrderDetailDTO purchase;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //we check the user is logged in
+        string userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            //we retrieve the id of the user logged in
+            if (user is not null)
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("User"))
+                {
+                    userName = user.Identity.Name;
+                }
+            }
+        }
+
+        try
+        {
+            purchase = await apiclient.GetPurchaseOrderAsync(PurchaseID);
+        }
+        catch (ApiException exception)
+        {
+            purchase = null;
+        }
+        if (purchase == null)
+        {
+            error = $"Error! You are not authorized to see this purchase or there is not a purchase with id={PurchaseID}";
+        }
+
+
+    }
+
+}

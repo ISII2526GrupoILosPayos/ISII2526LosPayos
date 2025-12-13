@@ -22,7 +22,9 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetBanReport(int reportId)
+
         {
             var report = await _context.BanReports
                 .Include(r => r.ReportCustomers)
@@ -61,6 +63,7 @@ namespace AppForSEII2526.API.Controllers
                 .ToList();
 
             var resultDTO = new ReportOperationResultDTO(
+                report.Id,
                 report.Reason,
                 report.DetailedDescription,
                 report.StartDate,
@@ -74,7 +77,10 @@ namespace AppForSEII2526.API.Controllers
         [HttpPost]
         [Route("[action]")]
         [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
         public async Task<IActionResult> CreateBanReport([FromBody] BanReportForCreateDTO reportDto)
+
         {
             if (!ModelState.IsValid)
                 return BadRequest(new ValidationProblemDetails(ModelState));
@@ -157,6 +163,7 @@ namespace AppForSEII2526.API.Controllers
                 .ToList();
 
             var resultDTO = new ReportOperationResultDTO(
+                report.Id,
                 report.Reason,
                 report.DetailedDescription,
                 report.StartDate,

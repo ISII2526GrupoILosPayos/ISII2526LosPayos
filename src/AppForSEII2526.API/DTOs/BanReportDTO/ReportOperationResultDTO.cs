@@ -2,8 +2,9 @@
 {
     public class ReportOperationResultDTO
     {
-        public ReportOperationResultDTO(string reason, string description, DateTime startDate, DateTime endDate, IList<ReportUserDTO> users)
+        public ReportOperationResultDTO(int id, string reason, string description, DateTime startDate, DateTime endDate, IList<ReportUserDTO> users)
         {
+            Id = id;
             Reason = reason;
             Description = description;
             StartDate = startDate;
@@ -11,6 +12,7 @@
             Users = users;
         }
 
+        public int Id { get; set; }
         public string Reason { get; set; }
         public string Description { get; set; }
         public DateTime StartDate { get; set; }

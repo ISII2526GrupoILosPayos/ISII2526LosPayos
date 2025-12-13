@@ -38,6 +38,7 @@ namespace AppForSEII2526.Web
                         Quantity = 1,
                         Location = product.Location,
                         Price = product.Price,
+                        Colour = product.Colour,
                     });
                 }
             }

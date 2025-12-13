@@ -19,6 +19,7 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [ProducesResponseType(typeof(IList<UserForBanDTO>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetUsers(string? surname, string? complaintType, DateTime? creationDate)
         {
             var users = await _context.ApplicationUsers

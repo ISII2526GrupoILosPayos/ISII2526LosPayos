@@ -3,7 +3,8 @@
 namespace AppForSEII2526.API.Models;
 
 // Add profile data for application users by adding properties to the ApplicationUser class
-public class ApplicationUser : IdentityUser {
+public class ApplicationUser : IdentityUser
+{
 
 
     public ApplicationUser() { }
@@ -15,6 +16,19 @@ public class ApplicationUser : IdentityUser {
         Surname = surname;
         Address = address;
         AccountCreationDate = DateTime.Now;
+
+    }
+
+    public ApplicationUser(string id, string name, string surname, string address, string username)
+    {
+        Id = id;
+        Name = name;
+        Surname = surname;
+        Address = address;
+        AccountCreationDate = DateTime.Now;
+        UserName = username;
+        Email = username;
+
     }
 
     public ApplicationUser(string name, string surname, string address)
@@ -33,14 +47,14 @@ public class ApplicationUser : IdentityUser {
     [Required]
     [StringLength(50, MinimumLength = 2)]
     [Display(Name = "Surname")]
-    public string Surname { get; set; } 
+    public string Surname { get; set; }
 
     [Required]
     [StringLength(100)]
     [Display(Name = "Address")]
-    public string Address { get; set; } 
+    public string Address { get; set; }
 
-    
+
     [Display(Name = "Account Creation Date")]
     public DateTime AccountCreationDate { get; set; }
 
