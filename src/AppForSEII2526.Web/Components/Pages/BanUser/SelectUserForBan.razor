@@ -8,13 +8,13 @@
 @inject BanUserProcessStateContainer banState
 @inject NavigationManager navigation
 
+
 @attribute [Authorize]
 
 <h3>Select Users For Ban</h3>
 
 <div class="container-fluid">
 
-    <!-- TOP BAR -->
     <div class="row">
         <div class="d-flex justify-content-between">
             <div><b>Users Selected:</b> @SelectedUsers.Count</div>
@@ -27,7 +27,6 @@
         </div>
     </div>
 
-    <!-- CART TOGGLE -->
     <div class="row">
         <button class="btn btn-outline-primary"
                 id="showBanCart"
@@ -36,7 +35,6 @@
         </button>
     </div>
 
-    <!-- CART CONTENT (como el RentalItem list, pero en tabla simple) -->
     <div class="row" hidden="@hiddenBanCart">
         @if (SelectedUsers.Count == 0)
         {
@@ -72,7 +70,6 @@
         }
     </div>
 
-    <!-- FILTERS -->
     <div class="row">
         <p></p>
         <h5>Filter Users</h5>
@@ -103,7 +100,6 @@
         </div>
     </div>
 
-    <!-- RESULTS -->
     <div class="d-flex justify-content-between">
         <div class="container-fluid">
             @if (Users.Count == 0)
@@ -129,7 +125,7 @@
                                 <tr id="UserData_@user.Id">
                                     <td>@user.Name</td>
                                     <td>@user.Surname</td>
-                                    <td>@user.AccountCreationDate.ToShortDateString()</td>
+                                    <td>@user.AccountCreationDate.DateTime.ToShortDateString()</td>
                                     <td>
                                         @if (user.ComplaintTypes == null || user.ComplaintTypes.Count == 0)
                                         {
@@ -162,15 +158,11 @@
     private bool hiddenBanCart = true;
     private void ToggleBanCart() => hiddenBanCart = !hiddenBanCart;
 
-    // Lista de usuarios devuelta por la API (GetUsers)
     private ICollection<UserForBanDTO> Users { get; set; } = new List<UserForBanDTO>();
 
-    // Filtros
     private string? surnameFilter;
     private string? complaintTypeFilter;
 
-    // Igual que la profe: propiedad con backing field y efecto secundario si cambia.
-    // Aquí, si cambias CreationDate, vaciamos selección para evitar inconsistencias (mismo espíritu que ella con fechas).
     private DateTime? _creationDate;
     private DateTime? CreationDate
     {
@@ -186,16 +178,13 @@
         }
     }
 
-    // Acceso al “carrito” (lista seleccionados)
     private BanReportForCreateDTO BanReport => banState.BanReport;
-    private IList<BanReportUserForCreateDTO> SelectedUsers => BanReport.Users;
+    private ICollection<BanReportUserForCreateDTO> SelectedUsers => BanReport.Users;
 
     private bool ContinueDisabled => SelectedUsers.Count == 0;
 
     protected override async Task OnInitializedAsync()
     {
-        // Como la profe: cargar datos iniciales y hacer una búsqueda inicial.
-        // Si no quieres filtro por fecha inicialmente, lo dejamos a null.
         _creationDate = null;
         await SearchUsers();
     }
@@ -204,7 +193,6 @@
     {
         try
         {
-            // Tu API filtra por surname/complaintType/creationDate :contentReference[oaicite:3]{index=3}
             Users = await apiservice.GetUsersAsync(
                 surname: string.IsNullOrWhiteSpace(surnameFilter) ? null : surnameFilter,
                 complaintType: string.IsNullOrWhiteSpace(complaintTypeFilter) ? null : complaintTypeFilter,
