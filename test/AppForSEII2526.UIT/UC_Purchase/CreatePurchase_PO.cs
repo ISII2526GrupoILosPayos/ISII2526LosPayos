@@ -52,6 +52,9 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
         public bool CheckValidationError(string expectedError)
         {
+            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
+            wait.Until(driver => driver.PageSource.Contains(expectedError));
+
             return _driver.PageSource.Contains(expectedError);
         }
     }

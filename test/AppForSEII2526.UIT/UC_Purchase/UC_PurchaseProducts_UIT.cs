@@ -102,7 +102,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
         }
 
         [Theory]
-        [InlineData("", "Calle Cueva de Montesinos, 8", "Villarrobledo", "02600", "The NameSurname field is required.")]
+        [InlineData("", "Av. España, 1", "Albacete", "02001", "The NameSurname field is required.")]
+        [InlineData("Luis", "Av. España, 1", "Albacete", "02001", "The field NameSurname must be a string with a minimum length of 5 and a maximum length of 50.")]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC77_AF5_UC77_8_9_10_11_12_13_14_15_16_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode,string expectedMessageError)
         {
