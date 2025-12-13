@@ -333,6 +333,18 @@ namespace AppForSEII2526.UIT.UC_Return
 
 
 
+        public bool IsContinueReturnVisible()
+        {
+            try
+            {
+                var els = _driver.FindElements(btnContinue);
+                return els.Count > 0 && els[0].Displayed;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
 
     }

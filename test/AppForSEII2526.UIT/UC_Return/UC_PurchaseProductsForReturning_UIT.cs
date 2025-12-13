@@ -9,6 +9,9 @@ namespace AppForSEII2526.UIT.UC_Return
     public class UC_PurchaseProductsForReturning_UIT : UC_UIT
     {
         private readonly PurchaseProductForReturning_PO purchaseProductForReturning_PO;
+        private readonly CreateReturnPurchaseOrder_PO CreateReturnPurchaseOrder_PO;
+        
+
 
         private const string userEmail = "pau2@gmail.com";
         private const string password = "Pau123.";
@@ -30,6 +33,7 @@ namespace AppForSEII2526.UIT.UC_Return
         {
             Initial_step_opening_the_web_page();
             purchaseProductForReturning_PO = new PurchaseProductForReturning_PO(_driver, _output);
+            CreateReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output); 
         }
 
         private void Precondition_perform_login()
@@ -44,8 +48,38 @@ namespace AppForSEII2526.UIT.UC_Return
             purchaseProductForReturning_PO.WaitForSelectPageLoaded();
         }
 
+
+
+        //desde CREATE -> "Modify selected products" -> vuelve a STEP 2 (Select)
+        [Theory]
+        [InlineData("Calcetines", 5)]
+        [InlineData("Sudadera", 3)]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC5_1_2(string productToAdd, int quantityFilter)
+        {
+            // Arrange
+            InitialSteps_GoToSelectReturnProducts();
+
+            // Act (Select): filtramos y añadimos 1 producto
+            purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: quantityFilter);
+            purchaseProductForReturning_PO.AddProductByName(productToAdd);
+
+            // Act: pasamos a Create
+            purchaseProductForReturning_PO.ContinueWithReturn();
+            CreateReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
+
+            // Act: pulsamos "Modify selected products" (vuelve al Select)
+            CreateReturnPurchaseOrder_PO.ClickModifySelectedProductsAndWaitToSelect();
+
+            // Assert: estamos en Step 2 (Select)
+            Assert.True(purchaseProductForReturning_PO.IsOnSelectReturnPage(),
+                "Error: it should return to Select (step 2) after clicking 'Modify selected products'.");
+
+        }
+
+
         //(BASIC FLOW)
-        
+
         [Theory]
         [InlineData("Camiseta")]
         [InlineData("Gorra")]
