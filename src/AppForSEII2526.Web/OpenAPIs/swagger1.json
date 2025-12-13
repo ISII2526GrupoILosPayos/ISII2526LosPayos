@@ -1016,6 +1016,10 @@
       "ReportOperationResultDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "reason": {
             "type": "string",
             "nullable": true

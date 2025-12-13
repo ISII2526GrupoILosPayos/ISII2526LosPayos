@@ -1,0 +1,202 @@
+﻿@page "/banreports/createbanreport"
+@using AppForSEII2526.Web.API
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
+@using System.Text.Json
+@using AppForSEII2526.Web.Components.Shared
+
+@inject APiClient apiservice
+@inject BanUserProcessStateContainer banState
+@inject NavigationManager Navigation
+
+@attribute [Authorize]
+
+<h3>Ban Report</h3>
+
+<EditForm Model="report" OnValidSubmit="OpenDialog">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="report.Reason" class="form-control" id="Reason" />
+                <label for="Reason">Reason</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputTextArea @bind-Value="report.DetailedDescription" class="form-control" id="DetailedDescription" />
+                <label for="DetailedDescription">Detailed description</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputDate TValue="DateTimeOffset" @bind-Value="report.StartDate" class="form-control" id="StartDate" />
+                <label for="StartDate">Start date</label>
+            </div>
+        </div>
+
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                <InputDate TValue="DateTimeOffset" @bind-Value="report.EndDate" class="form-control" id="EndDate" />
+                <label for="EndDate">End date</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md">
+            <div class="form-floating">
+                <button class="btn btn-primary" type="submit" id="Submit">
+                    Create ban report
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<p></p>
+<h4>Report detail</h4>
+
+<p>
+    <b>Start:</b> @report.StartDate.ToString("dd/MM/yyyy")
+    <b>End:</b> @report.EndDate.ToString("dd/MM/yyyy")
+</p>
+
+<p>
+    <b>Users selected:</b> @report.Users.Count
+    <button class="btn btn-outline-primary" type="button" @onclick="ModifySelectedUsers" id="ModifyUsers">
+        Modify users
+    </button>
+</p>
+
+<div class="mh-100 table-responsive">
+    <table class="table table-condensed table-hover" id="TableOfSelectedUsers">
+        <thead>
+            <tr>
+                <th>CustomerId</th>
+                <th>Personal message</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in report.Users)
+            {
+                <tr id="SelectedUser_@item.CustomerId">
+                    <td>@item.CustomerId</td>
+                    <td>
+                        <InputText @bind-Value="item.PersonalMessage"
+                                   class="form-control"
+                                   id="@($"personalMessage_{item.CustomerId}")" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (DialogIsOpen)
+{
+    <Dialog Caption="Create ban report"
+            Message="Do you want to proceed to create the ban report with the selected users?"
+            OnClose="@OnDialogClose"
+            Type=Dialog.Category.SaveNot>
+    </Dialog>
+}
+
+@if (DialogOKIsOpen)
+{
+    <Dialog Caption="Error!"
+            Message="@DialogOKMessage"
+            OnClose="@OnDialogOKClose"
+            Type=Dialog.Category.Okay>
+    </Dialog>
+}
+
+@code {
+    private BanReportForCreateDTO report => banState.BanReport;
+
+    private bool DialogIsOpen;
+    private bool OkCancel = false;
+
+    private void OpenDialog()
+    {
+        DialogIsOpen = true;
+    }
+
+    private void ModifySelectedUsers()
+    {
+        Navigation.NavigateTo("/banreports/selectusersforban");
+    }
+
+    private async Task OnDialogClose(bool isOk)
+    {
+        OkCancel = isOk;
+        DialogIsOpen = false;
+
+        if (!OkCancel) return;
+
+        // Validaciones “manuales” como en el controller (mismo espíritu que la profe)
+        if (report.Users == null || report.Users.Count == 0)
+        {
+            OpenDialogOK("Error! You must select at least one user.");
+            return;
+        }
+
+        if (report.StartDate > report.EndDate)
+        {
+            OpenDialogOK("Error! The start date cannot be after the end date.");
+            return;
+        }
+
+        try
+        {
+            // Llamada a la API (NSwag)
+            var result = await apiservice.CreateBanReportAsync(report);
+
+            // Si tu contenedor tiene método de “procesado”, úsalo.
+            // Si no existe, puedes simplemente limpiar el carrito aquí.
+            banState.ClearBanUserCart();
+
+            // Opción simple: volver a la pantalla de selección o a donde tengas el “listado”
+            Navigation.NavigateTo("/banreports/selectusersforban");
+        }
+        catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
+        {
+            string message = "Error while processing your request, please try again later!";
+
+            if (apiexceptionvalidation.Result?.Errors?.Values != null)
+            {
+                message = "";
+                foreach (var errors in apiexceptionvalidation.Result.Errors.Values)
+                    message = string.Join("(*) ", message, string.Join(" (*) ", errors));
+            }
+
+            OpenDialogOK(message);
+        }
+        catch (ApiException)
+        {
+            OpenDialogOK("Error while processing your request, please try again later!");
+        }
+    }
+
+    private bool DialogOKIsOpen;
+    private string DialogOKMessage;
+
+    private void OpenDialogOK(string message)
+    {
+        DialogOKIsOpen = true;
+        DialogOKMessage = message;
+    }
+
+    private async Task OnDialogOKClose()
+    {
+        DialogOKIsOpen = false;
+    }
+}
