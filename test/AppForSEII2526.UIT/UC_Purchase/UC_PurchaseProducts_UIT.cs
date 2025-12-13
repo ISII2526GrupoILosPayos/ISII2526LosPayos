@@ -100,5 +100,15 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
             Assert.True(selectProductsForPurchase_PO.PurchaseAvailable());
         }
+
+        [Theory]
+        [InlineData("", "Calle Cueva de Montesinos, 8", "Villarrobledo", "02600", "The NameSurname field is required.")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC77_AF5_UC77_8_9_10_11_12_13_14_15_16_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode,string expectedMessageError)
+        {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+
+            InitialStepsForPurchaseProducts();
+        }
     }
 }
