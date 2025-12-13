@@ -63,11 +63,15 @@ namespace AppForSEII2526.UIT.UC_Purchase
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
 
-        public void UC2_AF1_UC2_11_RentingNotavailable()
+        public void UC77_AF3_UC77_6_RentingNotavailable()
         {
             //Arrange
             InitialStepsForPurchaseProducts();
             //Act
+
+            //We search products for being able to add some products to the cart
+            selectProductsForPurchase_PO.SearchProducts("", "");
+
             selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
             selectProductsForPurchase_PO.RemoveProductFromPurchaseCart(productName1);
 
