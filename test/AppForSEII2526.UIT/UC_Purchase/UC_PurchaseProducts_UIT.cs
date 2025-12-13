@@ -183,6 +183,13 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
             Assert.True(detailPurchase_PO.CheckListOfProducts(expectedPurchaseProducts),"Error: rental items are not as expected");
         }
-        
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_AF0_UC77_17_ProductsNotAvailable()
+        {
+
+        }
+
     }
 }
