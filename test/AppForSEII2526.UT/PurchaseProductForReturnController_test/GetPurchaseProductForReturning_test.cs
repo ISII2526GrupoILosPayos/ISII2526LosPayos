@@ -160,49 +160,60 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
 
         public static IEnumerable<object[]> TestCasesForGetPurchaseProductForReturningTest()
         {
-            var PurchaseProduct1 = new PurchaseProductForReturnDTO(
-
+            var purchaseProduct1 = new PurchaseProductForReturnDTO(
                 id: 1,
                 name: "Zapatilla Roja",
                 brand: "Nike",
                 quantity: 2,
                 location: "Almacén Central Madrid",
                 returnable: true,
-                productid:1
+                productid: 1
             )
             {
                 PurchaseOrderId = 1
             };
 
-            var allTestCases = new List<object[]>
+            var purchaseProduct2 = new PurchaseProductForReturnDTO(
+                id: 2,
+                name: "Sudadera Negra",
+                brand: "Nike",
+                quantity: 1,
+                location: "Almacén Central Madrid",
+                returnable: false,
+                productid: 2
+            )
             {
-                new object[]
-                {
-                    null,           // filterProductName
-                    "pauUser",      // userName
-                    0,              // minQuantity
-                    new List<PurchaseProductForReturnDTO> { PurchaseProduct1 } // expected
-                },
-
-                new object[]
-                {
-                    "Zapatilla",    // filterProductName
-                    "pauUser",      // userName
-                    0,              // minQuantity
-                    new List<PurchaseProductForReturnDTO> { PurchaseProduct1 } // expected
-                },
-
-                new object[]
-                {
-                    "Camisa",       // filterProductName
-                    "pauUser",      // userName
-                    0,              // minQuantity
-                    new List<PurchaseProductForReturnDTO>() // expected: vacío
-                },
+                PurchaseOrderId = 1
             };
 
-            return allTestCases;
+            return new List<object[]>
+    {
+        new object[]
+        {
+            null,       // filterProductName
+            "pauUser",  // userName
+            0,          // minQuantity (quantity)
+            new List<PurchaseProductForReturnDTO> { purchaseProduct2, purchaseProduct1 } // 👈 orden por Name
+        },
+
+        new object[]
+        {
+            "Zapatilla",
+            "pauUser",
+            0,
+            new List<PurchaseProductForReturnDTO> { purchaseProduct1 }
+        },
+
+        new object[]
+        {
+            "Camisa",
+            "pauUser",
+            0,
+            new List<PurchaseProductForReturnDTO>()
+        },
+    };
         }
+
 
         /*
         [Fact]
@@ -280,7 +291,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
         */
 
 
-        /*
+
         [Theory]
         [MemberData(nameof(TestCasesForGetPurchaseProductForReturningTest))]
         [Trait("LevelTesting", "Unit Testing")]
@@ -318,7 +329,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 });
             }
         }
-        */
+        
 
 
         [Fact]
