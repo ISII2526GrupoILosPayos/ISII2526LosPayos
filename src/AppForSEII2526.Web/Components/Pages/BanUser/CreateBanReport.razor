@@ -157,16 +157,14 @@
 
         try
         {
-            // Llamada a la API (NSwag)
             var result = await apiservice.CreateBanReportAsync(report);
 
-            // Si tu contenedor tiene método de “procesado”, úsalo.
-            // Si no existe, puedes simplemente limpiar el carrito aquí.
             banState.ClearBanUserCart();
 
-            // Opción simple: volver a la pantalla de selección o a donde tengas el “listado”
-            Navigation.NavigateTo("/banreports/selectusersforban");
+            // OJO: usa la ruta real de tu página detail
+            Navigation.NavigateTo($"/banreports/detailbanreport?reportId={result.Id}");
         }
+
         catch (ApiException<ValidationProblemDetails> apiexceptionvalidation)
         {
             string message = "Error while processing your request, please try again later!";
