@@ -102,10 +102,15 @@ namespace AppForSEII2526.UIT.UC_Purchase
         }
 
         [Theory]
-        [InlineData("", "Av. España, 1", "Albacete", "02001", "The NameSurname field is required.")]
-        [InlineData("Luis", "Av. España, 1", "Albacete", "02001", "The field NameSurname must be a string with a minimum length of 5 and a maximum length of 50.")]
+        [InlineData("", "Av. España, 1", "Albacete", "02001", "Bizum", "The NameSurname field is required.")]
+        [InlineData("Luis", "Av. España, 1", "Albacete", "02001", "Bizum", "The field NameSurname must be a string with a minimum length of 5 and a maximum length of 50.")]
+        [InlineData("Luis Melero Jareño Mbappe Iniesta Messi Bellingham Porras", "Av. España, 1", "Albacete", "02001", "Bizum", "The field NameSurname must be a string with a minimum length of 5 and a maximum length of 50.")]
+        [InlineData("Luis Melero", "", "Albacete", "02001", "Bizum", "The Street field is required.")]
+        [InlineData("Luis Melero", "Av. España, 1", "", "02001", "Bizum", "The City field is required.")]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "", "Bizum", "The PostalCode field is required.")]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "1", "Bizum", "The field PostalCode must be a string with a minimum length of 3 and a maximum length of 10.")]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC77_AF5_UC77_8_9_10_11_12_13_14_15_16_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode,string expectedMessageError)
+        public void UC77_AF5_UC77_8_9_10_11_12_13_14_15_16_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod, string expectedMessageError)
         {
             var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
 
@@ -116,7 +121,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
             selectProductsForPurchase_PO.PurchaseProducts();
 
-            createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, "Bizum");
+            createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
             createPurchase_PO.PressRentYourMovies();
 
             //Assert
