@@ -1,4 +1,5 @@
-﻿@using AppForSEII2526.Web.API
+﻿
+@using AppForSEII2526.Web.API
 @using Microsoft.AspNetCore.Authorization
 @using System.Linq
 @attribute [Authorize]
@@ -108,7 +109,10 @@
                                     <th>Brand</th>
                                     <th>Quantity Bought</th>
                                     <th>Warehouse</th>
+                                    
                                     <th>Add</th>
+                                    
+
                                 </tr>
                             </thead>
 
@@ -120,6 +124,9 @@
                                         <td>@pp.Brand</td>
                                         <td>@pp.Quantity</td>
                                         <td>@pp.Location</td>
+                                        
+
+
 
                                         <td>
                                             <button class="btn btn-outline-secondary"
@@ -261,13 +268,50 @@
 
     private void GoToReturnDetails()
     {
+        // Limpia error anterior
+        errors = "";
+
+        // Seguridad: no continuar sin carrito
+        if (returnOrder.Items.Count == 0)
+        {
+            errors = "Select at least one product to return.";
+            StateHasChanged();
+            return;
+        }
+
+        // Necesitamos la lista cargada para poder validar IsReturnable
+        if (purchaseProductForReturn == null)
+        {
+            errors = "Products list not loaded yet. Please try again.";
+            StateHasChanged();
+            return;
+        }
+
+        // Productos seleccionados que NO son retornables
+        var notReturnables = returnOrder.Items
+       .Select(i => purchaseProductForReturn.FirstOrDefault(p =>
+           p.ProductId == i.ProductId &&
+           p.PurchaseOrderId == i.PurchaseOrderId))
+       .Where(p => p != null && p.IsReturnable == false)
+       .ToList();
+
+
+        if (notReturnables.Any())
+        {
+            errors = "You cannot continue. These products are not returnable: "
+                     + string.Join(", ", notReturnables.Select(p => p!.Name));
+            StateHasChanged();
+            return; // <- te quedas en esta página (la misma)
+        }
+
+        // Todo OK -> navega
         navigationManager.NavigateTo("/returnorder/createreturnpurchaseorder");
     }
 
     private void GoBackToOrders()
     {
         // Ajusta la ruta si el listado es otro
-        navigationManager.NavigateTo("/purchaseorders");
+        navigationManager.NavigateTo("/purchaseorder/selectproductsforpurchase");
     }
 
     // ===== Búsqueda en la API =====
@@ -326,9 +370,9 @@
     protected override async Task OnInitializedAsync()
     {
         // Valores por defecto (igual que en el ejemplo de películas)
-        UserName = "pauUser";
+        UserName = "pau2@gmail.com";
         ProductName = "";
-        Quantity = 0;
+        Quantity = 1;
 
         await SearchPurchaseProductForReturning();
         await base.OnInitializedAsync();

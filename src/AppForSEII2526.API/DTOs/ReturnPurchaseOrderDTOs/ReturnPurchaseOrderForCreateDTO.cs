@@ -39,5 +39,16 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
         [Required]
         [MinLength(1, ErrorMessage = "You must include at least one product to return")]
         public IList<ReturnItemForCreateDTO> Items { get; set; }
-    }
+
+        public string CustomerName { get; set; }
+        public string CustomerSurname { get; set; }
+
+        public string CustomerAddress { get; set; }
+
+        public string CustomerTelephone { get; set; }
+
+
+
+
+        }
 }
