@@ -49,5 +49,10 @@ namespace AppForSEII2526.UIT.UC_Purchase
         {
             _driver.FindElement(By.Id("ModifyProducts")).Click();
         }
+
+        public bool CheckValidationError(string expectedError)
+        {
+            return _driver.PageSource.Contains(expectedError);
+        }
     }
 }

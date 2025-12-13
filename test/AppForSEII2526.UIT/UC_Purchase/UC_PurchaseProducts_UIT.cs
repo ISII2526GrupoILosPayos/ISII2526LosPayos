@@ -118,7 +118,9 @@ namespace AppForSEII2526.UIT.UC_Purchase
             createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, "Bizum");
             createPurchase_PO.PressRentYourMovies();
 
-            
+            //Assert
+            //the expected error is shown in the view
+            Assert.True(createPurchase_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
         }
     }
 }
