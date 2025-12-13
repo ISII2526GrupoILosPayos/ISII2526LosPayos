@@ -15,6 +15,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
         By tableOfProductsBy = By.Id("TableOfProducts");
         By buttonPurchaseProducts = By.Id("purchaseProductButton");
 
+        IWebElement _purchaseButton() => _driver.FindElement(buttonPurchaseProducts);
+
         public SelectProductsForPurchase_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
@@ -60,6 +62,12 @@ namespace AppForSEII2526.UIT.UC_Purchase
         public bool PurchaseAvailable()
         {
             return _driver.FindElement(buttonPurchaseProducts).Displayed;
+        }
+
+        public void PurchaseProducts()
+        {
+            WaitForBeingClickable(buttonPurchaseProducts);
+            _purchaseButton().Click();
         }
     }
 }

@@ -109,6 +109,16 @@ namespace AppForSEII2526.UIT.UC_Purchase
             var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
 
             InitialStepsForPurchaseProducts();
+
+            selectProductsForPurchase_PO.SearchProducts("", "");
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, "Bizum");
+            createPurchase_PO.PressRentYourMovies();
+
+            
         }
     }
 }

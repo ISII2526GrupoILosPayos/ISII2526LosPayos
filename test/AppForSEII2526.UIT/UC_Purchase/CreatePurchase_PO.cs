@@ -20,15 +20,12 @@ namespace AppForSEII2526.UIT.UC_Purchase
         { 
         }
 
-        public void FillInPurchaseInfo(string nameSurname, string userName, string deliveryAddress, string city, string postalCode, string paymentMethod)
+        public void FillInPurchaseInfo(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod)
         {
             WaitForBeingVisible(_nameSurnameBy);
 
             _nameSurname().Clear();
             _nameSurname().SendKeys(nameSurname);
-
-            _userName().Clear();
-            _userName().SendKeys(userName);
 
             _deliveryAddress().Clear();
             _deliveryAddress().SendKeys(deliveryAddress);
