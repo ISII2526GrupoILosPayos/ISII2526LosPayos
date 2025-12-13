@@ -1,0 +1,116 @@
+﻿@page "/banreports/detailbanreport"
+@using AppForSEII2526.Web.API
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject APiClient apiservice
+
+@attribute [Authorize]
+
+<h3>Ban Report</h3>
+
+@if (report == null)
+{
+    <p>@error</p>
+}
+else
+{
+    <table class="table table-borderless table-sm">
+        <tr>
+            <th>Reason</th>
+            <td id="Reason">@report.Reason</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td id="Description">@report.Description</td>
+        </tr>
+        <tr>
+            <th>Start date</th>
+            <td id="StartDate">@report.StartDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>End date</th>
+            <td id="EndDate">@report.EndDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+        </tr>
+        <tr>
+            <th>Users</th>
+            <td id="UsersCount">@((report.Users?.Count ?? 0))</td>
+        </tr>
+    </table>
+
+    <h4>Reported Users</h4>
+
+    @if (report.Users == null || report.Users.Count == 0)
+    {
+        <p><em>No users in this report.</em></p>
+    }
+    else
+    {
+        <table class="table" id="ReportedUsers">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Personal message</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in report.Users)
+                {
+                    <tr id="@($"ReportUser_{(u.Name ?? "").Replace(" ", "")}_{(u.Surname ?? "").Replace(" ", "")}")">
+                        <td>@u.Name</td>
+                        <td>@u.Surname</td>
+                        <td>@(string.IsNullOrWhiteSpace(u.PersonalMessage) ? "-" : u.PersonalMessage)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "reportId")]
+    public int ReportId { get; set; }
+
+    private ReportOperationResultDTO? report;
+    private string error = "";
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check logged in (si quieres restringir por rol, añade: && user.IsInRole("Admin"))
+        var userName = "";
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            var user = authState?.User;
+
+            if (user?.Identity?.IsAuthenticated == true)
+                userName = user.Identity.Name ?? "";
+        }
+
+        if (ReportId <= 0)
+        {
+            report = null;
+            error = "Error! Missing or invalid reportId in the URL.";
+            return;
+        }
+
+        try
+        {
+            report = await apiservice.GetBanReportAsync(ReportId);
+        }
+        catch (ApiException)
+        {
+            report = null;
+        }
+
+        if (report == null)
+        {
+            error = $"Error! You are not authorized to see this report or there is not a report with id={ReportId}";
+        }
+    }
+}
