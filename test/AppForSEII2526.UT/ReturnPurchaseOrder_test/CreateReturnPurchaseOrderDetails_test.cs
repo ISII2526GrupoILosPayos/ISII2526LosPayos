@@ -179,11 +179,11 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
                 new object[] { userNotFound, "User not found." },
                 new object[] { invalidRating, "Rating must be between 1 and 5." },
                 new object[] { ratingMalExamen, "Error!, Please, select a value either higher or lower than 3." },
-                new object[] { ratingNull, "Error!, Please, select a value either higher or lower than 0." },
+                //new object[] { ratingNull, "Error!, Please, select a value either higher or lower than 0." },
               
             };
         }
-        /*
+        
         [Theory]
         [Trait("LevelTesting", "Unit Testing")]
         [Trait("Database", "WithoutFixture")]
@@ -198,7 +198,7 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
             var actualError = problem.Errors.First().Value[0];
             Assert.Contains(expectedError, actualError);
         }
-        */
+        
 
         // ==== 🔟 Caso de éxito: 201 + ReturnPurchaseOrderDTO completo ====
 
