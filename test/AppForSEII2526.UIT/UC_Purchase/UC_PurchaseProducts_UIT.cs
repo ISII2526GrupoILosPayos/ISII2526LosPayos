@@ -204,5 +204,11 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
         }
 
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_AF4_UC77_16_ModifyPurchaseCartWhenThereAreSomeDataIntroduced()
+        {
+
+        }
     }
 }
