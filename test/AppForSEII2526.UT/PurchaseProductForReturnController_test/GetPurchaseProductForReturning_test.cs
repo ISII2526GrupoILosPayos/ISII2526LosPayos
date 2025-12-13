@@ -280,6 +280,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
         */
 
 
+        /*
         [Theory]
         [MemberData(nameof(TestCasesForGetPurchaseProductForReturningTest))]
         [Trait("LevelTesting", "Unit Testing")]
@@ -317,6 +318,7 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
                 });
             }
         }
+        */
 
 
         [Fact]

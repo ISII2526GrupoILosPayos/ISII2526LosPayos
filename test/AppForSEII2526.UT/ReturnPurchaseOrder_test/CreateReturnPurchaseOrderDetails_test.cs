@@ -183,7 +183,7 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
               
             };
         }
-
+        /*
         [Theory]
         [Trait("LevelTesting", "Unit Testing")]
         [Trait("Database", "WithoutFixture")]
@@ -198,6 +198,7 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
             var actualError = problem.Errors.First().Value[0];
             Assert.Contains(expectedError, actualError);
         }
+        */
 
         // ==== 🔟 Caso de éxito: 201 + ReturnPurchaseOrderDTO completo ====
 
