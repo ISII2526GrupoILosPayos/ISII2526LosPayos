@@ -22,10 +22,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
         public void FillInPurchaseInfo(string nameSurname, string userName, string deliveryAddress, string city, string postalCode, string paymentMethod)
         {
-            // Esperamos a que el formulario esté visible
             WaitForBeingVisible(_nameSurnameBy);
 
-            // Rellenamos los campos de texto
             _nameSurname().Clear();
             _nameSurname().SendKeys(nameSurname);
 
@@ -41,9 +39,18 @@ namespace AppForSEII2526.UIT.UC_Purchase
             _postalCode().Clear();
             _postalCode().SendKeys(postalCode);
 
-            // Seleccionamos el método de pago (dropdown)
             SelectElement selectElement = new SelectElement(_paymentMethod());
             selectElement.SelectByText(paymentMethod);
+        }
+
+        public void PressRentYourMovies()
+        {
+            _driver.FindElement(By.Id("Submit")).Click();
+        }
+
+        public void PressModifyProducts()
+        {
+            _driver.FindElement(By.Id("ModifyProducts")).Click();
         }
     }
 }
