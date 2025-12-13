@@ -188,6 +188,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_AF0_UC77_17_ProductsNotAvailable()
         {
+            InitialStepsForPurchaseProducts();
+
             selectProductsForPurchase_PO.SearchProducts("", "");
 
             // Añadimos el producto hasta agotar el stock (10 veces)
@@ -198,9 +200,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
             // Assert
             Assert.True(
-                selectProductsForPurchase_PO.NoMoreStockMessageIsShown(),
-                "Expected 'No more stock available' message was not shown"
-            );
+                selectProductsForPurchase_PO.NoMoreStockMessageIsShown(), "Expected 'No more stock available' message was not shown");
 
         }
 
