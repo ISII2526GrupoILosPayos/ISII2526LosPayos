@@ -36,8 +36,11 @@ namespace AppForSEII2526.UIT.UC_Purchase
             _postalCode().Clear();
             _postalCode().SendKeys(postalCode);
 
-            SelectElement selectElement = new SelectElement(_paymentMethod());
-            selectElement.SelectByText(paymentMethod);
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                SelectElement selectElement = new SelectElement(_paymentMethod());
+                selectElement.SelectByText(paymentMethod);
+            }
         }
 
         public void PressRentYourMovies()
@@ -56,6 +59,14 @@ namespace AppForSEII2526.UIT.UC_Purchase
             wait.Until(driver => driver.PageSource.Contains(expectedError));
 
             return _driver.PageSource.Contains(expectedError);
+        }
+
+        public void ConfirmPurchase()
+        {
+            By saveButton = By.Id("Button_DialogOK");
+
+            WaitForBeingClickable(saveButton);
+            _driver.FindElement(saveButton).Click();
         }
     }
 }

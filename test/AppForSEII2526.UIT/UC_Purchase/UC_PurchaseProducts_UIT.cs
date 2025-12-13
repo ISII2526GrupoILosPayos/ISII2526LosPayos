@@ -128,5 +128,30 @@ namespace AppForSEII2526.UIT.UC_Purchase
             //the expected error is shown in the view
             Assert.True(createPurchase_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
         }
+
+        //We add another diferent test for the UC77_12 and UC77_16 because this errors appear after pressing the "Save" button
+
+        [Theory]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "", "Error! The selected payment method does not exist.")]
+        [InlineData("Luis Melero", "Av. España 1", "Albacete", "02001", "Bizum", "Error! You must include a comma to separate the street from the number of the house")]
+        public void UC77_AF5_UC77_12_16_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod, string expectedMessageError)
+        {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+
+            InitialStepsForPurchaseProducts();
+
+            selectProductsForPurchase_PO.SearchProducts("", "");
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
+            createPurchase_PO.PressRentYourMovies();
+            createPurchase_PO.ConfirmPurchase();
+
+            //Assert
+            //the expected error is shown in the view
+            Assert.True(createPurchase_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
+        }
     }
 }
