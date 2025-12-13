@@ -110,7 +110,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
         [InlineData("Luis Melero", "Av. España, 1", "Albacete", "", "Bizum", "The PostalCode field is required.")]
         [InlineData("Luis Melero", "Av. España, 1", "Albacete", "1", "Bizum", "The field PostalCode must be a string with a minimum length of 3 and a maximum length of 10.")]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC77_AF5_UC77_8_9_10_11_12_13_14_15_16_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod, string expectedMessageError)
+        public void UC77_AF5_UC77_8_9_10_11_13_14_15_testingErrorsMandatorydata(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod, string expectedMessageError)
         {
             var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
 
