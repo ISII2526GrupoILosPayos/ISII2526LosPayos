@@ -5,6 +5,7 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
     public class ReturnPurchaseOrderDTO
     {
         public ReturnPurchaseOrderDTO(
+             int id,
             string customerName,
             string customerFirstSurname,
             string customerAddress,
@@ -12,6 +13,7 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
             IList<ReturnedProductDTO> returnedProducts,
             string returningOptionSelected)
         {
+            Id = id;
             CustomerName = customerName;
             CustomerFirstSurname = customerFirstSurname;
             CustomerAddress = customerAddress;
@@ -21,6 +23,7 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
         }
 
         // Datos del cliente
+        public int Id { get; set; }
         public string CustomerName { get; set; }
         public string CustomerFirstSurname { get; set; }
         public string CustomerAddress { get; set; }

@@ -3,13 +3,15 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 {
     public class PurchaseProductForReturnDTO
     {
-        public PurchaseProductForReturnDTO(int id, string name, string brand, int quantity, string location)
+        public PurchaseProductForReturnDTO(int id, string name, string brand, int quantity, string location,bool returnable, int productid)
         {
             Id = id;
             Name = name;
             Brand = brand;
             Quantity = quantity;
             Location = location;
+            IsReturnable = returnable; // Por defecto, el producto es retornable
+            ProductId = productid;
         }
 
         public int Id { get; set; }
@@ -26,6 +28,10 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
 
         public string Location { get; set; }
 
+        public bool IsReturnable { get; set; }   // <-- clave
+
+        public int ProductId { get; set; }
+
         public override bool Equals(object? obj)
         {
             return obj is PurchaseProductForReturnDTO dTO &&
@@ -34,7 +40,9 @@ namespace AppForSEII2526.API.DTOs.ReturnProductDTOs
                    Name == dTO.Name &&
                    Brand == dTO.Brand &&
                    Quantity == dTO.Quantity &&
-                   Location == dTO.Location;
+                   Location == dTO.Location&&
+                   IsReturnable == dTO.IsReturnable&&
+                   ProductId == dTO.ProductId;
         }
 
         public override int GetHashCode()

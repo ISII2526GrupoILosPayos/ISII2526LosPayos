@@ -1000,6 +1000,13 @@
           "location": {
             "type": "string",
             "nullable": true
+          },
+          "isReturnable": {
+            "type": "boolean"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1090,6 +1097,18 @@
           "reason": {
             "minLength": 1,
             "type": "string"
+          },
+          "productName": {
+            "type": "string",
+            "nullable": true
+          },
+          "brandName": {
+            "type": "string",
+            "nullable": true
+          },
+          "brandLocation": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1097,6 +1116,10 @@
       "ReturnPurchaseOrderDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "customerName": {
             "type": "string",
             "nullable": true
@@ -1156,6 +1179,22 @@
             "items": {
               "$ref": "#/components/schemas/ReturnItemForCreateDTO"
             }
+          },
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerSurname": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "customerTelephone": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

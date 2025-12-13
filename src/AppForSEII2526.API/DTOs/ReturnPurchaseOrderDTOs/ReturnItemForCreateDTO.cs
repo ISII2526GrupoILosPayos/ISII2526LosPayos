@@ -20,5 +20,11 @@ namespace AppForSEII2526.API.DTOs.ReturnPurchaseOrderDTOs
         // (esto cubre "the reason why he is returning those products")
         [Required]
         public string Reason { get; set; }
+
+        public string ProductName { get; set; }
+
+        public string BrandName { get; set; }
+
+        public string BrandLocation { get; set; }
     }
 }

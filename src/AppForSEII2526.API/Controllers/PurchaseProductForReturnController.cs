@@ -1,5 +1,4 @@
 ﻿using AppForSEII2526.API.DTOs.ReturnProductDTOs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,8 +13,8 @@ namespace AppForSEII2526.API.Controllers
     [ApiController]
     public class PurchaseProductForReturnController : ControllerBase
     {
-        private ApplicationDbContext _context;
-        private ILogger<PurchaseProductForReturnController> _logger;
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<PurchaseProductForReturnController> _logger;
 
         public PurchaseProductForReturnController(ApplicationDbContext context, ILogger<PurchaseProductForReturnController> logger)
         {
@@ -29,47 +28,53 @@ namespace AppForSEII2526.API.Controllers
         [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetPurchasedProductsForReturning(string? productName, string userName, int quantity)
         {
-
             if (string.IsNullOrWhiteSpace(userName))
             {
                 ModelState.AddModelError(nameof(userName), "UserName is required.");
                 return BadRequest(new ValidationProblemDetails(ModelState));
             }
 
-            // incluimos Product->Brand y PurchaseOrder->ApplicationUser para poder filtrar por userName
-            IList<PurchaseProductForReturnDTO> purchaseProductForReturnDTOs = await _context.PurchaseProducts
-                .Include(pp => pp.Product)
-                    .ThenInclude(p => p.Brand)
-                .Include(pp => pp.PurchaseOrder)
-                    .ThenInclude(po => po.ApplicationUser)
+            // 1) Proyección a anónimo (100% traducible a SQL)
+            var data = await _context.PurchaseProducts
+                .AsNoTracking()
+                .Include(pp => pp.Product).ThenInclude(p => p.Brand)
+                .Include(pp => pp.PurchaseOrder).ThenInclude(po => po.ApplicationUser)
                 .Where(pp =>
-                    (
-                        productName == null ||
-                        pp.Product.Name.Contains(productName)
-                    )
-                    && (
-                        pp.PurchaseOrder.ApplicationUser.UserName == userName
-                        && pp.ReturnProduct == null
-                    )
-                    && (
-                         pp.Quantity > quantity
-                    )
-                    && (
-                        pp.Product.IsReturnable == true
-                    )
+                    (string.IsNullOrEmpty(productName) || pp.Product.Name.Contains(productName)) &&
+                    pp.PurchaseOrder.ApplicationUser.UserName == userName &&
+                    pp.ReturnProduct == null &&
+                    pp.Quantity >= quantity
                 )
                 .OrderBy(pp => pp.Product.Name)
-                .Select(pp => new PurchaseProductForReturnDTO(pp.Product.ProductId, pp.Product.Name, pp.Product.Brand.Name, pp.Quantity, pp.Product.Brand.Location)
+                .Select(pp => new
                 {
-                    PurchaseOrderId = pp.PurchaseOrderId
+                    pp.ProductId,
+                    pp.PurchaseOrderId,
+                    Name = pp.Product.Name,
+                    Brand = pp.Product.Brand.Name,
+                    Quantity = pp.Quantity,
+                    Location = pp.Product.Brand.Location,
+                    IsReturnable = pp.Product.IsReturnable
                 })
                 .ToListAsync();
 
+            // 2) Construcción del DTO en memoria (ya NO hay traducción SQL)
+            IList<PurchaseProductForReturnDTO> purchaseProductForReturnDTOs = data
+                .Select(x => new PurchaseProductForReturnDTO(
+                    id: x.ProductId,            // si quieres que Id sea el ProductId
+                    name: x.Name,
+                    brand: x.Brand,
+                    quantity: x.Quantity,
+                    location: x.Location,
+                    returnable: x.IsReturnable,
+                    productid: x.ProductId
+                )
+                {
+                    PurchaseOrderId = x.PurchaseOrderId
+                })
+                .ToList();
 
             return Ok(purchaseProductForReturnDTOs);
-
-           
         }
     }
-
 }

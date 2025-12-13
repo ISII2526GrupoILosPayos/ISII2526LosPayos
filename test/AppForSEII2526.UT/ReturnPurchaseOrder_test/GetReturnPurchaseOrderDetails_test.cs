@@ -170,6 +170,7 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
             };
 
             var expected = new ReturnPurchaseOrderDTO(
+                id: rpo.Id,
                 customerName: "Pau",
                 customerFirstSurname: "Femenia",
                 customerAddress: "Campus",
