@@ -55,21 +55,27 @@ namespace AppForSEII2526.UIT.Shared {
                 .GoToUrl(_URI);
         }
 
-        protected void Perform_login(string email, string password) {
-            _driver.Navigate()
-                    .GoToUrl(_URI + "Account/Login");
-            // _driver.FindElement(By.Id("Input_Email"))
-            //     .SendKeys("elena.navarro@uclm.es");
-            _driver.FindElement(By.Name("Input.Email"))
-                .SendKeys(email);
+        protected void Perform_login(string email, string password)
+        {
+            _driver.Navigate().GoToUrl(_URI + "Account/Login");
 
-            _driver.FindElement(By.Name("Input.Password"))
-                .SendKeys(password);
+            _driver.FindElement(By.Name("Input.Email")).Clear();
+            _driver.FindElement(By.Name("Input.Email")).SendKeys(email);
 
-            _driver.FindElement(By.XPath("/html/body/div[1]/main/article/div/div[1]/section/form/div[4]/button"))
-                .Click();
+            _driver.FindElement(By.Name("Input.Password")).Clear();
+            _driver.FindElement(By.Name("Input.Password")).SendKeys(password);
+
+            _driver.FindElement(By.XPath("//button[contains(.,'Log in') or contains(.,'Login')]")).Click();
+
+            // Espera a que el login haya terminado (elige 1 de estas 2 esperas)
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(15));
+
+            // Opción A: aparece Logout
+            wait.Until(d => d.PageSource.Contains("Logout"));
+
+            // Opción B (alternativa): aparece el email en el lateral
+            // wait.Until(d => d.PageSource.Contains(email));
         }
-
 
         protected void SetUp_Chrome4UIT() {
             var optionsc = new ChromeOptions {

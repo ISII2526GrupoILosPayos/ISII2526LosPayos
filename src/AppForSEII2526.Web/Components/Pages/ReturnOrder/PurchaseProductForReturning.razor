@@ -171,6 +171,16 @@
                     Continue with return
                 </button>
             </div>
+
+            <div class="row mt-2">
+                <button type="button"
+                        class="btn btn-danger"
+                        id="clearReturnCartButton"
+                        @onclick="ClearReturnCart">
+                    Empty Cart/Return
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
@@ -313,6 +323,22 @@
         // Ajusta la ruta si el listado es otro
         navigationManager.NavigateTo("/purchaseorder/selectproductsforpurchase");
     }
+
+    private async Task ClearReturnCart()
+    {
+        // Vacía el carrito (y cualquier estado de return que tengas guardado)
+        returnPurchaseOrderStateContainer.ResetAfterProcessing();
+
+        // Mantén el username actual en el state (porque Reset lo borra)
+        if (!string.IsNullOrWhiteSpace(userName))
+            returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+
+        // Opcional pero recomendable: volver a cargar la lista con los filtros actuales
+        await SearchPurchaseProductForReturning();
+
+        StateHasChanged();
+    }
+
 
     // ===== Búsqueda en la API =====
 
