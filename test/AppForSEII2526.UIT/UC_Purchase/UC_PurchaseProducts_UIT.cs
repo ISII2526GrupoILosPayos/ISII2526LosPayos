@@ -196,7 +196,11 @@ namespace AppForSEII2526.UIT.UC_Purchase
                 selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
             }
 
-            
+            // Assert
+            Assert.True(
+                selectProductsForPurchase_PO.NoMoreStockMessageIsShown(),
+                "Expected 'No more stock available' message was not shown"
+            );
 
         }
 
