@@ -18,7 +18,7 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly By errorAlertNoProducts = By.CssSelector("div.alert-danger");
         private readonly By backToOrdersButton = By.Id("backToOrdersButton");
 
-        // ✅ NUEVO (Return Cart)
+        // (Return Cart)
         private readonly By clearReturnCartButton = By.Id("clearReturnCartButton");
 
         private readonly By removeProductButtons = By.CssSelector("button[id^='removeProduct_']");
@@ -26,10 +26,10 @@ namespace AppForSEII2526.UIT.UC_Return
 
 
         // ---- CREATE page (y también botones del cart) ----
-        private readonly By btnContinue = By.Id("continueReturnButton");        // ✅ confirmado
-        private readonly By selectReturningOption = By.CssSelector("select");   // ✅ solo hay un select
-        private readonly By inputRating = By.Id("Rating");                     // ✅ confirmado
-        private readonly By btnSaveReturn = By.Id("SubmitReturnOrder");         // ✅ confirmado
+        private readonly By btnContinue = By.Id("continueReturnButton");        
+        private readonly By selectReturningOption = By.CssSelector("select");   
+        private readonly By inputRating = By.Id("Rating");                     
+        private readonly By btnSaveReturn = By.Id("SubmitReturnOrder");         
 
         public PurchaseProductForReturning_PO(IWebDriver driver, ITestOutputHelper output)
             : base(driver, output) { }
@@ -117,7 +117,7 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
         /// <summary>
-        /// ✅ Flujo OK: al continuar navega a /returnorder/createreturnpurchaseorder
+        ///  Flujo OK: al continuar navega a /returnorder/createreturnpurchaseorder
         /// </summary>
         public void ContinueWithReturn()
         {
@@ -129,7 +129,7 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
         /// <summary>
-        /// ✅ Caso NO retornable: al continuar NO navega y aparece el error rojo con el nombre del producto.
+        ///  Caso NO retornable: al continuar NO navega y aparece el error rojo con el nombre del producto.
         /// </summary>
         public void ClickContinueExpectingNotReturnableError(string productName)
         {
@@ -154,7 +154,7 @@ namespace AppForSEII2526.UIT.UC_Return
             });
         }
 
-        // ✅ Back to orders
+        //  Back to orders
         public bool CheckBackToOrdersButtonVisible()
         {
             try
@@ -177,7 +177,7 @@ namespace AppForSEII2526.UIT.UC_Return
             wait.Until(d => d.Url.Contains("/purchaseorder/selectproductsforpurchase"));
         }
 
-        // ✅ NUEVO: Empty Cart/Return
+        // Empty Cart/Return
         public bool CheckEmptyCartButtonVisible()
         {
             try
@@ -312,7 +312,7 @@ namespace AppForSEII2526.UIT.UC_Return
             return _driver.PageSource.Contains("No products to show");
         }
 
-        // ✅ NUEVO: validar mensaje de "not returnable"
+        // validar mensaje de "not returnable"
         public bool CheckNotReturnableErrorContains(string expectedPrefix, string productName)
         {
             try

@@ -44,8 +44,8 @@ namespace AppForSEII2526.UIT.UC_Return
             purchaseProductForReturning_PO.WaitForSelectPageLoaded();
         }
 
-        // ✅ TEST 1 (BASIC FLOW) - Theory para dos productos
-        // OJO: este test CREA un return y cambia estado. Debes ejecutarlo con BBDD reseteada/seed consistente.
+        //(BASIC FLOW)
+        
         [Theory]
         [InlineData("Camiseta")]
         [InlineData("Gorra")]
@@ -81,7 +81,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
       
 
-        // ✅ CASO: si no hay productos disponibles para devolver -> error + Back to orders
+        // si no hay productos disponibles para devolver -> error + Back to orders
         [Fact]
         [Trait("LevelTesting", "Functional Testing")]
         public void UC37_ESC2()
@@ -119,10 +119,8 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
 
-        // ✅ CASO 2.1-2.3 + continuar devolución hasta Details
-        // ✅ CASO 2.1-2.3 + continuar devolución hasta Details (THEORY)
-        // Filtra por Name + Quantity, muestra solo los productos que cumplen,
-        // y luego sigue el mismo flow que el Basic Flow.
+        
+        //   continuar devolución hasta Details (THEORY)
         [Theory]
         [InlineData("Calcetines", 5, "Pull&Bear", "Albacete")]
         [InlineData("Sudadera", 3, "Zara", "Albacete")]
@@ -172,7 +170,7 @@ namespace AppForSEII2526.UIT.UC_Return
             );
         }
 
-        // ✅ CASO 4.1–4.3 (AF): producto NO retornable -> error + Empty Cart/Return
+        // producto NO retornable -> error + Empty Cart/Return
         [Theory]
         [InlineData("Shampoo")]
         [InlineData("Water")]
