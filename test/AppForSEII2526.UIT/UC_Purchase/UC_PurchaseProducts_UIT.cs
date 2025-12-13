@@ -80,5 +80,25 @@ namespace AppForSEII2526.UIT.UC_Purchase
             Assert.True(selectProductsForPurchase_PO.PurchaseNotAvailable());
 
         }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC77_AF4_UC77_7_ModifyPurchaseCart()
+        {
+            //Arrange
+            InitialStepsForPurchaseProducts();
+            //Act
+
+            //We search products for being able to add some products to the cart
+            selectProductsForPurchase_PO.SearchProducts("", "");
+
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName2);
+            selectProductsForPurchase_PO.RemoveProductFromPurchaseCart(productName1);
+
+            //Assert
+
+            Assert.True(selectProductsForPurchase_PO.PurchaseAvailable());
+        }
     }
 }

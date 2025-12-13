@@ -13,7 +13,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
         By productColour = By.Id("inputColour");
         By buttonSearchProducts = By.Id("searchProducts");
         By tableOfProductsBy = By.Id("TableOfProducts");
-        By buttonRentMovies = By.Id("purchaseProductButton");
+        By buttonPurchaseProducts = By.Id("purchaseProductButton");
 
         public SelectProductsForPurchase_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
@@ -54,7 +54,12 @@ namespace AppForSEII2526.UIT.UC_Purchase
         {
             //the button is not Displayed=hidden
 
-            return _driver.FindElement(buttonRentMovies).Displayed == false;
+            return _driver.FindElement(buttonPurchaseProducts).Displayed == false;
+        }
+
+        public bool PurchaseAvailable()
+        {
+            return _driver.FindElement(buttonPurchaseProducts).Displayed;
         }
     }
 }
