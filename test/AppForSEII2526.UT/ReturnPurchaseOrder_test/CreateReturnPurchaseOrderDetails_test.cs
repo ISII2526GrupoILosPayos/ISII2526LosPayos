@@ -244,6 +244,7 @@ namespace AppForSEII2526.UT.ReturnPurchaseOrder_test
             };
 
             var expected = new ReturnPurchaseOrderDTO(
+                id: actual.Id,  // 👈 el Id lo genera la BD, no lo conocemos a priori
                 customerName: _name,
                 customerFirstSurname: _surname,
                 customerAddress: _address,

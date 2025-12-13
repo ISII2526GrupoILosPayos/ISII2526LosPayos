@@ -161,11 +161,14 @@ namespace AppForSEII2526.UT.PurchaseProductForReturnController_test
         public static IEnumerable<object[]> TestCasesForGetPurchaseProductForReturningTest()
         {
             var PurchaseProduct1 = new PurchaseProductForReturnDTO(
+
                 id: 1,
                 name: "Zapatilla Roja",
                 brand: "Nike",
                 quantity: 2,
-                location: "Almacén Central Madrid"
+                location: "Almacén Central Madrid",
+                returnable: true,
+                productid:1
             )
             {
                 PurchaseOrderId = 1
