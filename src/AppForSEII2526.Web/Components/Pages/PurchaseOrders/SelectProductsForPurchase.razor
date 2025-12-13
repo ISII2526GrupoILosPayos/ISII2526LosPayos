@@ -19,13 +19,13 @@
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Name</span>
-                        <input type="text" id="inputTitle" @bind=productName class="form-control" placeholder="Write the name of the product to purchase" aria-label="Product name" aria-describedby="basic-addon1">
+                        <input type="text" id="inputName" @bind=productName class="form-control" placeholder="Write the name of the product to purchase" aria-label="Product name" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Colour</span>
-                        <input type="text" id="inputGenre" @bind=productColour class="form-control" placeholder="Write the colour of the product to purchase" aria-label="Product colour" aria-describedby="basic-addon1">
+                        <input type="text" id="inputColour" @bind=productColour class="form-control" placeholder="Write the colour of the product to purchase" aria-label="Product colour" aria-describedby="basic-addon1">
                     </div>
                 </div>
                 <div class="col">
@@ -60,7 +60,7 @@
                                         <td>@product.Stock</td>
                                         <td>
                                             <button class="btn btn-outline-secondary"
-                                                    id="productToPurchase_@product.Id"
+                                                    id="productToPurchase_@product.Name"
                                                     @onclick="@(() => AddProduct(product))">
                                                 Add
                                             </button>
@@ -90,6 +90,7 @@
                     <div class="mb-1">
                         <button type="button"
                                 class="btn btn-light w-100 text-start"
+                                id="removeProduct_@product.Name"
                                 @onclick="@(() => RemoveProductItem(product))">
                             x @product.Name - @product.Brand - @product.Quantity - @product.Location - @product.Price €
                         </button>
@@ -103,6 +104,7 @@
 
             <button type="button"
                     class="btn btn-primary w-100 mt-2"
+                    id="purchaseProductButton"
                     @onclick=@PurchaseProducts>
                 Create a purchase
             </button>
