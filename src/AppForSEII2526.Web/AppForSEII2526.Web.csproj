@@ -8,18 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="OpenAPIs\swagger1.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="OpenAPIs\swagger1.json">
-      <ClassName>AppForSEII2526APIClient</ClassName>
-    </None>
     <None Include="OpenAPIs\swagger.json" ClassName="AppForSEII2526APIClient" />
   </ItemGroup>
 
   <ItemGroup>
-    <OpenApiReference Include="OpenAPIs\swagger2.json" Namespace="AppForSEII2526.Web.API" ClassName="APiClient">
+    <OpenApiReference Include="OpenAPIs\swagger1.json" Namespace="AppForSEII2526.Web.API" ClassName="APiClient">
       <SourceUri>https://localhost:7067/swagger/v1/swagger.json</SourceUri>
     </OpenApiReference>
   </ItemGroup>
