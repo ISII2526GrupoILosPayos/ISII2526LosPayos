@@ -14,7 +14,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
         private const string productName1 = "PS5";
         private const string productBrand1 = "Sony";
         private const string productLocation1 = "USA";
-        private const string productQuantity1 = "10";
+        private const string productQuantity1 = "1";
+        private const string productPriceForPurchase1 = "500";
 
         private const string productName2 = "Pantalon";
         private const string productBrand2 = "Pull&Bear";
@@ -153,5 +154,18 @@ namespace AppForSEII2526.UIT.UC_Purchase
             //the expected error is shown in the view
             Assert.True(createPurchase_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
         }
+
+        [Theory]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "Bizum")]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "CreditCard")]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "PayPal")]
+        public void UC77_BF_AF1_UC77_1_2_3_BasicFlow(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod)
+        {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+            var detailPurchase_PO = new DetailPurchase_PO(_driver, _output);
+
+            
+        }
+        
     }
 }
