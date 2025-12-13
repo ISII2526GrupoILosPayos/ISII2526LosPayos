@@ -22,6 +22,10 @@ namespace AppForSEII2526.UIT.UC_Return
         private const string expectedErrorAllReturned =
             "The selected order has no products available for returning.";
 
+        // Mensaje base para NO retornables
+        private const string expectedNotReturnablePrefix =
+            "You cannot continue. These products are not returnable:";
+
         public UC_PurchaseProductsForReturning_UIT(ITestOutputHelper output) : base(output)
         {
             Initial_step_opening_the_web_page();
@@ -168,7 +172,47 @@ namespace AppForSEII2526.UIT.UC_Return
             );
         }
 
+        // ✅ CASO 4.1–4.3 (AF): producto NO retornable -> error + Empty Cart/Return
+        [Theory]
+        [InlineData("Shampoo")]
+        [InlineData("Water")]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_AF_NotReturnableProduct_ShowsError_Then_EmptyCart_ReturnsToStep2(string notReturnableProduct)
+        {
+            // Arrange
+            InitialSteps_GoToSelectReturnProducts();
+
+            // Act: aseguramos listado "normal" (sin filtrar por quantity exacta del producto)
+            // (si filtras por quantity=1 podrías excluir Shampoo(3) o Water(2))
+            purchaseProductForReturning_PO.FilterProducts(productName: "", userName: userEmail, quantity: 0);
+
+            // Act: Add producto NO retornable
+            purchaseProductForReturning_PO.AddProductByName(notReturnableProduct);
+
+            // Act: Continue (pero debe quedarse en SELECT y mostrar error)
+            purchaseProductForReturning_PO.ClickContinueExpectingNotReturnableError(notReturnableProduct);
+
+            // Assert: mensaje contiene prefijo + nombre del producto
+            Assert.True(
+                purchaseProductForReturning_PO.CheckNotReturnableErrorContains(expectedNotReturnablePrefix, notReturnableProduct),
+                $"Error: not returnable message not shown correctly for product {notReturnableProduct}"
+            );
+
+            // Act: click Empty Cart/Return
+            purchaseProductForReturning_PO.ClickEmptyCartReturnAndWait();
+
+            Assert.True(purchaseProductForReturning_PO.IsOnSelectReturnPage(),
+                "Should return to step 2 (select page).");
+
+            Assert.True(purchaseProductForReturning_PO.IsCartEmpty(),
+                "Cart should be empty after Empty Cart/Return.");
 
 
+
+
+        }
     }
+
+
+
 }
