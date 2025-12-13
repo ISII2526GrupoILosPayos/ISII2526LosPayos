@@ -188,6 +188,15 @@ namespace AppForSEII2526.UIT.UC_Purchase
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC2_AF0_UC77_17_ProductsNotAvailable()
         {
+            selectProductsForPurchase_PO.SearchProducts("", "");
+
+            // Añadimos el producto hasta agotar el stock (10 veces)
+            for (int i = 0; i < 10; i++)
+            {
+                selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+            }
+
+            
 
         }
 
