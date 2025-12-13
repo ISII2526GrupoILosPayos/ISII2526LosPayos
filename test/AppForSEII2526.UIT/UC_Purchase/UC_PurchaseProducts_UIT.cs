@@ -123,7 +123,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
             selectProductsForPurchase_PO.PurchaseProducts();
 
             createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
-            createPurchase_PO.PressRentYourMovies();
+            createPurchase_PO.PressPurchaseYourProducts();
 
             //Assert
             //the expected error is shown in the view
@@ -147,7 +147,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
             selectProductsForPurchase_PO.PurchaseProducts();
 
             createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
-            createPurchase_PO.PressRentYourMovies();
+            createPurchase_PO.PressPurchaseYourProducts();
             createPurchase_PO.ConfirmPurchase();
 
             //Assert
@@ -173,7 +173,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
             createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
 
-            createPurchase_PO.PressRentYourMovies();
+            createPurchase_PO.PressPurchaseYourProducts();
             createPurchase_PO.ConfirmPurchase();
 
             Assert.True(detailPurchase_PO.CheckPurchaseDetail(nameSurname, deliveryAddress, city, postalCode, paymentMethod, DateTime.Now, productPriceForPurchase1),"Error: detail purchase is not as expected");
@@ -206,8 +206,36 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC2_AF4_UC77_16_ModifyPurchaseCartWhenThereAreSomeDataIntroduced()
+        public void UC2_AF4_UC77_18_ModifyPurchaseCartWhenThereAreSomeDataIntroduced()
         {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+            var detailPurchase_PO = new DetailPurchase_PO(_driver, _output);
+
+            InitialStepsForPurchaseProducts();
+
+            selectProductsForPurchase_PO.SearchProducts("", "");
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName2);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.FillInPurchaseInfo("Luis Melero", "Av. España, 1", "Albacete", "02001", "PayPal");
+
+            createPurchase_PO.PressModifyProducts();
+
+            selectProductsForPurchase_PO.RemoveProductFromPurchaseCart(productName2);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.PressPurchaseYourProducts();
+            createPurchase_PO.ConfirmPurchase();
+
+            Assert.True(detailPurchase_PO.CheckPurchaseDetail("Luis Melero", "Av. España, 1", "Albacete", "02001", "PayPal", DateTime.Now, productPriceForPurchase1), "Error: detail purchase is not as expected");
+
+            var expectedPurchaseProducts = new List<string[]>
+                    { new string[] { productName1, productBrand1, productQuantity1, productPriceForPurchase1 + " €"}, };
+
+            Assert.True(detailPurchase_PO.CheckListOfProducts(expectedPurchaseProducts), "Error: rental items are not as expected");
 
         }
     }
