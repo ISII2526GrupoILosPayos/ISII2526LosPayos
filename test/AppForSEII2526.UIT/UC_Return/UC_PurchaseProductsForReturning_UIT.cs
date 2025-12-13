@@ -177,14 +177,14 @@ namespace AppForSEII2526.UIT.UC_Return
         [InlineData("Shampoo")]
         [InlineData("Water")]
         [Trait("LevelTesting", "Functional Testing")]
-        public void UC37_AF_NotReturnableProduct_ShowsError_Then_EmptyCart_ReturnsToStep2(string notReturnableProduct)
+        public void UC37_ESC4_1_2(string notReturnableProduct)
         {
             // Arrange
             InitialSteps_GoToSelectReturnProducts();
 
             // Act: aseguramos listado "normal" (sin filtrar por quantity exacta del producto)
             // (si filtras por quantity=1 podrías excluir Shampoo(3) o Water(2))
-            purchaseProductForReturning_PO.FilterProducts(productName: "", userName: userEmail, quantity: 0);
+            purchaseProductForReturning_PO.FilterProducts(productName: "", userName: userEmail, quantity: 1);
 
             // Act: Add producto NO retornable
             purchaseProductForReturning_PO.AddProductByName(notReturnableProduct);
