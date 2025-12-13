@@ -22,6 +22,8 @@ namespace AppForSEII2526.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetBanReport(int reportId)
         {
             var report = await _context.BanReports
@@ -73,6 +75,9 @@ namespace AppForSEII2526.API.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ReportOperationResultDTO), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateBanReport([FromBody] BanReportForCreateDTO reportDto)
         {
