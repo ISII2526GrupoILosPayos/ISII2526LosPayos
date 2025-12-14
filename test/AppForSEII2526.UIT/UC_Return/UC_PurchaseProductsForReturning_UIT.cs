@@ -55,6 +55,35 @@ namespace AppForSEII2526.UIT.UC_Return
         [InlineData("Calcetines", 5)]
         [InlineData("Sudadera", 3)]
         [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC5_1_2(string productToAdd, int quantityFilter)
+        {
+            // Arrange
+            InitialSteps_GoToSelectReturnProducts();
+
+            // Act (Select): filtramos y añadimos 1 producto
+            purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: quantityFilter);
+            purchaseProductForReturning_PO.AddProductByName(productToAdd);
+
+            // Act: pasamos a Create
+            purchaseProductForReturning_PO.ContinueWithReturn();
+            CreateReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
+
+            // Act: pulsamos "Modify selected products" (vuelve al Select)
+            CreateReturnPurchaseOrder_PO.ClickModifySelectedProductsAndWaitToSelect();
+
+            // Assert: estamos en Step 2 (Select)
+            Assert.True(purchaseProductForReturning_PO.IsOnSelectReturnPage(),
+                "Error: it should return to Select (step 2) after clicking 'Modify selected products'.");
+
+        }
+
+
+
+        //desde CREATE -> "Modify selected products" -> vuelve a STEP 2 (Select)
+        [Theory]
+        [InlineData("Calcetines", 5)]
+        [InlineData("Sudadera", 3)]
+        [Trait("LevelTesting", "Functional Testing")]
         public void UC37_ESC6_SaveWithoutMandatoryFields_ShowsErrors_AndStaysOnCreate(string productToAdd, int quantityFilter)
         {
             // Arrange

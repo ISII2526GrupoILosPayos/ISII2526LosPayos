@@ -14,7 +14,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
         private const string productName1 = "PS5";
         private const string productBrand1 = "Sony";
         private const string productLocation1 = "USA";
-        private const string productQuantity1 = "10";
+        private const string productQuantity1 = "1";
+        private const string productPriceForPurchase1 = "500";
 
         private const string productName2 = "Pantalon";
         private const string productBrand2 = "Pull&Bear";
@@ -122,7 +123,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
             selectProductsForPurchase_PO.PurchaseProducts();
 
             createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
-            createPurchase_PO.PressRentYourMovies();
+            createPurchase_PO.PressPurchaseYourProducts();
 
             //Assert
             //the expected error is shown in the view
@@ -146,12 +147,96 @@ namespace AppForSEII2526.UIT.UC_Purchase
             selectProductsForPurchase_PO.PurchaseProducts();
 
             createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
-            createPurchase_PO.PressRentYourMovies();
+            createPurchase_PO.PressPurchaseYourProducts();
             createPurchase_PO.ConfirmPurchase();
 
             //Assert
             //the expected error is shown in the view
             Assert.True(createPurchase_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
+        }
+
+        [Theory]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "Bizum")]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "CreditCard")]
+        [InlineData("Luis Melero", "Av. España, 1", "Albacete", "02001", "PayPal")]
+        public void UC77_BF_AF1_UC77_1_2_3_BasicFlow(string nameSurname, string deliveryAddress, string city, string postalCode, string paymentMethod)
+        {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+            var detailPurchase_PO = new DetailPurchase_PO(_driver, _output);
+
+            InitialStepsForPurchaseProducts();
+
+            selectProductsForPurchase_PO.SearchProducts("", "");
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.FillInPurchaseInfo(nameSurname, deliveryAddress, city, postalCode, paymentMethod);
+
+            createPurchase_PO.PressPurchaseYourProducts();
+            createPurchase_PO.ConfirmPurchase();
+
+            Assert.True(detailPurchase_PO.CheckPurchaseDetail(nameSurname, deliveryAddress, city, postalCode, paymentMethod, DateTime.Now, productPriceForPurchase1),"Error: detail purchase is not as expected");
+
+            var expectedPurchaseProducts = new List<string[]>
+                    { new string[] { productName1, productBrand1, productQuantity1, productPriceForPurchase1 + " €"}, };
+
+            Assert.True(detailPurchase_PO.CheckListOfProducts(expectedPurchaseProducts),"Error: rental items are not as expected");
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_AF0_UC77_17_ProductsNotAvailable()
+        {
+            InitialStepsForPurchaseProducts();
+
+            selectProductsForPurchase_PO.SearchProducts("", "");
+
+            // Añadimos el producto hasta agotar el stock (10 veces)
+            for (int i = 0; i < 10; i++)
+            {
+                selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+            }
+
+            // Assert
+            Assert.True(
+                selectProductsForPurchase_PO.NoMoreStockMessageIsShown(), "Expected 'No more stock available' message was not shown");
+
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC2_AF4_UC77_18_ModifyPurchaseCartWhenThereAreSomeDataIntroduced()
+        {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+            var detailPurchase_PO = new DetailPurchase_PO(_driver, _output);
+
+            InitialStepsForPurchaseProducts();
+
+            selectProductsForPurchase_PO.SearchProducts("", "");
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName2);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.FillInPurchaseInfo("Luis Melero", "Av. España, 1", "Albacete", "02001", "PayPal");
+
+            createPurchase_PO.PressModifyProducts();
+
+            selectProductsForPurchase_PO.RemoveProductFromPurchaseCart(productName2);
+
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.PressPurchaseYourProducts();
+            createPurchase_PO.ConfirmPurchase();
+
+            Assert.True(detailPurchase_PO.CheckPurchaseDetail("Luis Melero", "Av. España, 1", "Albacete", "02001", "PayPal", DateTime.Now, productPriceForPurchase1), "Error: detail purchase is not as expected");
+
+            var expectedPurchaseProducts = new List<string[]>
+                    { new string[] { productName1, productBrand1, productQuantity1, productPriceForPurchase1 + " €"}, };
+
+            Assert.True(detailPurchase_PO.CheckListOfProducts(expectedPurchaseProducts), "Error: rental items are not as expected");
+
         }
     }
 }
