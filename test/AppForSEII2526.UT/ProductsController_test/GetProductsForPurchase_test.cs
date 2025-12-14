@@ -36,9 +36,9 @@ namespace AppForSEII2526.UT.ProductsController_test
         {
             var expectedProducts = new List<ProductForPurchaseDTO>()
             {
-                new ProductForPurchaseDTO(1, "Water", "Bezoya", "Palencia", 100),
-                new ProductForPurchaseDTO(2, "Hoodie", "Nike", "Madrid", 100),
-                new ProductForPurchaseDTO(3, "Shoes", "Nike", "Madrid", 50)
+                new ProductForPurchaseDTO(1, "Water", "Bezoya", "Palencia", 100, 1, "Blue"),
+                new ProductForPurchaseDTO(2, "Hoodie", "Nike", "Madrid", 100, 69, "Red"),
+                new ProductForPurchaseDTO(3, "Shoes", "Nike", "Madrid", 50, 100, "Red")
             };
             var mock = new Mock<ILogger<ProductsController>>();
             ILogger<ProductsController> logger = mock.Object;
@@ -55,9 +55,9 @@ namespace AppForSEII2526.UT.ProductsController_test
         {
             var productDTOs = new List<ProductForPurchaseDTO>()
             {
-                new ProductForPurchaseDTO(1, "Water", "Bezoya", "Palencia",100),
-                new ProductForPurchaseDTO(2, "Hoodie", "Nike", "Madrid",100),
-                new ProductForPurchaseDTO(3, "Shoes", "Nike", "Madrid",50),
+               new ProductForPurchaseDTO(1, "Water", "Bezoya", "Palencia", 100, 1, "Blue"),
+               new ProductForPurchaseDTO(2, "Hoodie", "Nike", "Madrid", 100, 69, "Red"),
+               new ProductForPurchaseDTO(3, "Shoes", "Nike", "Madrid", 50, 100, "Red"),
             };
             var productDTOsTC1 = new List<ProductForPurchaseDTO>() { productDTOs[1], productDTOs[2] }
                 .OrderBy(p => p.Name).ToList();

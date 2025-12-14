@@ -42,7 +42,8 @@
                    Name == dTO.Name &&
                    Brand == dTO.Brand &&
                    Location == dTO.Location &&
-                   Stock == dTO.Stock;
+                   Stock == dTO.Stock &&
+                   Price == dTO.Price && Colour == dTO.Colour;
         }
     }
 }
