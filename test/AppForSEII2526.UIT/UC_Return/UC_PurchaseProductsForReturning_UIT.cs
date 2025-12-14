@@ -82,12 +82,12 @@ namespace AppForSEII2526.UIT.UC_Return
 
         //(BASIC FLOW)
 
-        // ✅ ESC6 (AF5): Save sin campos obligatorios -> muestra errores de validación (se queda en Create)
+        // Save sin campos obligatorios -> muestra errores de validación (se queda en Create)
         [Theory]
         [InlineData("Calcetines", 5)]
         [InlineData("Sudadera", 3)]
         [Trait("LevelTesting", "Functional Testing")]
-        public void UC37_ESC6_MandatoryFieldsMissing_ShowsValidationMessages(string productToAdd, int quantityFilter)
+        public void UC37_ESC6_1_2(string productToAdd, int quantityFilter)
         {
             // Arrange
             InitialSteps_GoToSelectReturnProducts();
