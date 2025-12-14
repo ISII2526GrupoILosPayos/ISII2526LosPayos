@@ -1,0 +1,2 @@
+﻿INSERT INTO [dbo].[AspNetUserTokens] ([UserId], [LoginProvider], [Name], [Value]) VALUES (N'f7deea2d-735e-4768-ac87-20dcd4815250', N'[AspNetUserStore]', N'AuthenticatorKey', N'SPS3MYZ7IVG357BKAP675IO2RZEE45KS')
+INSERT INTO [dbo].[AspNetUserTokens] ([UserId], [LoginProvider], [Name], [Value]) VALUES (N'f7deea2d-735e-4768-ac87-20dcd4815250', N'[AspNetUserStore]', N'RecoveryCodes', N'JR4MH-W32V6;CFNTD-YNYN6;R8FVJ-K4TJQ;6WCMH-8M7F2;N24NX-6W9P7;WWPRK-R3WKV;42JWJ-YTPQB;YGG9N-NPFX3;JFC3R-2DM7Y')
