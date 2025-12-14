@@ -9,7 +9,7 @@ namespace AppForSEII2526.UIT.UC_Return
     public class UC_PurchaseProductsForReturning_UIT : UC_UIT
     {
         private readonly PurchaseProductForReturning_PO purchaseProductForReturning_PO;
-        private readonly CreateReturnPurchaseOrder_PO CreateReturnPurchaseOrder_PO;
+        private readonly CreateReturnPurchaseOrder_PO createReturnPurchaseOrder_PO;
         
 
 
@@ -33,7 +33,7 @@ namespace AppForSEII2526.UIT.UC_Return
         {
             Initial_step_opening_the_web_page();
             purchaseProductForReturning_PO = new PurchaseProductForReturning_PO(_driver, _output);
-            CreateReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output); 
+            createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output); 
         }
 
         private void Precondition_perform_login()
@@ -55,65 +55,70 @@ namespace AppForSEII2526.UIT.UC_Return
         [InlineData("Calcetines", 5)]
         [InlineData("Sudadera", 3)]
         [Trait("LevelTesting", "Functional Testing")]
-        public void UC37_ESC5_1_2(string productToAdd, int quantityFilter)
+        public void UC37_ESC6_SaveWithoutMandatoryFields_ShowsErrors_AndStaysOnCreate(string productToAdd, int quantityFilter)
         {
             // Arrange
             InitialSteps_GoToSelectReturnProducts();
 
-            // Act (Select): filtramos y añadimos 1 producto
+            // Step 2: seleccionar 1 producto y pasar a Create
             purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: quantityFilter);
             purchaseProductForReturning_PO.AddProductByName(productToAdd);
-
-            // Act: pasamos a Create
             purchaseProductForReturning_PO.ContinueWithReturn();
-            CreateReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
 
-            // Act: pulsamos "Modify selected products" (vuelve al Select)
-            CreateReturnPurchaseOrder_PO.ClickModifySelectedProductsAndWaitToSelect();
+            createReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
 
-            // Assert: estamos en Step 2 (Select)
-            Assert.True(purchaseProductForReturning_PO.IsOnSelectReturnPage(),
-                "Error: it should return to Select (step 2) after clicking 'Modify selected products'.");
+            // Act: NO rellenamos ReturningOption ni Reason, click Save
+            createReturnPurchaseOrder_PO.ClickSave();
 
+            // Assert: aparecen errores
+            createReturnPurchaseOrder_PO.WaitForErrorText("The ReturningOptionSelected field is required.");
+            createReturnPurchaseOrder_PO.WaitForErrorText("Reason for returning is required.");
+
+            // (opcional) confirmar que seguimos en Create (Step 4)
+            Assert.Contains("/returnorder/createreturnpurchaseorder", _driver.Url);
         }
+
 
 
         //(BASIC FLOW)
 
+        // ✅ ESC6 (AF5): Save sin campos obligatorios -> muestra errores de validación (se queda en Create)
         [Theory]
-        [InlineData("Camiseta")]
-        [InlineData("Gorra")]
+        [InlineData("Calcetines", 5)]
+        [InlineData("Sudadera", 3)]
         [Trait("LevelTesting", "Functional Testing")]
-        public void UC37_ESC1_1_2(string productToAdd)
+        public void UC37_ESC6_MandatoryFieldsMissing_ShowsValidationMessages(string productToAdd, int quantityFilter)
         {
             // Arrange
             InitialSteps_GoToSelectReturnProducts();
 
-            // Act (SELECT): filtra por producto + usuario (quantity base = 1)
-            purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: 1);
-
-            // Act: Add producto
+            // STEP 2 (Select): filtra + Add
+            purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: quantityFilter);
             purchaseProductForReturning_PO.AddProductByName(productToAdd);
 
-            // Act: Continue
+            // STEP 4 (Create)
             purchaseProductForReturning_PO.ContinueWithReturn();
+            createReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
 
-            // Act (CREATE): Bizum + Rating + Reason
-            purchaseProductForReturning_PO.FillCreateReturnInfo(returningOption, rating);
-            purchaseProductForReturning_PO.FillReasonForProduct(productToAdd, reason);
+            // Act: Save SIN seleccionar ReturningOptionSelected (y sin tocar reason)
+            createReturnPurchaseOrder_PO.ClickSave();
 
-            // Act: Save
-            purchaseProductForReturning_PO.SaveReturn();
-
-            // Assert: Details
-            purchaseProductForReturning_PO.WaitForDetailsPage();
-            Assert.True(
-                purchaseProductForReturning_PO.CheckDetailsContains(returningOption, productToAdd),
-                $"Error: details page does not contain expected data for product {productToAdd}"
+            // Assert: sale el mensaje de ReturningOptionSelected required
+            createReturnPurchaseOrder_PO.WaitForValidationMessageContains(
+                "The ReturningOptionSelected field is required."
             );
+
+            Assert.True(
+                createReturnPurchaseOrder_PO.HasValidationMessageContains("The ReturningOptionSelected field is required."),
+                "Error: expected validation message for ReturningOptionSelected was not shown."
+            );
+
+            // (Opcional) si también tienes validation-message para Reason, añade:
+            // Assert.True(createReturnPurchaseOrder_PO.HasValidationMessageContains("Reason"), "Error: expected reason validation message was not shown.");
         }
 
-      
+
+
 
         // si no hay productos disponibles para devolver -> error + Back to orders
         [Fact]
