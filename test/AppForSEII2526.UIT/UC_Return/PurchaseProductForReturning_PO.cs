@@ -7,7 +7,7 @@ namespace AppForSEII2526.UIT.UC_Return
 {
     public class PurchaseProductForReturning_PO : PageObject
     {
-        // ---- SELECT page ----
+        
         private readonly By inputProductName = By.Id("inputProductName");
         private readonly By inputQuantity = By.Id("inputQuantity");
         private readonly By inputUserName = By.Id("inputUserName");
@@ -18,14 +18,14 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly By errorAlertNoProducts = By.CssSelector("div.alert-danger");
         private readonly By backToOrdersButton = By.Id("backToOrdersButton");
 
-        // (Return Cart)
+        
         private readonly By clearReturnCartButton = By.Id("clearReturnCartButton");
 
         private readonly By removeProductButtons = By.CssSelector("button[id^='removeProduct_']");
 
 
 
-        // ---- CREATE page (y también botones del cart) ----
+        
         private readonly By btnContinue = By.Id("continueReturnButton");        
         private readonly By selectReturningOption = By.CssSelector("select");   
         private readonly By inputRating = By.Id("Rating");                     
@@ -34,7 +34,7 @@ namespace AppForSEII2526.UIT.UC_Return
         public PurchaseProductForReturning_PO(IWebDriver driver, ITestOutputHelper output)
             : base(driver, output) { }
 
-        // =============== NAVIGATION ===============
+        
         public void GoToSelectPage(string baseUri)
             => _driver.Navigate().GoToUrl(baseUri + "returnorder/purchaseproductforreturning");
 
@@ -53,7 +53,7 @@ namespace AppForSEII2526.UIT.UC_Return
         public bool IsOnSelectProductsForPurchasePage()
             => _driver.Url.Contains("/purchaseorder/selectproductsforpurchase");
 
-        // =============== SELECT ACTIONS ===============
+        
         public void FilterProducts(string productName, string userName, int quantity = 1)
         {
             WaitForBeingVisible(inputUserName);
@@ -72,7 +72,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
             _driver.FindElement(btnSearch).Click();
 
-            // Espera “real” a que algo cambie: tabla o error o "no products"
+            
             WaitForSelectResultsToLoad();
         }
 
@@ -83,14 +83,14 @@ namespace AppForSEII2526.UIT.UC_Return
             {
                 try
                 {
-                    // si aparece el error
+                    
                     var alerts = d.FindElements(errorAlertNoProducts);
                     if (alerts.Count > 0 && alerts[0].Displayed) return true;
 
-                    // si aparece el texto de "no products"
+                    
                     if (d.PageSource.Contains("No products to show")) return true;
 
-                    // si existe la tabla y tiene al menos 1 fila en tbody
+                    
                     var tables = d.FindElements(tableOfReturnedProducts);
                     if (tables.Count > 0)
                     {
@@ -105,7 +105,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public bool CheckListOfPurchasedProductsForReturning(System.Collections.Generic.List<string[]> expectedProductsForReturning)
         {
-            // Usa el helper del PageObject base (mismo estilo que tu profesora)
+           
             return CheckBodyTable(expectedProductsForReturning, tableOfReturnedProducts);
         }
 
@@ -116,9 +116,7 @@ namespace AppForSEII2526.UIT.UC_Return
             _driver.FindElement(byAddButton).Click();
         }
 
-        /// <summary>
-        ///  Flujo OK: al continuar navega a /returnorder/createreturnpurchaseorder
-        /// </summary>
+        
         public void ContinueWithReturn()
         {
             WaitForBeingClickable(btnContinue);
@@ -128,9 +126,7 @@ namespace AppForSEII2526.UIT.UC_Return
             wait.Until(d => d.Url.Contains("/returnorder/createreturnpurchaseorder"));
         }
 
-        /// <summary>
-        ///  Caso NO retornable: al continuar NO navega y aparece el error rojo con el nombre del producto.
-        /// </summary>
+        
         public void ClickContinueExpectingNotReturnableError(string productName)
         {
             WaitForBeingClickable(btnContinue);
@@ -154,7 +150,7 @@ namespace AppForSEII2526.UIT.UC_Return
             });
         }
 
-        //  Back to orders
+        
         public bool CheckBackToOrdersButtonVisible()
         {
             try
@@ -177,7 +173,7 @@ namespace AppForSEII2526.UIT.UC_Return
             wait.Until(d => d.Url.Contains("/purchaseorder/selectproductsforpurchase"));
         }
 
-        // Empty Cart/Return
+        
         public bool CheckEmptyCartButtonVisible()
         {
             try
@@ -201,10 +197,10 @@ namespace AppForSEII2526.UIT.UC_Return
             {
                 try
                 {
-                    // carrito vacío
+                    
                     var noItems = d.FindElements(By.CssSelector("button[id^='removeProduct_']")).Count == 0;
 
-                    // y además el botón continue no está visible (si sigue existiendo en DOM)
+                    
                     var continueEls = d.FindElements(btnContinue);
                     var continueHidden = continueEls.Count == 0 || !continueEls[0].Displayed;
 
@@ -221,7 +217,7 @@ namespace AppForSEII2526.UIT.UC_Return
         {
             try
             {
-                // Si no hay botones removeProduct_ => no hay items
+                
                 return _driver.FindElements(removeProductButtons).Count == 0;
             }
             catch
@@ -237,16 +233,16 @@ namespace AppForSEII2526.UIT.UC_Return
             try
             {
                 var el = _driver.FindElement(btnContinue);
-                return !el.Displayed; // si está hidden, Displayed=false
+                return !el.Displayed; 
             }
             catch
             {
-                // si ni existe por render, también lo damos por oculto
+                
                 return true;
             }
         }
 
-        // =============== CREATE ACTIONS ===============
+        
         public void FillCreateReturnInfo(string returningOptionText, string ratingValue)
         {
             WaitForBeingVisible(selectReturningOption);
@@ -262,13 +258,13 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public void FillReasonForProduct(string productName, string reasonText)
         {
-            // buscamos la fila del producto y dentro el input reason
+            
             var rowBy = By.XPath($"//tr[td[normalize-space()='{productName}']]");
             WaitForBeingVisible(rowBy);
 
             var row = _driver.FindElement(rowBy);
 
-            // tu HTML confirma: name="item.Reason" + id="reason_{productId}_{purchaseOrderId}"
+            
             IWebElement reasonInput = row.FindElement(By.CssSelector("input[name='item.Reason']"));
 
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
@@ -284,7 +280,7 @@ namespace AppForSEII2526.UIT.UC_Return
             _driver.FindElement(btnSaveReturn).Click();
         }
 
-        // =============== ASSERTS ===============
+        
         public bool CheckDetailsContains(string returningOption, string productName)
         {
             return _driver.PageSource.Contains("Return Purchase Order Details")
@@ -312,7 +308,7 @@ namespace AppForSEII2526.UIT.UC_Return
             return _driver.PageSource.Contains("No products to show");
         }
 
-        // validar mensaje de "not returnable"
+       
         public bool CheckNotReturnableErrorContains(string expectedPrefix, string productName)
         {
             try

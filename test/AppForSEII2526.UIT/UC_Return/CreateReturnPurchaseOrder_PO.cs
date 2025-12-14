@@ -7,7 +7,7 @@ namespace AppForSEII2526.UIT.UC_Return
 {
     internal class CreateReturnPurchaseOrder_PO : PageObject
     {
-        // ---- CREATE page ----
+        
         private readonly By btnModifySelectedProducts = By.Id("ModifyProducts");
         private readonly By validationMessages = By.CssSelector("li.validation-message");
         private readonly By btnSaveReturn = By.Id("SubmitReturnOrder");
