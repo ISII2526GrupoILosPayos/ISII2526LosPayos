@@ -14,7 +14,7 @@
 
 <div class="container-fluid">
 
-    <!-- Zona de errores -->
+   
     <div class="row alert alert-danger" role="alert" hidden="@hideErrors">
         <div class="col">
             <p id="ErrorsShown">Errors: @errors</p>
@@ -32,11 +32,11 @@
     </div>
 
     <div class="row">
-        <!-- Columna izquierda: filtros + tabla -->
+        
         <div class="col-8">
             <div class="row">
 
-                <!-- Filtro por nombre -->
+                
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">ProductName</span>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <!-- Filtro por cantidad -->
+                
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Quantity</span>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <!-- UserName (para saber de qué pedido / usuario) -->
+                
                 <div class="col">
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">UserName</span>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
 
-                <!-- Botón de búsqueda -->
+               
                 <div class="col">
                     <button type="button"
                             class="btn btn-primary"
@@ -89,7 +89,7 @@
                 </div>
             </div>
 
-            <!-- Tabla de productos disponibles para devolver -->
+            
             <div class="row">
                 @if (purchaseProductForReturn == null)
                 {
@@ -145,7 +145,7 @@
             </div>
         </div>
 
-        <!-- Columna derecha: carrito de devolución -->
+        
         <div class="col-2" hidden="@hideReturningCart">
             <div class="row">
                 <h3>Return Cart</h3>
@@ -186,7 +186,7 @@
 </div>
 
 @code {
-    // ===== Estado básico =====
+    
 
     private ICollection<PurchaseProductForReturnDTO>? purchaseProductForReturn;
     private string errors = "";
@@ -194,14 +194,14 @@
 
     private bool hideErrors => string.IsNullOrEmpty(errors);
 
-    // Alias al DTO que se enviará en el POST
+   
     private ReturnPurchaseOrderForCreateDTO returnOrder =>
         returnPurchaseOrderStateContainer.ReturnOrder;
 
-    // Mostrar u ocultar el carrito de devolución
+   
     private bool hideReturningCart => returnOrder.Items.Count == 0;
 
-    // ===== Backing fields filtros =====
+    
 
     private string productName = "";
     private int quantity = 0;
@@ -216,10 +216,10 @@
             {
                 productName = value;
 
-                // Al cambiar filtros, limpiamos el carrito
+                
                 returnPurchaseOrderStateContainer.ResetAfterProcessing();
 
-                // Si ya había username, lo restauramos
+                
                 if (!string.IsNullOrWhiteSpace(userName))
                     returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
             }
@@ -252,18 +252,18 @@
             {
                 userName = value;
 
-                // Reseteamos carrito y fijamos el nuevo usuario
+                
                 returnPurchaseOrderStateContainer.ResetAfterProcessing();
                 returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
             }
         }
     }
 
-    // ===== Lógica de carrito y navegación =====
+    
 
     private void AddProductToReturn(PurchaseProductForReturnDTO product)
     {
-        // Por ahora añadimos 1 unidad y razón vacía
+        
         returnPurchaseOrderStateContainer.AddProductForReturn(
             product,
             quantity: 1,
@@ -278,10 +278,10 @@
 
     private void GoToReturnDetails()
     {
-        // Limpia error anterior
+        
         errors = "";
 
-        // Seguridad: no continuar sin carrito
+        
         if (returnOrder.Items.Count == 0)
         {
             errors = "Select at least one product to return.";
@@ -289,7 +289,7 @@
             return;
         }
 
-        // Necesitamos la lista cargada para poder validar IsReturnable
+        
         if (purchaseProductForReturn == null)
         {
             errors = "Products list not loaded yet. Please try again.";
@@ -297,7 +297,7 @@
             return;
         }
 
-        // Productos seleccionados que NO son retornables
+        
         var notReturnables = returnOrder.Items
        .Select(i => purchaseProductForReturn.FirstOrDefault(p =>
            p.ProductId == i.ProductId &&
@@ -311,36 +311,36 @@
             errors = "You cannot continue. These products are not returnable: "
                      + string.Join(", ", notReturnables.Select(p => p!.Name));
             StateHasChanged();
-            return; // <- te quedas en esta página (la misma)
+            return; 
         }
 
-        // Todo OK -> navega
+        
         navigationManager.NavigateTo("/returnorder/createreturnpurchaseorder");
     }
 
     private void GoBackToOrders()
     {
-        // Ajusta la ruta si el listado es otro
+        
         navigationManager.NavigateTo("/purchaseorder/selectproductsforpurchase");
     }
 
     private async Task ClearReturnCart()
     {
-        // Vacía el carrito (y cualquier estado de return que tengas guardado)
+        
         returnPurchaseOrderStateContainer.ResetAfterProcessing();
 
-        // Mantén el username actual en el state (porque Reset lo borra)
+        
         if (!string.IsNullOrWhiteSpace(userName))
             returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
 
-        // Opcional pero recomendable: volver a cargar la lista con los filtros actuales
+        
         await SearchPurchaseProductForReturning();
 
         StateHasChanged();
     }
 
 
-    // ===== Búsqueda en la API =====
+    
 
     private async Task SearchPurchaseProductForReturning()
     {
@@ -391,11 +391,11 @@
         StateHasChanged();
     }
 
-    // ===== Inicialización =====
+    
 
     protected override async Task OnInitializedAsync()
     {
-        // Valores por defecto (igual que en el ejemplo de películas)
+        
         UserName = "pau2@gmail.com";
         ProductName = "";
         Quantity = 1;
