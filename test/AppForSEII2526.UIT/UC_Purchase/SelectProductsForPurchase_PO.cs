@@ -69,5 +69,10 @@ namespace AppForSEII2526.UIT.UC_Purchase
             WaitForBeingClickable(buttonPurchaseProducts);
             _purchaseButton().Click();
         }
+
+        public bool NoMoreStockMessageIsShown()
+        {
+            return _driver.PageSource.Contains("No more stock available");
+        }
     }
 }

@@ -43,7 +43,7 @@ namespace AppForSEII2526.UIT.UC_Purchase
             }
         }
 
-        public void PressRentYourMovies()
+        public void PressPurchaseYourProducts()
         {
             _driver.FindElement(By.Id("Submit")).Click();
         }
@@ -68,5 +68,8 @@ namespace AppForSEII2526.UIT.UC_Purchase
             WaitForBeingClickable(saveButton);
             _driver.FindElement(saveButton).Click();
         }
+
+        
+
     }
 }
