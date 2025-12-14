@@ -66,10 +66,10 @@ namespace AppForSEII2526.UIT.UC_Return
 
             // Act: pasamos a Create
             purchaseProductForReturning_PO.ContinueWithReturn();
-            CreateReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
+            createReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
 
             // Act: pulsamos "Modify selected products" (vuelve al Select)
-            CreateReturnPurchaseOrder_PO.ClickModifySelectedProductsAndWaitToSelect();
+            createReturnPurchaseOrder_PO.ClickModifySelectedProductsAndWaitToSelect();
 
             // Assert: estamos en Step 2 (Select)
             Assert.True(purchaseProductForReturning_PO.IsOnSelectReturnPage(),
@@ -78,38 +78,7 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
 
-
-        //desde CREATE -> "Modify selected products" -> vuelve a STEP 2 (Select)
-        [Theory]
-        [InlineData("Calcetines", 5)]
-        [InlineData("Sudadera", 3)]
-        [Trait("LevelTesting", "Functional Testing")]
-        public void UC37_ESC6_SaveWithoutMandatoryFields_ShowsErrors_AndStaysOnCreate(string productToAdd, int quantityFilter)
-        {
-            // Arrange
-            InitialSteps_GoToSelectReturnProducts();
-
-            // Step 2: seleccionar 1 producto y pasar a Create
-            purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: quantityFilter);
-            purchaseProductForReturning_PO.AddProductByName(productToAdd);
-            purchaseProductForReturning_PO.ContinueWithReturn();
-
-            createReturnPurchaseOrder_PO.WaitForCreatePageLoaded();
-
-            // Act: NO rellenamos ReturningOption ni Reason, click Save
-            createReturnPurchaseOrder_PO.ClickSave();
-
-            // Assert: aparecen errores
-            createReturnPurchaseOrder_PO.WaitForErrorText("The ReturningOptionSelected field is required.");
-            createReturnPurchaseOrder_PO.WaitForErrorText("Reason for returning is required.");
-
-            // (opcional) confirmar que seguimos en Create (Step 4)
-            Assert.Contains("/returnorder/createreturnpurchaseorder", _driver.Url);
-        }
-
-
-
-        //(BASIC FLOW)
+        
 
         // Save sin campos obligatorios -> muestra errores de validación (se queda en Create)
         [Theory]
@@ -147,6 +116,38 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
 
+        [Theory]
+        [InlineData("Camiseta")]
+        [InlineData("Gorra")]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC1_1_2(string productToAdd)
+        {
+            // Arrange
+            InitialSteps_GoToSelectReturnProducts();
+
+            // Act (SELECT): filtra por producto + usuario (quantity base = 1)
+            purchaseProductForReturning_PO.FilterProducts(productName: productToAdd, userName: userEmail, quantity: 1);
+
+            // Act: Add producto
+            purchaseProductForReturning_PO.AddProductByName(productToAdd);
+
+            // Act: Continue
+            purchaseProductForReturning_PO.ContinueWithReturn();
+
+            // Act (CREATE): Bizum + Rating + Reason
+            purchaseProductForReturning_PO.FillCreateReturnInfo(returningOption, rating);
+            purchaseProductForReturning_PO.FillReasonForProduct(productToAdd, reason);
+
+            // Act: Save
+            purchaseProductForReturning_PO.SaveReturn();
+
+            // Assert: Details
+            purchaseProductForReturning_PO.WaitForDetailsPage();
+            Assert.True(
+                purchaseProductForReturning_PO.CheckDetailsContains(returningOption, productToAdd),
+                $"Error: details page does not contain expected data for product {productToAdd}"
+            );
+        }
 
 
         // si no hay productos disponibles para devolver -> error + Back to orders
