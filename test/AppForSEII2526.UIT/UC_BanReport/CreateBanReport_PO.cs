@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using Xunit.Abstractions;
 
 namespace AppForSEII2526.UIT.UC_BanReport
 {
@@ -16,11 +16,11 @@ namespace AppForSEII2526.UIT.UC_BanReport
         private By _submitBy = By.Id("Submit");
         private By _modifyUsersBy = By.Id("ModifyUsers");
 
-        private By _tableSelectedUsersBy = By.Id("TableOfSelectedUsers");
+        private By _dialogBy = By.Id("DialogOKSaveDelete");
+        private By _dialogOkBy = By.Id("Button_DialogOK");
+        private By _dialogCancelBy = By.Id("Button_DialogCancel");
 
-        private By _modalBy = By.Id("DialogOKSaveDelete");
-        private By _modalOkBy = By.Id("Button_DialogOK");
-        private By _modalCancelBy = By.Id("Button_DialogCancel");
+        private By _tableSelectedUsersBy = By.Id("TableOfSelectedUsers");
 
         private IWebElement _reason() => _driver.FindElement(_reasonBy);
         private IWebElement _detailedDescription() => _driver.FindElement(_detailedDescriptionBy);
@@ -32,28 +32,43 @@ namespace AppForSEII2526.UIT.UC_BanReport
         {
         }
 
-        public void FillInReportInfo(string reason, string detailedDescription, DateTimeOffset start, DateTimeOffset end)
+        public void FillInBanReportInfo(string reason, string detailedDescription)
         {
             WaitForBeingVisible(_reasonBy);
 
             _reason().Clear();
-            _reason().SendKeys(reason);
+            _reason().SendKeys(reason ?? "");
 
             _detailedDescription().Clear();
-            _detailedDescription().SendKeys(detailedDescription);
+            _detailedDescription().SendKeys(detailedDescription ?? "");
+        }
 
+        public void FillInBanReportDates(DateTimeOffset start, DateTimeOffset end)
+        {
+            WaitForBeingVisible(_startDateBy);
             InputDateInDatePicker(_startDateBy, start.DateTime);
+
+            WaitForBeingVisible(_endDateBy);
             InputDateInDatePicker(_endDateBy, end.DateTime);
         }
 
-        public void FillPersonalMessage(string customerId, string personalMessage)
+        public void FillInBanReportDates(DateTime start, DateTime end)
+        {
+            WaitForBeingVisible(_startDateBy);
+            InputDateInDatePicker(_startDateBy, start);
+
+            WaitForBeingVisible(_endDateBy);
+            InputDateInDatePicker(_endDateBy, end);
+        }
+
+        public void FillPersonalMessage(string customerId, string message)
         {
             var by = By.Id($"personalMessage_{customerId}");
             WaitForBeingVisible(by);
 
             var input = _driver.FindElement(by);
             input.Clear();
-            input.SendKeys(personalMessage);
+            input.SendKeys(message ?? "");
         }
 
         public void PressCreateBanReport()
@@ -68,18 +83,23 @@ namespace AppForSEII2526.UIT.UC_BanReport
             _modifyUsers().Click();
         }
 
-        public void ConfirmCreateReport(bool ok)
+        public void ConfirmDialog()
         {
-            WaitForBeingVisible(_modalBy);
+            WaitForBeingVisible(_dialogBy);
+            WaitForBeingClickable(_dialogOkBy);
+            _driver.FindElement(_dialogOkBy).Click();
+        }
 
-            if (ok)
-                _driver.FindElement(_modalOkBy).Click();
-            else
-                _driver.FindElement(_modalCancelBy).Click();
+        public void CancelDialog()
+        {
+            WaitForBeingVisible(_dialogBy);
+            WaitForBeingClickable(_dialogCancelBy);
+            _driver.FindElement(_dialogCancelBy).Click();
         }
 
         public bool CheckSelectedUsersTable(List<string[]> expectedRows)
         {
+            WaitForBeingVisible(_tableSelectedUsersBy);
             return CheckBodyTable(expectedRows, _tableSelectedUsersBy);
         }
 
@@ -90,7 +110,7 @@ namespace AppForSEII2526.UIT.UC_BanReport
 
         public bool CheckModalError(string expectedError)
         {
-            return CheckModalBodyText(expectedError, _modalBy);
+            return CheckModalBodyText(expectedError, _dialogBy);
         }
     }
 }
