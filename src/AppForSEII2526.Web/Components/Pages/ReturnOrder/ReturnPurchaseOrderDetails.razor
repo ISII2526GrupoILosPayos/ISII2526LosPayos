@@ -34,7 +34,7 @@
     }
     else if (returnDetails != null)
     {
-        <!-- Datos del cliente + opción de devolución -->
+        
         <div class="row mb-4">
             <div class="col-6">
                 <div class="card">
@@ -44,7 +44,7 @@
                     <div class="card-body">
                         <p><strong>Name:</strong> <span id="CustomerName">@returnDetails.CustomerName</span></p>
                         <p><strong>First surname:</strong> <span id="CustomerFirstSurname">@returnDetails.CustomerFirstSurname</span></p>
-                        <!-- El UC habla de Second Surname, pero el modelo solo tiene uno -->
+                        
                         <p><strong>Address:</strong> <span id="CustomerAddress">@returnDetails.CustomerAddress</span></p>
                         <p><strong>Telephone:</strong> <span id="CustomerTelephoneNumber">@returnDetails.CustomerTelephoneNumber</span></p>
                     </div>
@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <!-- Productos devueltos -->
+        
         <div class="row">
             <div class="col-12">
                 <h4>Returned products</h4>
@@ -108,7 +108,7 @@
 
 @code {
     [Parameter]
-    public int Id { get; set; }   // viene de la ruta /returnorder/details/{Id:int}
+    public int Id { get; set; }  
 
     private ReturnPurchaseOrderDTO? returnDetails;
     private string errors = "";
@@ -117,7 +117,7 @@
     {
         try
         {
-            // Llamada al endpoint GetReturnPurchaseOrderDetails(id)
+            
             returnDetails = await apiclient.GetReturnPurchaseOrderDetailsAsync(Id);
             errors = "";
         }
@@ -140,7 +140,7 @@
 
     private void GoBackToOrders()
     {
-        // Ajusta la ruta si vuestra lista de órdenes tiene otro path
+        
         navigationManager.NavigateTo("/purchaseorders");
     }
 
