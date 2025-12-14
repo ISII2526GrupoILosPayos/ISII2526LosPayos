@@ -21,7 +21,7 @@ namespace AppForSEII2526.Web
         public event Action? OnChange;
         private void NotifyStateChanged() => OnChange?.Invoke();
 
-        // Añadir un producto que el usuario quiere devolver
+        
         public void AddProductForReturn(PurchaseProductForReturnDTO product, int quantity, string reason)
         {
             var existingItem = ReturnOrder.Items
@@ -37,7 +37,7 @@ namespace AppForSEII2526.Web
                     Quantity = quantity,
                     Reason = reason,
 
-                    // ✅ INFO PARA PINTAR EN LA UI (Create)
+                   
                     ProductName = product.Name,
                     BrandName = product.Brand,
                     BrandLocation = product.Location
@@ -50,7 +50,7 @@ namespace AppForSEII2526.Web
                 if (!string.IsNullOrWhiteSpace(reason))
                     existingItem.Reason = reason;
 
-                // ✅ por si venía vacío (o por si quieres refrescarlo)
+                
                 if (string.IsNullOrWhiteSpace(existingItem.ProductName))
                     existingItem.ProductName = product.Name;
 
@@ -65,35 +65,35 @@ namespace AppForSEII2526.Web
         }
 
 
-        // Eliminar un producto de la devolución
+      
         public void RemoveItem(ReturnItemForCreateDTO item)
         {
             ReturnOrder.Items.Remove(item);
             NotifyStateChanged();
         }
 
-        // Vaciar el carrito de devolución
+        
         public void ClearReturningCart()
         {
             ReturnOrder.Items.Clear();
             NotifyStateChanged();
         }
 
-        // Cambiar el método de devolución del dinero
+        
         public void SetReturningOption(string option)
         {
             ReturnOrder.ReturningOptionSelected = option;
             NotifyStateChanged();
         }
 
-        // Cambiar el rating
+       
         public void SetRating(int? rating)
         {
             ReturnOrder.Rating = rating;
             NotifyStateChanged();
         }
 
-        // Establecer el usuario que realiza la devolución
+       
         public void SetCustomerUserName(string username)
         {
             ReturnOrder.CustomerUserName = username;
@@ -116,7 +116,7 @@ namespace AppForSEII2526.Web
             NotifyStateChanged();
         }
 
-        // Hemos terminado una devolución → empezamos otra desde 0
+        
         public void ResetAfterProcessing()
         {
             ReturnOrder = new ReturnPurchaseOrderForCreateDTO()
