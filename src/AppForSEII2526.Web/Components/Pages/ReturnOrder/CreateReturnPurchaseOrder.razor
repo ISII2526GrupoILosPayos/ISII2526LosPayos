@@ -173,6 +173,18 @@ else
     // Se ejecuta cuando el formulario pasa todas las validaciones de DataAnnotations
     private async Task OnSaveReturn()
     {
+
+        // Validación manual: Reason obligatorio para cada item
+        var itemsWithoutReason = returnOrder.Items
+            .Where(i => string.IsNullOrWhiteSpace(i.Reason))
+            .ToList();
+
+        if (itemsWithoutReason.Any())
+        {
+            infoDialogMessage = "Validation errors: Reason for returning is required.";
+            infoDialogOpen = true;
+            return; // te quedas en Step 4 (Create)
+        }
         // Seguridad: al menos un producto
         if (!returnOrder.Items.Any())
         {
@@ -220,7 +232,15 @@ else
     // Cuando FALLA la validación del EditForm
     private void HandleInvalidSubmit(EditContext editContext)
     {
-        var messages = editContext.GetValidationMessages();
+        var messages = editContext.GetValidationMessages().ToList();
+
+        // Añadimos también el error de Reason si falta
+        if (returnOrder.Items.Any(i => string.IsNullOrWhiteSpace(i.Reason)))
+            messages.Add("Reason for returning is required.");
+
+        infoDialogMessage = "Validation errors: " + string.Join(" | ", messages);
+        infoDialogOpen = true;
+
         infoDialogMessage = "Validation errors: " + string.Join(" | ", messages);
         infoDialogOpen = true;
 
