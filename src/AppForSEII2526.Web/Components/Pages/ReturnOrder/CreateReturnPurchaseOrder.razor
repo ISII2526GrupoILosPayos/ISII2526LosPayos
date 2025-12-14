@@ -22,7 +22,7 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <!-- Datos del cliente (solo lectura: vienen del ApplicationUser vía API) -->
+    
     <div class="row g-2 mb-3">
         <div class="col-md">
             <div class="form-floating">
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <!-- Opciones de devolución -->
+    
     <div class="row g-2 mb-3">
         <div class="col-md">
             <div class="form-floating">
@@ -148,7 +148,7 @@ else
 
 @code
 {
-    // ================= STATE =================
+    
     private ReturnPurchaseOrderForCreateDTO returnOrder => returnPurchaseOrderStateContainer.ReturnOrder;
 
     private string customerName = "";
@@ -159,7 +159,7 @@ else
     private bool infoDialogOpen = false;
     private string infoDialogMessage = "";
 
-    // ================= ACCIONES DE UI =================
+    
     private void GoBackToSelection()
     {
         Navigation.NavigateTo("/returnorder/purchaseproductforreturning");
@@ -170,11 +170,11 @@ else
         returnPurchaseOrderStateContainer.RemoveItem(item);
     }
 
-    // Se ejecuta cuando el formulario pasa todas las validaciones de DataAnnotations
+    
     private async Task OnSaveReturn()
     {
 
-        // Validación manual: Reason obligatorio para cada item
+        
         var itemsWithoutReason = returnOrder.Items
             .Where(i => string.IsNullOrWhiteSpace(i.Reason))
             .ToList();
@@ -185,7 +185,7 @@ else
             infoDialogOpen = true;
             return; // te quedas en Step 4 (Create)
         }
-        // Seguridad: al menos un producto
+       
         if (!returnOrder.Items.Any())
         {
             infoDialogMessage = "You must select at least one product to return.";
@@ -229,12 +229,12 @@ else
         }
     }
 
-    // Cuando FALLA la validación del EditForm
+    
     private void HandleInvalidSubmit(EditContext editContext)
     {
         var messages = editContext.GetValidationMessages().ToList();
 
-        // Añadimos también el error de Reason si falta
+        
         if (returnOrder.Items.Any(i => string.IsNullOrWhiteSpace(i.Reason)))
             messages.Add("Reason for returning is required.");
 
@@ -254,7 +254,7 @@ else
         return Task.CompletedTask;
     }
 
-    // ================= INICIALIZACIÓN =================
+    // INICIALIZACIÓN
     protected override async Task OnInitializedAsync()
     {
         if (!returnOrder.Items.Any())
@@ -263,8 +263,7 @@ else
             return;
         }
 
-        // Si todavía no tenemos rellenos los datos del cliente en el StateContainer,
-        // los pedimos al API a partir del PurchaseOrderId del primer ítem.
+        
         if (string.IsNullOrWhiteSpace(returnOrder.CustomerName) 
             || string.IsNullOrWhiteSpace(returnOrder.CustomerSurname)
         || string.IsNullOrWhiteSpace(returnOrder.CustomerAddress))
