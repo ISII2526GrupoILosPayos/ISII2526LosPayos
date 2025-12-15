@@ -135,5 +135,15 @@ namespace AppForSEII2526.UIT.UC_BanReport
             var row = By.Id($"SelectedUser_{customerId}");
             return _driver.FindElements(row).Any();
         }
+
+
+        
+
+        public void RemoveUserFromBanReport(string CustomerId)
+        {
+            WaitForBeingClickable(By.Id("removeUser_"+ CustomerId));
+            _driver.FindElement(By.Id("removeUser_" + CustomerId)).Click();
+        }
+
     }
 }

@@ -52,14 +52,14 @@ namespace AppForSEII2526.UIT.UC_BanReport
             InputDateInDatePicker(_endDateBy, end.DateTime);
         }
 
-        public void FillInBanReportDates(DateTime start, DateTime end)
-        {
-            WaitForBeingVisible(_startDateBy);
-            InputDateInDatePicker(_startDateBy, start);
+        //public void FillInBanReportDates(DateTime start, DateTime end)
+        //{
+        //    WaitForBeingVisible(_startDateBy);
+        //    InputDateInDatePicker(_startDateBy, start);
 
-            WaitForBeingVisible(_endDateBy);
-            InputDateInDatePicker(_endDateBy, end);
-        }
+        //    WaitForBeingVisible(_endDateBy);
+        //    InputDateInDatePicker(_endDateBy, end);
+        //}
 
         public void FillPersonalMessage(string customerId, string message)
         {
