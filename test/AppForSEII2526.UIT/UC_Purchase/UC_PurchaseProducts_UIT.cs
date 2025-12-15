@@ -22,6 +22,13 @@ namespace AppForSEII2526.UIT.UC_Purchase
         private const string productLocation2 = "Albacete";
         private const string productQuantity2 = "30";
 
+        //New product added for using in the new test of the exam of the sprint 3
+        private const string productName3 = "Shampoo";
+        private const string productBrand3 = "H&S";
+        private const string productLocation3 = "Madrid";
+        private const string productQuantity3 = "1";
+        private const string productPriceForPurchase3 = "5";
+
         public UC_PurchaseProducts_UIT(ITestOutputHelper output) : base(output)
         {
             selectProductsForPurchase_PO = new SelectProductsForPurchase_PO(_driver, _output);
@@ -237,6 +244,43 @@ namespace AppForSEII2526.UIT.UC_Purchase
 
             Assert.True(detailPurchase_PO.CheckListOfProducts(expectedPurchaseProducts), "Error: rental items are not as expected");
 
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void TestCaseForTheSprint3Exam()
+        {
+            var createPurchase_PO = new CreatePurchase_PO(_driver, _output);
+            var detailPurchase_PO = new DetailPurchase_PO(_driver, _output);
+
+            InitialStepsForPurchaseProducts();
+            //a) We add an item
+            selectProductsForPurchase_PO.SearchProducts("", "");
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName1);
+
+            //b) Filter by name
+            selectProductsForPurchase_PO.SearchProducts("Shampoo", "");
+
+            //c) We add a new item (the one filtered by name)
+            selectProductsForPurchase_PO.AddProductToPurchaseCart(productName3);
+
+            //d) We remove the first item
+            selectProductsForPurchase_PO.RemoveProductFromPurchaseCart(productName1);
+
+            //And we continue the process till the end of the basic flow
+            selectProductsForPurchase_PO.PurchaseProducts();
+
+            createPurchase_PO.FillInPurchaseInfo("Luis Melero", "Av. España, 1", "Albacete", "02001", "Bizum");
+
+            createPurchase_PO.PressPurchaseYourProducts();
+            createPurchase_PO.ConfirmPurchase();
+
+            Assert.True(detailPurchase_PO.CheckPurchaseDetail("Luis Melero", "Av. España, 1", "Albacete", "02001", "Bizum", DateTime.Now, productPriceForPurchase3), "Error: detail purchase is not as expected");
+
+            var expectedPurchaseProducts = new List<string[]>
+                    { new string[] { productName3, productBrand3, productQuantity3, productPriceForPurchase3 + " €"}, };
+
+            Assert.True(detailPurchase_PO.CheckListOfProducts(expectedPurchaseProducts), "Error: rental items are not as expected");
         }
     }
 }
