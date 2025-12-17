@@ -13,7 +13,7 @@ namespace AppForSEII2526.UIT.UC_Return
         
 
 
-        private const string userEmail = "pau2@gmail.com";
+        private const string userName = "pau2@gmail.com";
         private const string password = "Pau123.";
 
         private const string returningOption = "Bizum";
@@ -38,7 +38,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         private void Precondition_perform_login()
         {
-            Perform_login(userEmail, password);
+            Perform_login(userName, password);
         }
 
         private void InitialSteps_GoToSelectReturnProducts()
@@ -48,6 +48,21 @@ namespace AppForSEII2526.UIT.UC_Return
             purchaseProductForReturning_PO.WaitForBeingVisible(By.Id("ReturnPurchaseOrder"));
             //we click on the option of the menu
             _driver.FindElement(By.Id("ReturnPurchaseOrder")).Click();
+
+        }
+
+        [Theory]
+        [InlineData("Bizum","I dont like it")]
+        [InlineData("Paypal", "I dont like it")]
+        public void UC37_BF_1_2(string returningOption,string rating)
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+            //UserName no es un filtro y Quantity nuestri estandard es == 1
+            purchaseProductForReturning_PO.SearchProducts("", 1, userName);
+
 
         }
 
