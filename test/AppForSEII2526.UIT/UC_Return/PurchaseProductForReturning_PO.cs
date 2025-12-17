@@ -11,7 +11,14 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly By inputProductName = By.Id("inputProductName");
         private readonly By inputQuantity = By.Id("inputQuantity");
         private readonly By inputUserName = By.Id("inputUserName");
+        private readonly By btnReturnProduct = By.Id("continueReturnButton");
+        //boton de buscar productos
         private readonly By btnSearch = By.Id("purchaseProductForReturning");
+
+        IWebElement _returnButton() => _driver.FindElement(btnReturnProduct);
+
+
+
 
         private readonly By tableOfReturnedProducts = By.Id("TableOfReturnedProducts");
 
@@ -55,6 +62,13 @@ namespace AppForSEII2526.UIT.UC_Return
         {
             WaitForBeingClickable(By.Id("productToReturn_" + productName));
             _driver.FindElement(By.Id("productToReturn_" + productName)).Click();
+        }
+
+        public void ReturnProducts()
+        {
+            WaitForBeingClickable(btnReturnProduct);
+            _returnButton().Click();
+
         }
 
         /*

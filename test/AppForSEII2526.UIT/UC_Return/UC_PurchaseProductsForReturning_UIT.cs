@@ -63,6 +63,7 @@ namespace AppForSEII2526.UIT.UC_Return
             //UserName no es un filtro y Quantity nuestri estandard es == 1
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+            purchaseProductForReturning_PO.ReturnProducts();
 
 
         }
