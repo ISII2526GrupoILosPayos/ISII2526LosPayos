@@ -14,6 +14,10 @@ namespace AppForSEII2526.UIT.UC_Return
         private const string productName1 = "Camiseta";
 
         private const string userName = "pau2@gmail.com";
+        private const string nameofUser = "Pau";
+        private const string userSurname = "Femenia";
+        private const string address = "Campus";
+        private const int telephone = 65432451;
         private const string password = "Pau123.";
 
         private const string returningOption = "Bizum";
@@ -53,17 +57,28 @@ namespace AppForSEII2526.UIT.UC_Return
 
         [Theory]
         [InlineData("Bizum","I dont like it")]
-        [InlineData("Paypal", "I dont like it")]
-        public void UC37_BF_1_2(string returningOption,string rating)
+        [InlineData("PayPal", "I dont like it")]
+        public void UC37_BF_1_2(string returningOption,string reason)
         {
             var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
             var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
 
             InitialSteps_GoToSelectReturnProducts();
+
             //UserName no es un filtro y Quantity nuestri estandard es == 1
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+
             purchaseProductForReturning_PO.ReturnProducts();
+
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption, reason);
+
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+           // createReturnPurchaseOrder_PO.ConfirmReturn();  Nosotros no tenemos confimacion de compra solo boton
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname,address, telephone, returningOption),
+                $"Error: details page does not contain expected data after completing AF flow for {productName1}."
+            );
 
 
         }
