@@ -11,7 +11,7 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly PurchaseProductForReturning_PO purchaseProductForReturning_PO;
         private readonly CreateReturnPurchaseOrder_PO createReturnPurchaseOrder_PO;
 
-        private const string productName1 = "Camiseta";
+        private const string productName1 = "Sudadera";
 
         private const string userName = "pau2@gmail.com";
         private const string nameofUser = "Pau";
@@ -77,7 +77,7 @@ namespace AppForSEII2526.UIT.UC_Return
            // createReturnPurchaseOrder_PO.ConfirmReturn();  Nosotros no tenemos confimacion de compra solo boton
 
             Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname,address, telephone, returningOption),
-                $"Error: details page does not contain expected data after completing AF flow for {productName1}."
+                $"Error: details page does not contain expected."
             );
 
 

@@ -13,6 +13,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public bool CheckReturnDetails(string nameofUser, string userSurname, string address, int telephone, string returningOption)
         {
+            WaitForBeingVisible(By.Id("CustomerName"));
             bool result = true;
             result = result && _driver.FindElement(By.Id("CustomerName")).Text.Contains(nameofUser);
             result = result && _driver.FindElement(By.Id("CustomerFirstSurname")).Text.Contains(userSurname);
