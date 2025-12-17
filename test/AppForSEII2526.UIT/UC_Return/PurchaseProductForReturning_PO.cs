@@ -71,6 +71,16 @@ namespace AppForSEII2526.UIT.UC_Return
 
         }
 
+        public bool NoProductsAvailableMessageIsShown()
+        {
+            return _driver.PageSource.Contains("Errors: The selected order has no products available for returning.");
+        }
+
+        public bool CheckListOfPurchasedProductsForReturning(List<string[]> expectedProducts)
+        {
+            return CheckBodyTable(expectedProducts, tableOfReturnedProducts);
+        }
+
         /*
         public void GoToSelectPage(string baseUri)
             => _driver.Navigate().GoToUrl(baseUri + "returnorder/purchaseproductforreturning");

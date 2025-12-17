@@ -12,9 +12,25 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly CreateReturnPurchaseOrder_PO createReturnPurchaseOrder_PO;
 
         private const string productName1 = "Sudadera";
+        private const string productName2 = "Camiseta";
+        private const string productName3 = "Shampoo";
+        private const string productName4 = "Gorra";
+
+
         private const string brandName1 = "Zara";
-        private const string quantity1 = "1";
+        private const string brandName2 = "Pull&Bear";
+        private const string brandName3 = "H&S";
+        private const string brandName4 = "";
+
+
+        private const int quantity1 = 1;
+        private const int quantity2 = 2;
+        private const int quantity3 = 10;
+
         private const string warehouse1 = "Albacete";
+        private const string warehouse2 = "Valencia";
+        private const string warehouse3 = "Madrid";
+       
 
         private const string userName = "pau2@gmail.com";
         private const string nameofUser = "Pau";
@@ -60,9 +76,8 @@ namespace AppForSEII2526.UIT.UC_Return
 
         [Theory]
         [InlineData("Bizum","I dont like it")]
-        [InlineData("Credit Card", "I dont like it")]
         [InlineData("PayPal", "I dont like it")]
-        public void UC37_BF_1_2(string returningOption,string reason)
+        public void UC37_ESC1_BF_1_2(string returningOption,string reason)
         {
             var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
             var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
@@ -86,13 +101,50 @@ namespace AppForSEII2526.UIT.UC_Return
 
             var expectedReturnedProducts = new List<string[]>
             {
-                new string[] { quantity1, productName1, brandName1,warehouse1}
+                new string[] { quantity1.ToString(), productName1, brandName1,warehouse1}
             };
 
             Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts),"Error: the returned products list does not match the expected one.");
 
         }
 
+        [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC2_AF1_()
+        {
+
+            InitialSteps_GoToSelectReturnProducts();
+            purchaseProductForReturning_PO.SearchProducts("", 1, userEmailAllReturned);
+
+            Assert.True(
+                purchaseProductForReturning_PO.NoProductsAvailableMessageIsShown(),
+                "Error: expected message was not shown:NoProductsAvailableMessageIsShown.");
+
+        }
+
+
+
+        [Theory]
+        [InlineData(productName3, brandName3, quantity3, warehouse3, "", 10)]
+        [InlineData(productName4, brandName1, quantity1, warehouse1, "Gorra", 1)]
+        
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC3_AF2_(string productName, string productBrand, int quantity, string location, string filterProductName,
+            int filterProductQuantity)
+        {
+            //Arrange
+            InitialSteps_GoToSelectReturnProducts();
+            var expectedProducts = new List<string[]>{new string[] { productName, productBrand, quantity.ToString(), location }};
+
+            //Act
+            purchaseProductForReturning_PO.SearchProducts(filterProductName, filterProductQuantity, userName);
+
+            //Assert
+            Assert.True(
+                purchaseProductForReturning_PO.CheckListOfPurchasedProductsForReturning(expectedProducts)
+            );
+
+        }
 
 
         /*
