@@ -10,8 +10,8 @@ namespace AppForSEII2526.UIT.UC_Return
     {
         private readonly PurchaseProductForReturning_PO purchaseProductForReturning_PO;
         private readonly CreateReturnPurchaseOrder_PO createReturnPurchaseOrder_PO;
-        
 
+        private const string productName1 = "Camiseta";
 
         private const string userName = "pau2@gmail.com";
         private const string password = "Pau123.";
@@ -62,6 +62,7 @@ namespace AppForSEII2526.UIT.UC_Return
             InitialSteps_GoToSelectReturnProducts();
             //UserName no es un filtro y Quantity nuestri estandard es == 1
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
 
 
         }

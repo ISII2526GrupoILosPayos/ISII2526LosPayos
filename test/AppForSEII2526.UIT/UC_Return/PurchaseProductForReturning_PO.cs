@@ -51,6 +51,12 @@ namespace AppForSEII2526.UIT.UC_Return
 
         }
 
+        public void AddProductstoReturnCart(string productName)
+        {
+            WaitForBeingClickable(By.Id("productToReturn_" + productName));
+            _driver.FindElement(By.Id("productToReturn_" + productName)).Click();
+        }
+
         /*
         public void GoToSelectPage(string baseUri)
             => _driver.Navigate().GoToUrl(baseUri + "returnorder/purchaseproductforreturning");
