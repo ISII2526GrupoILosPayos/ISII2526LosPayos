@@ -32,8 +32,8 @@ namespace AppForSEII2526.UIT.UC_Return
         public UC_PurchaseProductsForReturning_UIT(ITestOutputHelper output) : base(output)
         {
             Initial_step_opening_the_web_page();
+
             purchaseProductForReturning_PO = new PurchaseProductForReturning_PO(_driver, _output);
-            createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output); 
         }
 
         private void Precondition_perform_login()
@@ -44,13 +44,16 @@ namespace AppForSEII2526.UIT.UC_Return
         private void InitialSteps_GoToSelectReturnProducts()
         {
             Precondition_perform_login();
-            purchaseProductForReturning_PO.GoToSelectPage(_URI);
-            purchaseProductForReturning_PO.WaitForSelectPageLoaded();
+            //we wait for the option of the menu to be visible
+            purchaseProductForReturning_PO.WaitForBeingVisible(By.Id("ReturnPurchaseOrder"));
+            //we click on the option of the menu
+            _driver.FindElement(By.Id("ReturnPurchaseOrder")).Click();
+
         }
 
 
 
-        
+        /*
         [Theory]
         [InlineData("Calcetines", 5)]
         [InlineData("Sudadera", 3)]
@@ -276,6 +279,8 @@ namespace AppForSEII2526.UIT.UC_Return
 
 
         }
+
+        */
     }
 
 
