@@ -10,13 +10,20 @@ namespace AppForSEII2526.UIT.UC_Return
         public ReturnPurchaseOrderDetails_PO(IWebDriver driver, ITestOutputHelper output)
             : base(driver, output) {  }
 
-        public bool IsOnDetailsPage()
-            => _driver.Url.Contains("/returnorder/details");
 
-        public void WaitForDetailsPageLoaded()
+        public bool CheckReturnDetails(string nameofUser, string userSurname, string address, int telephone, string returningOption)
         {
-            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-            wait.Until(d => d.Url.Contains("/returnorder/details"));
+            bool result = true;
+            result = result && _driver.FindElement(By.Id("CustomerName")).Text.Contains(nameofUser);
+            result = result && _driver.FindElement(By.Id("CustomerFirstSurname")).Text.Contains(userSurname);
+            result = result && _driver.FindElement(By.Id("CustomerAddress")).Text.Contains(address);
+            result = result && _driver.FindElement(By.Id("CustomerTelephoneNumber")).Text.Contains(telephone.ToString());
+            result = result && _driver.FindElement(By.Id("ReturningOptionSelected")).Text.Contains(returningOption);
+            return result;
+
+
         }
+
+
     }
 }
