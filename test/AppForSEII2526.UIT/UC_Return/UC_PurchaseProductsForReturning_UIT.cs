@@ -60,7 +60,8 @@ namespace AppForSEII2526.UIT.UC_Return
 
         [Theory]
         [InlineData("Bizum","I dont like it")]
-        //[InlineData("PayPal", "I dont like it")]
+        [InlineData("Credit Card", "I dont like it")]
+        [InlineData("PayPal", "I dont like it")]
         public void UC37_BF_1_2(string returningOption,string reason)
         {
             var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
