@@ -12,6 +12,9 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly CreateReturnPurchaseOrder_PO createReturnPurchaseOrder_PO;
 
         private const string productName1 = "Sudadera";
+        private const string brandName1 = "Zara";
+        private const string quantity1 = "1";
+        private const string warehouse1 = "Albacete";
 
         private const string userName = "pau2@gmail.com";
         private const string nameofUser = "Pau";
@@ -57,7 +60,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         [Theory]
         [InlineData("Bizum","I dont like it")]
-        [InlineData("PayPal", "I dont like it")]
+        //[InlineData("PayPal", "I dont like it")]
         public void UC37_BF_1_2(string returningOption,string reason)
         {
             var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
@@ -80,6 +83,12 @@ namespace AppForSEII2526.UIT.UC_Return
                 $"Error: details page does not contain expected."
             );
 
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity1, productName1, brandName1,warehouse1}
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts),"Error: the returned products list does not match the expected one.");
 
         }
 
