@@ -34,7 +34,24 @@ namespace AppForSEII2526.UIT.UC_Return
         public PurchaseProductForReturning_PO(IWebDriver driver, ITestOutputHelper output)
             : base(driver, output) { }
 
-        
+
+        public void SearchProducts(string productName, int quantity, string userName)
+        {
+            WaitForBeingClickable(inputProductName);
+            _driver.FindElement(inputProductName).Clear();
+            _driver.FindElement(inputProductName).SendKeys(productName);
+
+            _driver.FindElement(inputQuantity).Clear();
+            _driver.FindElement(inputQuantity).SendKeys(quantity.ToString());
+
+            _driver.FindElement(inputUserName).Clear();
+            _driver.FindElement(inputUserName).SendKeys(userName);
+
+            _driver.FindElement(btnSearch).Click();
+
+        }
+
+        /*
         public void GoToSelectPage(string baseUri)
             => _driver.Navigate().GoToUrl(baseUri + "returnorder/purchaseproductforreturning");
 
@@ -341,7 +358,7 @@ namespace AppForSEII2526.UIT.UC_Return
                 return false;
             }
         }
-
+        */
 
     }
 
