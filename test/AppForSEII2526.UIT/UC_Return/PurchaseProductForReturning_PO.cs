@@ -81,6 +81,17 @@ namespace AppForSEII2526.UIT.UC_Return
             return CheckBodyTable(expectedProducts, tableOfReturnedProducts);
         }
 
+        public bool ReturnProductsExpectingNotReturnableError(string productName)
+        {
+            return _driver.PageSource.Contains("Errors: You cannot continue. These products are not returnable:");
+        }
+
+        public void EmptyCompleteCart()
+        {
+                       WaitForBeingClickable(clearReturnCartButton);
+            _driver.FindElement(By.Id("clearReturnCartButton")).Click();
+        }
+
         /*
         public void GoToSelectPage(string baseUri)
             => _driver.Navigate().GoToUrl(baseUri + "returnorder/purchaseproductforreturning");

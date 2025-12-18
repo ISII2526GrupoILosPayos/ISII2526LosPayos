@@ -146,6 +146,24 @@ namespace AppForSEII2526.UIT.UC_Return
 
         }
 
+        [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC4_AF3_()
+        {
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts("", 1, userName);
+
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName3);
+            purchaseProductForReturning_PO.ReturnProducts();
+
+           Assert.True( purchaseProductForReturning_PO.ReturnProductsExpectingNotReturnableError(productName3));
+
+            //AIXO TINC QUE FIXEARLO PER A QUE FUNCIONE EN CREATE
+            purchaseProductForReturning_PO.EmptyCompleteCart();
+
+        }
+
 
         /*
         [Theory]
