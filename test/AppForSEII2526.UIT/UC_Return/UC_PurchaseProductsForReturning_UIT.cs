@@ -15,22 +15,31 @@ namespace AppForSEII2526.UIT.UC_Return
         private const string productName2 = "Camiseta";
         private const string productName3 = "Shampoo";
         private const string productName4 = "Gorra";
+        private const string productName5 = "Cadena";
 
 
         private const string brandName1 = "Zara";
         private const string brandName2 = "Pull&Bear";
         private const string brandName3 = "H&S";
         private const string brandName4 = "";
+        private const string brandName5 = brandName1;
+
 
 
         private const int quantity1 = 1;
         private const int quantity2 = 2;
         private const int quantity3 = 10;
 
+        private const int quantity5 = 33;
+
         private const string warehouse1 = "Albacete";
         private const string warehouse2 = "Valencia";
         private const string warehouse3 = "Madrid";
-       
+
+        private const string warehouse5 = warehouse1;
+
+
+
 
         private const string userName = "pau2@gmail.com";
         private const string nameofUser = "Pau";
@@ -201,6 +210,37 @@ namespace AppForSEII2526.UIT.UC_Return
 
             //Assert
             Assert.True(createReturnPurchaseOrder_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC7EXAMENSPRINT3_()
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts(productName1, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+
+            purchaseProductForReturning_PO.SearchProductsExam("", quantity5, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName5);
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCart(productName1);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption, reason);
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname, address, telephone, returningOption), $"Error: details page does not contain expected." );
+
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity5.ToString(), productName5, brandName5,warehouse5}
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
+
         }
 
 
