@@ -164,6 +164,29 @@ namespace AppForSEII2526.UIT.UC_Return
 
         }
 
+        [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC5_AF4_()
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts("", 1, userName);
+
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+            purchaseProductForReturning_PO.ReturnProducts();
+            createReturnPurchaseOrder_PO.PressModifyReturnedProducts();
+
+           // Assert.True(
+             //   purchaseProductForReturning_PO()
+            //);
+
+        }
+
+        
+
+
 
         /*
         [Theory]

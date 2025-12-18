@@ -41,6 +41,11 @@ namespace AppForSEII2526.UIT.UC_Return
             _driver.FindElement(By.Id("SubmitReturnOrder")).Click();
         }
 
+        public void PressModifyReturnedProducts()
+        {
+            _driver.FindElement(By.Id("ModifyProducts")).Click();
+        }
+
 
 
 
