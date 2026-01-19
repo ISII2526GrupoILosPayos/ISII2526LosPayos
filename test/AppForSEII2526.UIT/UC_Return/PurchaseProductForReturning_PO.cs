@@ -58,21 +58,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         }
 
-        public void SearchProductsExam(string productName, int quantity, string userName)
-        {
-            WaitForBeingClickable(inputProductName);
-            //_driver.FindElement(inputProductName).Clear();
-           // _driver.FindElement(inputProductName).SendKeys(productName);
-
-            _driver.FindElement(inputQuantity).Clear();
-            _driver.FindElement(inputQuantity).SendKeys(quantity.ToString());
-
-            _driver.FindElement(inputUserName).Clear();
-            _driver.FindElement(inputUserName).SendKeys(userName);
-
-            _driver.FindElement(btnSearch).Click();
-
-        }
+       
 
         public void AddProductstoReturnCart(string productName)
         {
@@ -108,11 +94,15 @@ namespace AppForSEII2526.UIT.UC_Return
             _driver.FindElement(By.Id("clearReturnCartButton")).Click();
         }
 
-        public void RemoveProductFromPurchaseCart(string productName)
+
+        public void RemoveProductFromPurchaseCartByName(string productName)
         {
-            WaitForBeingClickable(By.Id("removeProduct_" + productName));
-            _driver.FindElement(By.Id("removeProduct_" + productName)).Click();
+            var by = By.XPath($"//button[starts-with(@id,'removeProduct_') and contains(normalize-space(.), '{productName}')]");
+            WaitForBeingClickable(by);
+            _driver.FindElement(by).Click();
         }
+
+
 
         /*
         public void GoToSelectPage(string baseUri)

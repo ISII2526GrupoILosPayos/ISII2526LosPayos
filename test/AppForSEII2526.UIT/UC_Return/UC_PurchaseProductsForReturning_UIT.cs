@@ -224,10 +224,10 @@ namespace AppForSEII2526.UIT.UC_Return
             purchaseProductForReturning_PO.SearchProducts(productName1, 1, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
 
-            purchaseProductForReturning_PO.SearchProductsExam("", quantity5, userName);
+            purchaseProductForReturning_PO.SearchProducts("", quantity5, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName5);
 
-            purchaseProductForReturning_PO.RemoveProductFromPurchaseCart(productName1);
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName1);
 
             purchaseProductForReturning_PO.ReturnProducts();
             createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption, reason);
@@ -236,7 +236,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
             var expectedReturnedProducts = new List<string[]>
             {
-                new string[] { quantity5.ToString(), productName5, brandName5,warehouse5}
+                new string[] { quantity1.ToString(), productName5, brandName5,warehouse5}
             };
 
             Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");

@@ -72,14 +72,27 @@ namespace AppForSEII2526.Web
             NotifyStateChanged();
         }
 
-        
         public void ClearReturningCart()
         {
+            Console.WriteLine(">>> ClearReturningCart() called");
             ReturnOrder.Items.Clear();
             NotifyStateChanged();
         }
 
-        
+        public void ResetAfterProcessing()
+        {
+            Console.WriteLine(">>> ResetAfterProcessing() called");
+            ReturnOrder = new ReturnPurchaseOrderForCreateDTO()
+            {
+                CustomerUserName = "",
+                ReturningOptionSelected = "",
+                Rating = null,
+                Items = new List<ReturnItemForCreateDTO>()
+            };
+            NotifyStateChanged();
+        }
+
+
         public void SetReturningOption(string option)
         {
             ReturnOrder.ReturningOptionSelected = option;
@@ -117,17 +130,6 @@ namespace AppForSEII2526.Web
         }
 
         
-        public void ResetAfterProcessing()
-        {
-            ReturnOrder = new ReturnPurchaseOrderForCreateDTO()
-            {
-                CustomerUserName = "",
-                ReturningOptionSelected = "",
-                Rating = null,
-                Items = new List<ReturnItemForCreateDTO>()
-            };
-
-            NotifyStateChanged();
-        }
+       
     }
 }
