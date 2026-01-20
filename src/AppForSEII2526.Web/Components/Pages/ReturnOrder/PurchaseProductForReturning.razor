@@ -153,14 +153,16 @@
 
             @foreach (var item in returnOrder.Items)
             {
-                <div class="row">
-                    <button type="button"
-                            class="btn btn-light"
-                            id="removeProduct_@item.ProductId"
-                            @onclick="@(() => RemoveReturnItem(item))">
-                        x Product @item.ProductId - Qty @item.Quantity
-                    </button>
-                </div>
+                    <div class="row">
+                        <button type="button"
+                                class="btn btn-light"
+                                id="removeProduct_@item.ProductId @item.PurchaseOrderId"
+                                @onclick="@(() => RemoveReturnItem(item))">
+
+                            x @item.ProductName (@item.BrandName) - @item.BrandLocation - Qty @item.Quantity
+                        </button>
+                    </div>
+              
             }
 
             <div class="row mt-2">
@@ -172,15 +174,7 @@
                 </button>
             </div>
 
-            <div class="row mt-2">
-                <button type="button"
-                        class="btn btn-danger"
-                        id="clearReturnCartButton"
-                        @onclick="ClearReturnCart">
-                    Empty Cart/Return
-                </button>
-            </div>
-
+            
         </div>
     </div>
 </div>
@@ -217,11 +211,11 @@
                 productName = value;
 
                 
-                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+               // returnPurchaseOrderStateContainer.ResetAfterProcessing();
 
                 
-                if (!string.IsNullOrWhiteSpace(userName))
-                    returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+                //if (!string.IsNullOrWhiteSpace(userName))
+                   // returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
             }
         }
     }
@@ -235,10 +229,10 @@
             {
                 quantity = value;
 
-                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+                //eturnPurchaseOrderStateContainer.ResetAfterProcessing();
 
-                if (!string.IsNullOrWhiteSpace(userName))
-                    returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
+               // if (!string.IsNullOrWhiteSpace(userName))
+                 //   returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
             }
         }
     }
@@ -253,7 +247,7 @@
                 userName = value;
 
                 
-                returnPurchaseOrderStateContainer.ResetAfterProcessing();
+                //returnPurchaseOrderStateContainer.ResetAfterProcessing();
                 returnPurchaseOrderStateContainer.SetCustomerUserName(userName);
             }
         }
@@ -327,7 +321,7 @@
     private async Task ClearReturnCart()
     {
         
-        returnPurchaseOrderStateContainer.ResetAfterProcessing();
+        //returnPurchaseOrderStateContainer.ResetAfterProcessing();
 
         
         if (!string.IsNullOrWhiteSpace(userName))

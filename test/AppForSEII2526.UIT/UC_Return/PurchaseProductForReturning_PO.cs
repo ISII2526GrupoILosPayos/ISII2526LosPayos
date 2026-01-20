@@ -11,7 +11,14 @@ namespace AppForSEII2526.UIT.UC_Return
         private readonly By inputProductName = By.Id("inputProductName");
         private readonly By inputQuantity = By.Id("inputQuantity");
         private readonly By inputUserName = By.Id("inputUserName");
+        private readonly By btnReturnProduct = By.Id("continueReturnButton");
+        //boton de buscar productos
         private readonly By btnSearch = By.Id("purchaseProductForReturning");
+
+        IWebElement _returnButton() => _driver.FindElement(btnReturnProduct);
+
+
+
 
         private readonly By tableOfReturnedProducts = By.Id("TableOfReturnedProducts");
 
@@ -34,7 +41,70 @@ namespace AppForSEII2526.UIT.UC_Return
         public PurchaseProductForReturning_PO(IWebDriver driver, ITestOutputHelper output)
             : base(driver, output) { }
 
-        
+
+        public void SearchProducts(string productName, int quantity, string userName)
+        {
+            WaitForBeingClickable(inputProductName);
+            _driver.FindElement(inputProductName).Clear();
+            _driver.FindElement(inputProductName).SendKeys(productName);
+
+            _driver.FindElement(inputQuantity).Clear();
+            _driver.FindElement(inputQuantity).SendKeys(quantity.ToString());
+
+            _driver.FindElement(inputUserName).Clear();
+            _driver.FindElement(inputUserName).SendKeys(userName);
+
+            _driver.FindElement(btnSearch).Click();
+
+        }
+
+       
+
+        public void AddProductstoReturnCart(string productName)
+        {
+            WaitForBeingClickable(By.Id("productToReturn_" + productName));
+            _driver.FindElement(By.Id("productToReturn_" + productName)).Click();
+        }
+
+        public void ReturnProducts()
+        {
+            WaitForBeingClickable(btnReturnProduct);
+            _returnButton().Click();
+
+        }
+
+        public bool NoProductsAvailableMessageIsShown()
+        {
+            return _driver.PageSource.Contains("Errors: The selected order has no products available for returning.");
+        }
+
+        public bool CheckListOfPurchasedProductsForReturning(List<string[]> expectedProducts)
+        {
+            return CheckBodyTable(expectedProducts, tableOfReturnedProducts);
+        }
+
+        public bool ReturnProductsExpectingNotReturnableError(string productName)
+        {
+            return _driver.PageSource.Contains("Errors: You cannot continue. These products are not returnable:");
+        }
+
+        public void EmptyCompleteCart()
+        {
+                       WaitForBeingClickable(clearReturnCartButton);
+            _driver.FindElement(By.Id("clearReturnCartButton")).Click();
+        }
+
+
+        public void RemoveProductFromPurchaseCartByName(string productName)
+        {
+            var by = By.XPath($"//button[starts-with(@id,'removeProduct_') and contains(normalize-space(.), '{productName}')]");
+            WaitForBeingClickable(by);
+            _driver.FindElement(by).Click();
+        }
+
+
+
+        /*
         public void GoToSelectPage(string baseUri)
             => _driver.Navigate().GoToUrl(baseUri + "returnorder/purchaseproductforreturning");
 
@@ -341,7 +411,7 @@ namespace AppForSEII2526.UIT.UC_Return
                 return false;
             }
         }
-
+        */
 
     }
 
