@@ -45,12 +45,13 @@ namespace AppForSEII2526.UIT.UC_Return
         public void SearchProducts(string productName, int quantity, string userName)
         {
             WaitForBeingClickable(inputProductName);
+            
             _driver.FindElement(inputProductName).Clear();
             _driver.FindElement(inputProductName).SendKeys(productName);
-
+            Thread.Sleep(100);
             _driver.FindElement(inputQuantity).Clear();
             _driver.FindElement(inputQuantity).SendKeys(quantity.ToString());
-
+            Thread.Sleep(100);
             _driver.FindElement(inputUserName).Clear();
             _driver.FindElement(inputUserName).SendKeys(userName);
 
@@ -62,6 +63,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public void AddProductstoReturnCart(string productName)
         {
+            Thread.Sleep(100); 
             WaitForBeingClickable(By.Id("productToReturn_" + productName));
             _driver.FindElement(By.Id("productToReturn_" + productName)).Click();
         }
@@ -75,6 +77,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public bool NoProductsAvailableMessageIsShown()
         {
+            Thread.Sleep(1000);
             return _driver.PageSource.Contains("Errors: The selected order has no products available for returning.");
         }
 
@@ -85,6 +88,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public bool ReturnProductsExpectingNotReturnableError(string productName)
         {
+            Thread.Sleep(1000);
             return _driver.PageSource.Contains("Errors: You cannot continue. These products are not returnable:");
         }
 
@@ -101,6 +105,19 @@ namespace AppForSEII2526.UIT.UC_Return
             WaitForBeingClickable(by);
             _driver.FindElement(by).Click();
         }
+
+
+        public bool CheckBackToSelectProductsStep2()
+        {
+            // (Opcional pero recomendado) Espera a que la página esté lista
+            WaitForBeingClickable(By.Id("purchaseProductForReturning"));
+
+            return _driver.FindElements(By.Id("inputProductName")).Any()
+                && _driver.FindElements(By.Id("inputQuantity")).Any()
+                && _driver.FindElements(By.Id("inputUserName")).Any()
+                && _driver.FindElements(By.Id("purchaseProductForReturning")).Any();
+        }
+
 
 
 
