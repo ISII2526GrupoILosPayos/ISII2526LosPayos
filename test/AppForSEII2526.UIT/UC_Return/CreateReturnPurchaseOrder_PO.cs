@@ -43,6 +43,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         public void PressModifyReturnedProducts()
         {
+            Thread.Sleep(100); // Espera para que se actualice la interfaz
             _driver.FindElement(By.Id("ModifyProducts")).Click();
         }
 
