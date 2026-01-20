@@ -6,4 +6,5 @@ INSERT INTO [dbo].[PaymentMethods] ([Id], [UserId], [Discriminator], [TelephoneN
 INSERT INTO [dbo].[PaymentMethods] ([Id], [UserId], [Discriminator], [TelephoneNumber], [CreditCardNumber], [ExpirationDate], [Email]) VALUES (7, N'5ba11d46-28d8-4a7b-aa80-049871ef5d01', N'Cash', 65432451, N'12345', N'2040-11-20 00:00:00', N'luis@gmail.com')
 INSERT INTO [dbo].[PaymentMethods] ([Id], [UserId], [Discriminator], [TelephoneNumber], [CreditCardNumber], [ExpirationDate], [Email]) VALUES (8, N'5ba11d46-28d8-4a7b-aa80-049871ef5d01', N'Bium', 65432451, N'12345', N'2040-11-20 00:00:00', N'luis@gmail.com')
 INSERT INTO [dbo].[PaymentMethods] ([Id], [UserId], [Discriminator], [TelephoneNumber], [CreditCardNumber], [ExpirationDate], [Email]) VALUES (9, N'a956c19a-a481-473c-956c-5cee138a0d37', N'Bizum', 65432451, N'12345', N'2040-11-20 00:00:00', N'hugo@gmail.com')
+INSERT INTO [dbo].[PaymentMethods] ([Id], [UserId], [Discriminator], [TelephoneNumber], [CreditCardNumber], [ExpirationDate], [Email]) VALUES (1003, N'f7deea2d-735e-4768-ac87-20dcd4815250', N'PayPal', 65432451, N'12345', N'2040-11-20 00:00:00', N'pau2@gmail.com')
 SET IDENTITY_INSERT [dbo].[PaymentMethods] OFF

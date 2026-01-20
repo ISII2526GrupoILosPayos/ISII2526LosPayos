@@ -8,4 +8,6 @@ INSERT INTO [dbo].[Products] ([ProductId], [Name], [Description], [Colour], [Pri
 INSERT INTO [dbo].[Products] ([ProductId], [Name], [Description], [Colour], [Price], [Stock], [IsReturnable], [BrandId]) VALUES (14, N'Gafas', N'Gafas', N'Negro', CAST(230.00 AS Decimal(10, 2)), 1, 1, 2)
 INSERT INTO [dbo].[Products] ([ProductId], [Name], [Description], [Colour], [Price], [Stock], [IsReturnable], [BrandId]) VALUES (15, N'Calcetines', N'Calcetines', N'Blanco', CAST(1.00 AS Decimal(10, 2)), 10, 1, 2)
 INSERT INTO [dbo].[Products] ([ProductId], [Name], [Description], [Colour], [Price], [Stock], [IsReturnable], [BrandId]) VALUES (16, N'Sudadera', N'Sudadera', N'Azul', CAST(30.00 AS Decimal(10, 2)), 3, 1, 1)
+INSERT INTO [dbo].[Products] ([ProductId], [Name], [Description], [Colour], [Price], [Stock], [IsReturnable], [BrandId]) VALUES (1004, N'Cadena', N'Cadena', N'Blue', CAST(99.00 AS Decimal(10, 2)), 40, 1, 1)
+INSERT INTO [dbo].[Products] ([ProductId], [Name], [Description], [Colour], [Price], [Stock], [IsReturnable], [BrandId]) VALUES (1006, N'Gorra', N'Gorra', N'Blue', CAST(10.00 AS Decimal(10, 2)), 33, 1, 1)
 SET IDENTITY_INSERT [dbo].[Products] OFF
