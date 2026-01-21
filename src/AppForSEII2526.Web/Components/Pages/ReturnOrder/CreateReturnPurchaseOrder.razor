@@ -130,6 +130,14 @@ else
         </table>
     </div>
 
+         @if (!string.IsNullOrEmpty(reasonError))
+    {
+    <div class="alert alert-danger mt-2" id="ReasonError">
+        @reasonError
+    </div>
+    }
+
+
     <p class="mt-3">
         <button class="btn btn-outline-secondary" type="button" id="ModifyProducts" @onclick="GoBackToSelection">
             Modify selected products
@@ -148,6 +156,8 @@ else
 
 @code
 {
+    private string reasonError = "";
+
     
     private ReturnPurchaseOrderForCreateDTO returnOrder => returnPurchaseOrderStateContainer.ReturnOrder;
 
@@ -181,15 +191,18 @@ else
 
         if (itemsWithoutReason.Any())
         {
-            infoDialogMessage = "Validation errors: Reason for returning is required.";
-            infoDialogOpen = true;
-            return; // te quedas en Step 4 (Create)
+        reasonError = "Reason for returning is required.";
+        infoDialogOpen = false;   // opcional
+        StateHasChanged();
+        return;
         }
-       
+        reasonError = "";
+
         if (!returnOrder.Items.Any())
         {
             infoDialogMessage = "You must select at least one product to return.";
             infoDialogOpen = true;
+            StateHasChanged();   // ✅ AÑADIR
             return;
         }
 
@@ -233,6 +246,17 @@ else
     private void HandleInvalidSubmit(EditContext editContext)
     {
         var messages = editContext.GetValidationMessages().ToList();
+
+        // ✅ Reason inline error (aunque ReturningOption esté vacío)
+      if (returnOrder.Items.Any(i => string.IsNullOrWhiteSpace(i.Reason)))
+     {
+        reasonError = "Reason for returning is required.";
+        messages.Add("Reason for returning is required.");
+     }
+     else
+     {
+        reasonError = "";
+      }
 
         
         if (returnOrder.Items.Any(i => string.IsNullOrWhiteSpace(i.Reason)))

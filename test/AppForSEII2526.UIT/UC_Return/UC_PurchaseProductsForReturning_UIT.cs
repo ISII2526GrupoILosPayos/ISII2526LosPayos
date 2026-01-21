@@ -16,6 +16,9 @@ namespace AppForSEII2526.UIT.UC_Return
         private const string productName3 = "Shampoo";
         private const string productName4 = "Gorra";
         private const string productName5 = "Cadena";
+        private const string productName6 = "Jamon";
+        private const string productName7 = "Leche";
+        private const string productName8 = "Naranja";
 
 
         private const string brandName1 = "Zara";
@@ -129,6 +132,8 @@ namespace AppForSEII2526.UIT.UC_Return
                 purchaseProductForReturning_PO.NoProductsAvailableMessageIsShown(),
                 "Error: expected message was not shown:NoProductsAvailableMessageIsShown.");
 
+            Assert.True(purchaseProductForReturning_PO.CheckBackToOrdersButton(),
+                "Error: expected 'No button was shown");
         }
 
 
@@ -168,9 +173,8 @@ namespace AppForSEII2526.UIT.UC_Return
 
            Assert.True( purchaseProductForReturning_PO.ReturnProductsExpectingNotReturnableError(productName3));
 
-            
-            //HECHO COMO EL EJEMPLO DE ELENA QUE SOLO COMRBUEBA, NO VA A STEP 2
-            //purchaseProductForReturning_PO.EmptyCompleteCart();
+            Assert.True(purchaseProductForReturning_PO.CheckBackToSelectProductsStep2(),
+                "Should return to step 2 (select page) after acknowledging not returnable error.");
 
         }
 
@@ -183,8 +187,8 @@ namespace AppForSEII2526.UIT.UC_Return
             InitialSteps_GoToSelectReturnProducts();
 
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
-            
-            purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName2);
             purchaseProductForReturning_PO.ReturnProducts();
             createReturnPurchaseOrder_PO.PressModifyReturnedProducts();
 
@@ -194,8 +198,8 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
         [Theory]
-        [InlineData("Bizum", "I dont like it", "The ReturningOptionSelected field is required.")]
-        //[InlineData("PayPal", "I dont like it")] Añadir para el reason
+        [InlineData("", "I dont like it", "The ReturningOptionSelected field is required.")]
+        [InlineData("Bizum", "", "Reason for returning is required.")]
         public void UC37_ESC6_AF5_1_2(string returningOption, string reason, string expectedMessageError)
         {
            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
@@ -205,12 +209,13 @@ namespace AppForSEII2526.UIT.UC_Return
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName2);
             purchaseProductForReturning_PO.ReturnProducts();
-            createReturnPurchaseOrder_PO.FillCreateReturnInfo("", reason);
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption,reason);
             createReturnPurchaseOrder_PO.PressReturnYourProducts();
 
             //Assert
             Assert.True(createReturnPurchaseOrder_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
         }
+
 
         [Fact]
         [Trait("LevelTesting", "Functional Testing")]
@@ -242,6 +247,212 @@ namespace AppForSEII2526.UIT.UC_Return
             Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
 
         }
+
+
+
+
+
+        /*
+         * 1.FILTER BY QUANTITY, FILTER BY NAME, REMOVE THE QUANTITY ONE, CONTINUE WITH THE RETURN
+                [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC7EXAMENSPRINT3_1()
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts("", 5, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName7);
+
+            purchaseProductForReturning_PO.SearchProducts(productName6, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName6);
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName7);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption, reason);
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname, address, telephone, returningOption), $"Error: details page does not contain expected.");
+
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity1.ToString(), productName6, brandName1,warehouse1}
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
+
+        }
+
+
+
+        2.FILTER BY NAME, FILTER BY NAME(NO RETURNABLE PRODUCT), CHECK ERROR, REMOVE NO RETURNABLE,CONTINUE WITH THE RETURN
+                [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC7EXAMENSPRINT3_1()
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts(productName6, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName6);
+
+            purchaseProductForReturning_PO.SearchProducts(productName3, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName3);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+            Assert.True(purchaseProductForReturning_PO.ReturnProductsExpectingNotReturnableError(productName3));
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName3);
+            purchaseProductForReturning_PO.ReturnProducts();
+
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption, reason);
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname, address, telephone, returningOption), $"Error: details page does not contain expected.");
+
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity1.ToString(), productName6, brandName1,warehouse1}
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
+
+        }
+
+
+
+        3.FILTER BY QUANTITY,FILTER BY NAME,REMOVE EL QUANTITY, RELLENA CREATE VACIO, COMPRUEBA ERROR, RELLENA CREATE BIEN, HACE DEVOLUCION
+          [InlineData("", "", "The ReturningOptionSelected field is required.")]
+        //[InlineData("", "", "Reason for returning is required.")] HAY QUE QUITARLO DE LA BBDD(RETURN PRODUCTS) Y PONER OTRA VEZ
+        public void UC37_ESC7EXAMENSPRINT3_1(string returningOption, string reason, string expectedMessageError)
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts("", 5, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName7);
+
+            purchaseProductForReturning_PO.SearchProducts(productName6, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName6);
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName6);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo("", "");
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+
+            Assert.True(createReturnPurchaseOrder_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
+
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo("Bizum", "I dont like it");
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname, address, telephone, returningOption), $"Error: details page does not contain expected.");
+
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity1.ToString(), productName7, brandName1,warehouse1},
+            
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
+
+        }
+
+
+        4.FILTER BY  QUANTIY, FILTER BY NAME, REMOVE QUANTITY, RELLENA CREATE VACIO, COMPRUEBA ERRORES DEL CREATE, DARLE A MODIFY PRODUCTS, VOLVER A FILTRAR POR QUANTITY, NAME Y QUITAR QUANTITY,RELLENA CREATE, HAZ DEVOLUCION
+               [Theory]
+        [InlineData("", "", "The ReturningOptionSelected field is required.")]
+        //[InlineData("", "", "Reason for returning is required.")] HAY QUE QUITARLO DE LA BBDD(RETURN PRODUCTS) Y PONER OTRA VEZ
+        public void UC37_ESC7EXAMENSPRINT3_1(string returningOption, string reason, string expectedMessageError)
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.SearchProducts("", 5, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName7);
+
+            purchaseProductForReturning_PO.SearchProducts(productName6, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName6);
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName7);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo("", "");
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+
+            Assert.True(createReturnPurchaseOrder_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
+
+            createReturnPurchaseOrder_PO.PressModifyReturnedProducts();
+
+            purchaseProductForReturning_PO.SearchProducts("", 5, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName7);
+
+            purchaseProductForReturning_PO.SearchProducts(productName6, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName6);
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName7);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+
+
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo("Bizum", "I dont like it");
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname, address, telephone, returningOption), $"Error: details page does not contain expected.");
+
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity1.ToString(), productName7, brandName1,warehouse1},
+            
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
