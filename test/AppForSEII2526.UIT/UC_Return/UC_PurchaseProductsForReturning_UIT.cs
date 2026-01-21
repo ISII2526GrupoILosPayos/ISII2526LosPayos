@@ -16,6 +16,9 @@ namespace AppForSEII2526.UIT.UC_Return
         private const string productName3 = "Shampoo";
         private const string productName4 = "Gorra";
         private const string productName5 = "Cadena";
+        private const string productName6 = "Leche";
+        private const string productName7 = "Jamon";
+        private const string productName8 = "Naranja";
 
 
         private const string brandName1 = "Zara";
