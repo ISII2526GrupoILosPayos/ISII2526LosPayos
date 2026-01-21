@@ -129,6 +129,8 @@ namespace AppForSEII2526.UIT.UC_Return
                 purchaseProductForReturning_PO.NoProductsAvailableMessageIsShown(),
                 "Error: expected message was not shown:NoProductsAvailableMessageIsShown.");
 
+            Assert.True(purchaseProductForReturning_PO.CheckBackToOrdersButton(),
+                "Error: expected 'No button was shown");
         }
 
 

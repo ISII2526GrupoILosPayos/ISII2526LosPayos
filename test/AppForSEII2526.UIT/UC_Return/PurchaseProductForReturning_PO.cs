@@ -81,6 +81,13 @@ namespace AppForSEII2526.UIT.UC_Return
             return _driver.PageSource.Contains("Errors: The selected order has no products available for returning.");
         }
 
+        public bool CheckBackToOrdersButton()
+        {
+            Thread.Sleep(100);
+             _driver.FindElement(By.Id("backToOrdersButton"));
+            return true;
+        }
+
         public bool CheckListOfPurchasedProductsForReturning(List<string[]> expectedProducts)
         {
             return CheckBodyTable(expectedProducts, tableOfReturnedProducts);
