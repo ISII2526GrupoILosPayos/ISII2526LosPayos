@@ -195,8 +195,8 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
         [Theory]
-        [InlineData("Bizum", "I dont like it", "The ReturningOptionSelected field is required.")]
-        //[InlineData("PayPal", "I dont like it")] Añadir para el reason
+        [InlineData("", "I dont like it", "The ReturningOptionSelected field is required.")]
+        [InlineData("Bizum", "", "Reason for returning is required.")]
         public void UC37_ESC6_AF5_1_2(string returningOption, string reason, string expectedMessageError)
         {
            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
@@ -206,7 +206,7 @@ namespace AppForSEII2526.UIT.UC_Return
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName2);
             purchaseProductForReturning_PO.ReturnProducts();
-            createReturnPurchaseOrder_PO.FillCreateReturnInfo("", reason);
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption,reason);
             createReturnPurchaseOrder_PO.PressReturnYourProducts();
 
             //Assert
