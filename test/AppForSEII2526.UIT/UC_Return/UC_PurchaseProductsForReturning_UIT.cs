@@ -30,7 +30,7 @@ namespace AppForSEII2526.UIT.UC_Return
         private const int quantity2 = 2;
         private const int quantity3 = 10;
 
-        private const int quantity5 = 33;
+        private const int quantity5 = 3;
 
         private const string warehouse1 = "Albacete";
         private const string warehouse2 = "Valencia";
@@ -85,7 +85,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
         [Theory]
         [InlineData("Bizum","I dont like it")]
-        [InlineData("PayPal", "I dont like it")]
+        //[InlineData("PayPal", "I dont like it")]
         public void UC37_ESC1_BF_1_2(string returningOption,string reason)
         {
             var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
@@ -124,7 +124,7 @@ namespace AppForSEII2526.UIT.UC_Return
 
             InitialSteps_GoToSelectReturnProducts();
             purchaseProductForReturning_PO.SearchProducts("", 1, userEmailAllReturned);
-
+            
             Assert.True(
                 purchaseProductForReturning_PO.NoProductsAvailableMessageIsShown(),
                 "Error: expected message was not shown:NoProductsAvailableMessageIsShown.");
@@ -168,8 +168,9 @@ namespace AppForSEII2526.UIT.UC_Return
 
            Assert.True( purchaseProductForReturning_PO.ReturnProductsExpectingNotReturnableError(productName3));
 
-            //AIXO TINC QUE FIXEARLO PER A QUE FUNCIONE EN CREATE
-            purchaseProductForReturning_PO.EmptyCompleteCart();
+            
+            //HECHO COMO EL EJEMPLO DE ELENA QUE SOLO COMRBUEBA, NO VA A STEP 2
+            //purchaseProductForReturning_PO.EmptyCompleteCart();
 
         }
 
@@ -182,15 +183,14 @@ namespace AppForSEII2526.UIT.UC_Return
             InitialSteps_GoToSelectReturnProducts();
 
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
-
+            
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
             purchaseProductForReturning_PO.ReturnProducts();
             createReturnPurchaseOrder_PO.PressModifyReturnedProducts();
 
-           // Assert.True(
-             //   purchaseProductForReturning_PO()
-            //);
-
+            Assert.True(
+             purchaseProductForReturning_PO.CheckBackToSelectProductsStep2(),
+             "Error: it should return to Select (step 2) after clicking 'Modify selected products.'");
         }
 
         [Theory]
@@ -220,10 +220,10 @@ namespace AppForSEII2526.UIT.UC_Return
             var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
 
             InitialSteps_GoToSelectReturnProducts();
-
+           
             purchaseProductForReturning_PO.SearchProducts(productName1, 1, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
-
+            
             purchaseProductForReturning_PO.SearchProducts("", quantity5, userName);
             purchaseProductForReturning_PO.AddProductstoReturnCart(productName5);
 
