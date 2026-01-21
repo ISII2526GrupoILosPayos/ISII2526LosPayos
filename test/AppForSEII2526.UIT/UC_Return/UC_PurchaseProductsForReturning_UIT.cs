@@ -170,9 +170,8 @@ namespace AppForSEII2526.UIT.UC_Return
 
            Assert.True( purchaseProductForReturning_PO.ReturnProductsExpectingNotReturnableError(productName3));
 
-            
-            //HECHO COMO EL EJEMPLO DE ELENA QUE SOLO COMRBUEBA, NO VA A STEP 2
-            //purchaseProductForReturning_PO.EmptyCompleteCart();
+            Assert.True(purchaseProductForReturning_PO.CheckBackToSelectProductsStep2(),
+                "Should return to step 2 (select page) after acknowledging not returnable error.");
 
         }
 
