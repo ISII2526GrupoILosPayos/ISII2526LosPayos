@@ -184,8 +184,8 @@ namespace AppForSEII2526.UIT.UC_Return
             InitialSteps_GoToSelectReturnProducts();
 
             purchaseProductForReturning_PO.SearchProducts("", 1, userName);
-            
-            purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName2);
             purchaseProductForReturning_PO.ReturnProducts();
             createReturnPurchaseOrder_PO.PressModifyReturnedProducts();
 
@@ -212,6 +212,7 @@ namespace AppForSEII2526.UIT.UC_Return
             //Assert
             Assert.True(createReturnPurchaseOrder_PO.CheckValidationError(expectedMessageError), $"Expected error: {expectedMessageError}");
         }
+
 
         [Fact]
         [Trait("LevelTesting", "Functional Testing")]
