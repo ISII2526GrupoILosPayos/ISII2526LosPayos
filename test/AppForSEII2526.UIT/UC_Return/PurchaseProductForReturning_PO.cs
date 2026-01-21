@@ -45,7 +45,7 @@ namespace AppForSEII2526.UIT.UC_Return
         public void SearchProducts(string productName, int quantity, string userName)
         {
             WaitForBeingClickable(inputProductName);
-            
+            Thread.Sleep(100);
             _driver.FindElement(inputProductName).Clear();
             _driver.FindElement(inputProductName).SendKeys(productName);
             Thread.Sleep(100);
