@@ -249,6 +249,42 @@ namespace AppForSEII2526.UIT.UC_Return
         }
 
 
+        [Fact]
+        [Trait("LevelTesting", "Functional Testing")]
+        public void UC37_ESC7EXAMENSPRINT3_5()
+        {
+            var createReturnPurchaseOrder_PO = new CreateReturnPurchaseOrder_PO(_driver, _output);
+            var returnpurchaseorderDetails_PO = new ReturnPurchaseOrderDetails_PO(_driver, _output);
+
+            InitialSteps_GoToSelectReturnProducts();
+
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName8);
+
+            purchaseProductForReturning_PO.SearchProducts("", quantity5, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName5);
+
+            purchaseProductForReturning_PO.SearchProducts(productName1, 1, userName);
+            purchaseProductForReturning_PO.AddProductstoReturnCart(productName1);
+
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName8);
+
+            purchaseProductForReturning_PO.RemoveProductFromPurchaseCartByName(productName5);
+
+            purchaseProductForReturning_PO.ReturnProducts();
+            createReturnPurchaseOrder_PO.FillCreateReturnInfo(returningOption, reason);
+            createReturnPurchaseOrder_PO.PressReturnYourProducts();
+            Assert.True(returnpurchaseorderDetails_PO.CheckReturnDetails(nameofUser, userSurname, address, telephone, returningOption), $"Error: details page does not contain expected.");
+
+            var expectedReturnedProducts = new List<string[]>
+            {
+                new string[] { quantity1.ToString(), productName1, brandName1,warehouse1}
+            };
+
+            Assert.True(returnpurchaseorderDetails_PO.CheckListOfProducts(expectedReturnedProducts), "Error: the returned products list does not match the expected one.");
+
+        }
+
 
 
 
