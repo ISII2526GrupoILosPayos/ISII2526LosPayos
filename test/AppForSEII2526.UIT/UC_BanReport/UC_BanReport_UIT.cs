@@ -28,6 +28,8 @@ namespace AppForSEII2526.UIT.UC_BanReports
 
         private const string reason = "hola hola hola";
         private const string detailedDescription = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        private const string startdate = "01/03/2026";
+        private const string enddate = "04/03/2026";
 
         public UC_BanUser_UIT(ITestOutputHelper output) : base(output)
         {
@@ -69,20 +71,95 @@ namespace AppForSEII2526.UIT.UC_BanReports
 
         [Fact]
         [Trait("LevelTesting", "Funcional Testing")]
-        public void UC77_AF2_4_ButtonNotavailable()
+        public void UC34_AF2_4_ButtonNotavailable()
         {
             //Arrange
             InitialSteps_SelectUsersForBan();
 
             //Act
             selectUsersForBan_PO.searchUser("", "");
-
             selectUsersForBan_PO.AddUserToBanReport("1");
             selectUsersForBan_PO.RemoveUserFromBanReport("1");
 
             //Assert
 
             Assert.True(selectUsersForBan_PO.ContinueNotAvailable());
+
+        }
+
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC34_AF23_5_ButtonAvailable()
+        {
+            //Arrange
+            InitialSteps_SelectUsersForBan();
+
+            //Act
+            selectUsersForBan_PO.searchUser("", "");
+            selectUsersForBan_PO.AddUserToBanReport("1");
+            selectUsersForBan_PO.AddUserToBanReport("2");
+            selectUsersForBan_PO.RemoveUserFromBanReport("1");
+
+            //Assert
+
+            Assert.True(selectUsersForBan_PO.ContinueAvailable());
+
+        }
+
+
+        [Theory]
+        [InlineData(reason,"", startdate, enddate, "The DetailedDescription field is required.")]
+        [InlineData("",detailedDescription, startdate, enddate, "The Reason field is required.")]
+        [InlineData(reason, detailedDescription, "adios", enddate, "The StartDate field must be a date.")]
+        [InlineData(reason, detailedDescription, startdate, "adios", "The EndDate field must be a date.")]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC34_AF5_6_MissingInformation(string reason, string description, string startdate, string enddate, string motivoError)
+        {
+            var createBanReport_PO = new CreateBanReport_PO(_driver, _output);
+
+            //Arrange
+            InitialSteps_SelectUsersForBan();
+
+            //Act
+            selectUsersForBan_PO.searchUser("", "");
+            selectUsersForBan_PO.AddUserToBanReport("2");
+            selectUsersForBan_PO.Continue();
+
+            createBanReport_PO.FillInBanReportInfo(reason, description, startdate, enddate);
+            createBanReport_PO.PressCreateBanReport();
+            //Assert
+
+            Assert.True(createBanReport_PO.CheckValidationError(motivoError));
+
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC34_BF_1()
+        {
+            var createBanReport_PO = new CreateBanReport_PO(_driver, _output);
+            var detailsBanReport_PO = new DetailBanReport_PO(_driver, _output);
+
+            var startDate = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero);
+            var endDate = new DateTimeOffset(2026, 3, 4, 0, 0, 0, TimeSpan.Zero);
+
+            //Arrange
+            InitialSteps_SelectUsersForBan();
+
+            //Act
+            selectUsersForBan_PO.searchUser("", "");
+            selectUsersForBan_PO.AddUserToBanReport("1");
+            selectUsersForBan_PO.Continue();
+
+            createBanReport_PO.FillInBanReportInfo("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "01/03/2026", "04/03/2026");
+            createBanReport_PO.PressCreateBanReport();
+            createBanReport_PO.ConfirmCreateBanReport();
+
+
+            //Assert
+
+            Assert.True(detailsBanReport_PO.CheckBanReportDetail("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", startDate, endDate,1));
 
         }
     }

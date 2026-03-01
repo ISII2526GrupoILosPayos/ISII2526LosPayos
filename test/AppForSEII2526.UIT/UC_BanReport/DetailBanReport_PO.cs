@@ -20,19 +20,14 @@ namespace AppForSEII2526.UIT.UC_BanReports
             result = result && _driver.FindElement(By.Id("Reason")).Text.Contains(reason);
             result = result && _driver.FindElement(By.Id("Description")).Text.Contains(description);
 
- 
-            var startText = _driver.FindElement(By.Id("StartDate")).Text;
-            var endText = _driver.FindElement(By.Id("EndDate")).Text;
+            // Comparar el texto que se muestra en la pantalla (mismo formato que el razor)
+            string expectedStartText = startDate.ToString("dd/MM/yyyy");
+            string expectedEndText = endDate.ToString("dd/MM/yyyy");
 
+            result = result && _driver.FindElement(By.Id("StartDate")).Text.Contains(expectedStartText);
+            result = result && _driver.FindElement(By.Id("EndDate")).Text.Contains(expectedEndText);
 
-            var actualStart = DateTimeOffset.ParseExact(startText, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-            var actualEnd = DateTimeOffset.ParseExact(endText, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-
-            result = result && (Math.Abs((actualStart - startDate).TotalMinutes) < 1);
-            result = result && (Math.Abs((actualEnd - endDate).TotalMinutes) < 1);
-
-            var actualUsersCount = int.Parse(_driver.FindElement(By.Id("UsersCount")).Text);
-            result = result && (actualUsersCount == usersCount);
+            result = result && _driver.FindElement(By.Id("UsersCount")).Text.Contains(usersCount.ToString());
 
             return result;
         }
