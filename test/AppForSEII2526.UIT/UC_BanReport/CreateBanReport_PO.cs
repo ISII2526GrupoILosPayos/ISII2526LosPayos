@@ -33,24 +33,24 @@ namespace AppForSEII2526.UIT.UC_BanReports
         {
         }
 
-public void FillInBanReportInfo(string reason, string detailedDescription, DateTimeOffset startDate, DateTimeOffset endDate)
-{
-    WaitForBeingVisible(_reasonBy);
+        public void FillInBanReportInfo(string reason, string detailedDescription, DateTimeOffset startDate, DateTimeOffset endDate)
+        {
+            WaitForBeingVisible(_reasonBy);
 
-    _reason().Clear();
-    _reason().SendKeys(reason);
+            _reason().Clear();
+            _reason().SendKeys(reason);
 
-    _detailedDescription().Clear();
-    _detailedDescription().SendKeys(detailedDescription);
+            _detailedDescription().Clear();
+            _detailedDescription().SendKeys(detailedDescription);
 
-    _startDate().Clear();
-    _startDate().SendKeys(startDate.ToString("yyyy-MM-dd"));
-    _startDate().SendKeys(Keys.Tab);
+            _startDate().Clear();
+            _startDate().SendKeys(startDate.ToString("yyyy-MM-dd"));
+            _startDate().SendKeys(Keys.Tab);
 
-    _endDate().Clear();
-    _endDate().SendKeys(endDate.ToString("yyyy-MM-dd"));
-    _endDate().SendKeys(Keys.Tab);
-}
+            _endDate().Clear();
+            _endDate().SendKeys(endDate.ToString("yyyy-MM-dd"));
+            _endDate().SendKeys(Keys.Tab);
+        }
 
         public void PressCreateBanReport()
         {
