@@ -1,75 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using Xunit.Abstractions;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AppForSEII2526.UIT.UC_BanReport
+namespace AppForSEII2526.UIT.UC_BanReports
 {
     public class CreateBanReport_PO : PageObject
     {
         private By _reasonBy = By.Id("Reason");
+        private IWebElement _reason() => _driver.FindElement(_reasonBy);
+
         private By _detailedDescriptionBy = By.Id("DetailedDescription");
+        private IWebElement _detailedDescription() => _driver.FindElement(_detailedDescriptionBy);
+
         private By _startDateBy = By.Id("StartDate");
+        private IWebElement _startDate() => _driver.FindElement(_startDateBy);
+
         private By _endDateBy = By.Id("EndDate");
+        private IWebElement _endDate() => _driver.FindElement(_endDateBy);
 
         private By _submitBy = By.Id("Submit");
-        private By _modifyUsersBy = By.Id("ModifyUsers");
-
-        private By _dialogBy = By.Id("DialogOKSaveDelete");
-        private By _dialogOkBy = By.Id("Button_DialogOK");
-        private By _dialogCancelBy = By.Id("Button_DialogCancel");
-
-        private By _tableSelectedUsersBy = By.Id("TableOfSelectedUsers");
-
-        private IWebElement _reason() => _driver.FindElement(_reasonBy);
-        private IWebElement _detailedDescription() => _driver.FindElement(_detailedDescriptionBy);
         private IWebElement _submit() => _driver.FindElement(_submitBy);
+
+        private By _modifyUsersBy = By.Id("ModifyUsers");
         private IWebElement _modifyUsers() => _driver.FindElement(_modifyUsersBy);
 
-        public CreateBanReport_PO(IWebDriver driver, ITestOutputHelper output)
-            : base(driver, output)
+        private By _tableOfSelectedUsersBy = By.Id("TableOfSelectedUsers");
+        private IWebElement _tableOfSelectedUsers() => _driver.FindElement(_tableOfSelectedUsersBy);
+
+        public CreateBanReport_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        public void FillInBanReportInfo(string reason, string detailedDescription)
-        {
-            WaitForBeingVisible(_reasonBy);
+public void FillInBanReportInfo(string reason, string detailedDescription, DateTimeOffset startDate, DateTimeOffset endDate)
+{
+    WaitForBeingVisible(_reasonBy);
 
-            _reason().Clear();
-            _reason().SendKeys(reason ?? "");
+    _reason().Clear();
+    _reason().SendKeys(reason);
 
-            _detailedDescription().Clear();
-            _detailedDescription().SendKeys(detailedDescription ?? "");
-        }
+    _detailedDescription().Clear();
+    _detailedDescription().SendKeys(detailedDescription);
 
-        public void FillInBanReportDates(DateTimeOffset start, DateTimeOffset end)
-        {
-            WaitForBeingVisible(_startDateBy);
-            InputDateInDatePicker(_startDateBy, start.DateTime);
+    _startDate().Clear();
+    _startDate().SendKeys(startDate.ToString("yyyy-MM-dd"));
+    _startDate().SendKeys(Keys.Tab);
 
-            WaitForBeingVisible(_endDateBy);
-            InputDateInDatePicker(_endDateBy, end.DateTime);
-        }
-
-        public void FillInBanReportDates(DateTime start, DateTime end)
-        {
-            WaitForBeingVisible(_startDateBy);
-            InputDateInDatePicker(_startDateBy, start);
-
-            WaitForBeingVisible(_endDateBy);
-            InputDateInDatePicker(_endDateBy, end);
-        }
-
-        public void FillPersonalMessage(string customerId, string message)
-        {
-            var by = By.Id($"personalMessage_{customerId}");
-            WaitForBeingVisible(by);
-
-            var input = _driver.FindElement(by);
-            input.Clear();
-            input.SendKeys(message ?? "");
-        }
+    _endDate().Clear();
+    _endDate().SendKeys(endDate.ToString("yyyy-MM-dd"));
+    _endDate().SendKeys(Keys.Tab);
+}
 
         public void PressCreateBanReport()
         {
@@ -83,34 +64,40 @@ namespace AppForSEII2526.UIT.UC_BanReport
             _modifyUsers().Click();
         }
 
-        public void ConfirmDialog()
+        public void FillPersonalMessageForUser(string customerId, string personalMessage)
         {
-            WaitForBeingVisible(_dialogBy);
-            WaitForBeingClickable(_dialogOkBy);
-            _driver.FindElement(_dialogOkBy).Click();
-        }
+            By personalMessageBy = By.Id($"personalMessage_{customerId}");
 
-        public void CancelDialog()
-        {
-            WaitForBeingVisible(_dialogBy);
-            WaitForBeingClickable(_dialogCancelBy);
-            _driver.FindElement(_dialogCancelBy).Click();
-        }
+            WaitForBeingVisible(_tableOfSelectedUsersBy);
+            WaitForBeingVisible(personalMessageBy);
 
-        public bool CheckSelectedUsersTable(List<string[]> expectedRows)
-        {
-            WaitForBeingVisible(_tableSelectedUsersBy);
-            return CheckBodyTable(expectedRows, _tableSelectedUsersBy);
+            IWebElement personalMessageInput = _driver.FindElement(personalMessageBy);
+            personalMessageInput.Clear();
+            personalMessageInput.SendKeys(personalMessage);
         }
 
         public bool CheckValidationError(string expectedError)
         {
+            WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
+            wait.Until(driver => driver.PageSource.Contains(expectedError));
+
             return _driver.PageSource.Contains(expectedError);
         }
 
-        public bool CheckModalError(string expectedError)
+        public void ConfirmCreateBanReport()
         {
-            return CheckModalBodyText(expectedError, _dialogBy);
+            By okButton = By.Id("Button_DialogOK");
+
+            WaitForBeingClickable(okButton);
+            _driver.FindElement(okButton).Click();
+        }
+
+        public void CancelCreateBanReport()
+        {
+            By cancelButton = By.Id("Button_DialogCancel");
+
+            WaitForBeingClickable(cancelButton);
+            _driver.FindElement(cancelButton).Click();
         }
     }
 }
