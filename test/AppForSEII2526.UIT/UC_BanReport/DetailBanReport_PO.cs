@@ -1,75 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using OpenQA.Selenium;
-using Xunit.Abstractions;
 
-namespace AppForSEII2526.UIT.UC_BanReport
+namespace AppForSEII2526.UIT.UC_BanReports
 {
     public class DetailBanReport_PO : PageObject
     {
-        public DetailBanReport_PO(IWebDriver driver, ITestOutputHelper output)
-            : base(driver, output)
+        public DetailBanReport_PO(IWebDriver driver, ITestOutputHelper output) : base(driver, output)
         {
         }
 
-        private string TextOfFirstExistingId(params string[] ids)
+        public bool CheckBanReportDetail(string reason, string description, DateTimeOffset startDate, DateTimeOffset endDate, int usersCount)
         {
-            foreach (var id in ids)
-            {
-                var elements = _driver.FindElements(By.Id(id));
-                if (elements != null && elements.Count > 0)
-                    return elements[0].Text;
-            }
-
-            _output.WriteLine($"No element found with any of these ids: {string.Join(", ", ids)}");
-            return "";
-        }
-
-        private By FirstExistingBy(params string[] ids)
-        {
-            foreach (var id in ids)
-            {
-                var elements = _driver.FindElements(By.Id(id));
-                if (elements != null && elements.Count > 0)
-                    return By.Id(id);
-            }
-
-            return By.Id(ids[0]);
-        }
-
-        public bool CheckBanReportDetail(
-            string reason,
-            string description,
-            DateTime startDate,
-            DateTime endDate)
-        {
-            WaitForBeingVisible(By.Id("Reason"));
+            WaitForBeingVisible(By.Id("UsersCount"));
 
             bool result = true;
 
-            result = result && TextOfFirstExistingId("Reason").Contains(reason);
+            result = result && _driver.FindElement(By.Id("Reason")).Text.Contains(reason);
+            result = result && _driver.FindElement(By.Id("Description")).Text.Contains(description);
 
-            var actualDesc = TextOfFirstExistingId("Description", "DetailedDescription");
-            result = result && actualDesc.Contains(description);
+ 
+            var startText = _driver.FindElement(By.Id("StartDate")).Text;
+            var endText = _driver.FindElement(By.Id("EndDate")).Text;
 
-            string startExpected = startDate.ToString("dd/MM/yyyy");
-            string endExpected = endDate.ToString("dd/MM/yyyy");
 
-            var actualStart = TextOfFirstExistingId("StartDate", "Start");
-            var actualEnd = TextOfFirstExistingId("EndDate", "End");
+            var actualStart = DateTimeOffset.ParseExact(startText, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+            var actualEnd = DateTimeOffset.ParseExact(endText, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
 
-            result = result && actualStart.Contains(startExpected);
-            result = result && actualEnd.Contains(endExpected);
+            result = result && (Math.Abs((actualStart - startDate).TotalMinutes) < 1);
+            result = result && (Math.Abs((actualEnd - endDate).TotalMinutes) < 1);
+
+            var actualUsersCount = int.Parse(_driver.FindElement(By.Id("UsersCount")).Text);
+            result = result && (actualUsersCount == usersCount);
 
             return result;
         }
 
-        public bool CheckListOfReportedUsers(List<string[]> expectedUsers)
+        public bool CheckReportedUsers(List<string[]> expectedReportedUsers)
         {
-            var tableBy = FirstExistingBy("TableOfReportedUsers", "ReportedUsers", "TableOfUsers");
-
-            return CheckBodyTable(expectedUsers, tableBy);
+            // Tabla id="ReportedUsers" con columnas: Name, Surname, Personal message
+            return CheckBodyTable(expectedReportedUsers, By.Id("ReportedUsers"));
         }
     }
 }
