@@ -24,7 +24,7 @@
             _driver.FindElement(surnameFilter).SendKeys(surname);
 
             _driver.FindElement(complaintFilter).Clear();
-            _driver.FindElement(complaintFilter).SendKeys(surname);
+            _driver.FindElement(complaintFilter).SendKeys(type);
 
             _driver.FindElement(buttonSearchUsers).Click();
         }
@@ -54,12 +54,12 @@
         {
             //the button is not Displayed=hidden
 
-            return _driver.FindElement(buttonContinue).Displayed == false;
+            return _driver.FindElement(buttonContinue).Enabled == false;
         }
 
         public bool ContinueAvailable()
         {
-            return _driver.FindElement(buttonContinue).Displayed;
+            return _driver.FindElement(buttonContinue).Enabled;
         }
 
         public void Continue()
