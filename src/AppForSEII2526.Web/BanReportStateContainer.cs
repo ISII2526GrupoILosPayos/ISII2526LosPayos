@@ -26,21 +26,21 @@ namespace AppForSEII2526.Web
                     PersonalMessage = user.PersonalMessage
                 });
 
-            NotifyStateChanged();
+            //NotifyStateChanged();
         }
 
         public void RemoveUserFromBanReport(BanReportUserForCreateDTO user)
         {
             BanReport.Users.Remove(user);
 
-            NotifyStateChanged();
+            //NotifyStateChanged();
         }
 
         public void ClearBanUserCart()
         {
             BanReport.Users.Clear();
 
-            NotifyStateChanged();
+            //NotifyStateChanged();
         }
 
         public void ReportProcessed()
@@ -54,7 +54,7 @@ namespace AppForSEII2526.Web
                 Users = new List<BanReportUserForCreateDTO>()
             };
 
-            NotifyStateChanged();
+            //NotifyStateChanged();
         }
     }
 }
