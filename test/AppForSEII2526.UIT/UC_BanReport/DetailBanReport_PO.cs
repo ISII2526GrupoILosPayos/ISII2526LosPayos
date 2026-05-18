@@ -20,7 +20,6 @@ namespace AppForSEII2526.UIT.UC_BanReports
             result = result && _driver.FindElement(By.Id("Reason")).Text.Contains(reason);
             result = result && _driver.FindElement(By.Id("Description")).Text.Contains(description);
 
-            // Comparar el texto que se muestra en la pantalla (mismo formato que el razor)
             string expectedStartText = startDate.ToString("dd/MM/yyyy");
             string expectedEndText = endDate.ToString("dd/MM/yyyy");
 
@@ -34,7 +33,6 @@ namespace AppForSEII2526.UIT.UC_BanReports
 
         public bool CheckReportedUsers(List<string[]> expectedReportedUsers)
         {
-            // Tabla id="ReportedUsers" con columnas: Name, Surname, Personal message
             return CheckBodyTable(expectedReportedUsers, By.Id("ReportedUsers"));
         }
     }

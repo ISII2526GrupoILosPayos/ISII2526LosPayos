@@ -142,7 +142,6 @@
 
         if (!OkCancel) return;
 
-        // Validaciones “manuales” como en el controller (mismo espíritu que la profe)
         if (report.Users == null || report.Users.Count == 0)
         {
             OpenDialogOK("Error! You must select at least one user.");
@@ -161,7 +160,6 @@
 
             banState.ClearBanUserCart();
 
-            // OJO: usa la ruta real de tu página detail
             Navigation.NavigateTo($"/banreports/detailbanreport?reportId={result.Id}");
         }
 

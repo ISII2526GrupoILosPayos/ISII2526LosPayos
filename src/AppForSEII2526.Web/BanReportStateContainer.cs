@@ -25,16 +25,22 @@ namespace AppForSEII2526.Web
                     CustomerId = user.CustomerId,
                     PersonalMessage = user.PersonalMessage
                 });
+
+            //NotifyStateChanged();
         }
 
         public void RemoveUserFromBanReport(BanReportUserForCreateDTO user)
         {
             BanReport.Users.Remove(user);
+
+            //NotifyStateChanged();
         }
 
         public void ClearBanUserCart()
         {
             BanReport.Users.Clear();
+
+            //NotifyStateChanged();
         }
 
         public void ReportProcessed()
@@ -47,6 +53,8 @@ namespace AppForSEII2526.Web
                 EndDate = DateTime.Today.AddDays(1),
                 Users = new List<BanReportUserForCreateDTO>()
             };
+
+            //NotifyStateChanged();
         }
     }
 }

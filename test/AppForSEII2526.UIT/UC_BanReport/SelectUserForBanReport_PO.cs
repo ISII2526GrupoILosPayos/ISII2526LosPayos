@@ -52,7 +52,6 @@
 
         public bool ContinueNotAvailable()
         {
-            //the button is not Displayed=hidden
 
             return _driver.FindElement(buttonContinue).Enabled == false;
         }

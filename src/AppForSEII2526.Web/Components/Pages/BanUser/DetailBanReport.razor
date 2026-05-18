@@ -81,7 +81,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Check logged in (si quieres restringir por rol, añade: && user.IsInRole("Admin"))
         var userName = "";
         if (authenticationState is not null)
         {
