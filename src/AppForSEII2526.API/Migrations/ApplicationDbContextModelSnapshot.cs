@@ -441,8 +441,8 @@ namespace AppForSEII2526.API.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<decimal>("NewTotalPrice")
                         .HasPrecision(10, 2)

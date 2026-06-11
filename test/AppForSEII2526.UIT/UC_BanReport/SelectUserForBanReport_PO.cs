@@ -48,6 +48,7 @@
             WaitForBeingClickable(showSelectedUsers);
             _driver.FindElement(showSelectedUsers).Click();
             _driver.FindElement(By.Id("removeUser_" + userNumber)).Click();
+            _driver.FindElement(showSelectedUsers).Click();
         }
 
         public bool ContinueNotAvailable()
