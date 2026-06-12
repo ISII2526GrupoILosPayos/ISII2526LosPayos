@@ -52,7 +52,7 @@ namespace AppForSEII2526.UIT.UC_BanReports
         }
 
         [Theory]
-        [InlineData(userName1, userSurname1, creationDate1, unproComplaint1, "Mbappe", "")]
+        [InlineData(userName2, userSurname2, creationDate2, unproComplaint2, "Feme", "")]
         [InlineData(userName2, userSurname2, creationDate2, unproComplaint2, "", "Denuncia")]
         [Trait("LevelTesting", "Funcional Testing")]
         public void UC34_AF1_2_3filtering(string name, string surname, string date, string unproComplaint, string filterSurname, string type)
@@ -149,7 +149,7 @@ namespace AppForSEII2526.UIT.UC_BanReports
 
             //Act
             selectUsersForBan_PO.searchUser("", "");
-            selectUsersForBan_PO.AddUserToBanReport("1");
+            selectUsersForBan_PO.AddUserToBanReport("4");
             selectUsersForBan_PO.Continue();
 
             createBanReport_PO.FillInBanReportInfo("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "01/03/2026", "04/03/2026");
@@ -159,7 +159,43 @@ namespace AppForSEII2526.UIT.UC_BanReports
 
             //Assert
 
-            Assert.True(detailsBanReport_PO.CheckBanReportDetail("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", startDate, endDate,1));
+            Assert.True(detailsBanReport_PO.CheckBanReportDetail("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", startDate, endDate, 1));
+
+
+        }
+
+        [Fact]
+        [Trait("LevelTesting", "Funcional Testing")]
+        public void UC34_Exam()
+        {
+            var createBanReport_PO = new CreateBanReport_PO(_driver, _output);
+            var detailsBanReport_PO = new DetailBanReport_PO(_driver, _output);
+
+            var startDate = new DateTimeOffset(2026, 3, 1, 0, 0, 0, TimeSpan.Zero);
+            var endDate = new DateTimeOffset(2026, 3, 4, 0, 0, 0, TimeSpan.Zero);
+
+            //Arrange
+            InitialSteps_SelectUsersForBan();
+
+            //Act
+            selectUsersForBan_PO.searchUser("Navarro", "");
+            selectUsersForBan_PO.AddUserToBanReport("1");
+            selectUsersForBan_PO.searchUser("Feme", "");
+            selectUsersForBan_PO.AddUserToBanReport("2");
+            selectUsersForBan_PO.searchUser("", "");
+            selectUsersForBan_PO.AddUserToBanReport("3");
+            selectUsersForBan_PO.RemoveUserFromBanReport("1");
+            selectUsersForBan_PO.RemoveUserFromBanReport("2");
+            selectUsersForBan_PO.Continue();
+
+            createBanReport_PO.FillInBanReportInfo("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "01/03/2026", "04/03/2026");
+            createBanReport_PO.PressCreateBanReport();
+            createBanReport_PO.ConfirmCreateBanReport();
+
+
+            //Assert
+
+            Assert.True(detailsBanReport_PO.CheckBanReportDetail("hola hola hola", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", startDate, endDate, 1));
 
         }
     }
